@@ -1,0 +1,270 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Analysis II}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+
+  \begin{columns}
+    \column{0.5}
+\block{Function limits}{
+  Intuitively we can have a notion of a fuction tending to a limit as its argument approaches a point. To discuss such a notion formally we might state a definition: $\displaystyle\lim_{x \to p} f(x) = l$ if for any arbitrary distance that $f(x)$ might be from $l$, there is a radius around $p$ not including $p$ such that all $f(x)$ are within that distance from $l$. \\
+
+  Without extra work it is difficult to justify this definition, as the $\forall$ quantifier on $x$ could be satisfied simply by the absence of possible $x$ values. Thus we must first define the condition that $p$ is a limit point of the domain of $f$.\\
+
+  \begin{definition}[Limit point]
+  \ $p$ is a limit point of $E$ if for all $\delta > 0$ there exists an $x \in E$ such that $0 < |x - p| < \varepsilon$.\\
+  \end{definition}
+
+  From this we can define the notions of closure and isolation. More importantly, we can relate the concept to that of sequences: \\
+
+  \begin{claim}[Limit points via sequences]
+    A point $p \in \mathbb{R}$ is a limit point of $E \subseteq \mathbb{R}$ if and only if there exists a sequence $(p_{n})$ with $p_{n} \in E \setminus \{p\}$ such that $\displaystyle\lim_{n \to \infty} p_{n} = p$. \\
+  \end{claim}
+
+  The proof of this is fairly intuitive -- if $p$ is a limit point then there will exist a sequence of points around it which approach arbitrarily close as $n$ gets large. \\
+
+  Using this we return to the definition of function limits, now more strictly defined as
+  \begin{definition}[Function limit]
+    Let $E \subseteq \mathbb{R}$ and $f : E \to \mathbb{R}$ be a real-valued function. Let $p$ be a limit point of $E$ and let $l \in \mathbb{R}$. $f$ converges to $l$ as $x$ tends to $p$ if
+    \[
+      \forall \varepsilon > 0\ \exists \delta > 0\ \forall x \in E\ (0 < |x-p| < \delta \Rightarrow |f(x)-l|< \varepsilon)
+    \]
+  \end{definition}
+
+  and we can continue the relation to sequences by showing that $\displaystyle\lim_{x\to p} f(x)= l$ is equivalent to the claim that for all $p_{n}$, $\displaystyle \lim_{n \to \infty} f(p_{n}) = l$ if $p_{n} \in E \setminus \{p\}$, and $p_{n} \to p$.
+
+  \coloredbox{
+    Whenever the notion of tending to infinity is considered, we may replace within our definitions $\forall \varepsilon > 0 \hdots \Rightarrow |f(x)-l| < \varepsilon$ with $\forall M \hdots \Rightarrow f(x) > M$. \\
+
+    This applies in a similar way when the limit is tending to infinity: we replace $\exists \delta > 0 \ \hdots \ 0 < |x - p| < \delta \Rightarrow \hdots$ with $\exists N \hdots \ x > N \Rightarrow \hdots$ (or vice versa when tending to negative infinity).
+  }
+  \phantom{}
+  \innerblock{Properties}{
+    \begin{theorem}[AOL for functions]
+      Let $E \subseteq \mathbb{R}$ and let $p$ be a limit point of $E$. Let $f, g : E \to \mathbb{R}$ and suppose that $f(x) \to a$ and $g(x) \to b$ as $x \to p$. Then
+      \begin{itemize}
+              \item $|f(x)| \to |a|$,
+              \item $f(x)+g(x) \to a + b$,
+              \item $f(x)-g(x) \to a - b$,
+              \item $f(x)g(x) \to ab$ and
+              \item if $b \neq 0$ then $f(x) / g(x) \to a/b$
+      \end{itemize}
+    \end{theorem}
+    These statements all follow from AOL. Extensions of this AOL then come from considering infinite limits and arguments, although these are tedious to prove. \\
+
+    Additionally we get the preservation of weak inequalities, sandwiching, and the limits of composition of functions. That is, if $f(x) \to q$ for $x \to p$, but $f(x) \neq q$ (this is required to ensure $q$ is a limit point) for all $x \in E \setminus \{p\}$, and $g(y) \to l$ as $y \to q$, thus $g(f(x)) \to l$ as $x \to p$.\\
+
+    The requirement of ``$\forall x \in E$'' may be loosened by the observation that for many $p$ only a subset of $E$ is required.
+  }
+  \phantom{}
+  \innerblock{Continuity}{
+    \begin{definition}[Continuity]
+      Let $f: E \to \mathbb{R}$, where $E \subseteq \mathbb{R}$ and $p \in E$. $f$ is continuous at $p$ if
+      \[
+        \forall \varepsilon > 0 \ \exists \delta > 0 \ \forall x \in E \ (|x - p| < \delta \Rightarrow |f(x) - f(p)| < \varepsilon)
+      \]
+    \end{definition}
+    or equivalently: $f$ is continuous if $p$ is not a limit point of $E$, and otherwise iff $\displaystyle\lim_{x \to p}f(x) = f(p)$. \\
+    \begin{lemma}[Continuity via restrictions]
+      For $f : E \to \mathbb{R}$, if there exists $I$ of which $x$ is an element of the interior such that $\restr{f}{I}$ is continuous, then $f$ is continuous at $x$.
+    \end{lemma}
+  }
+}
+\block{Convergence}{
+  \begin{theorem}[Uniformity preserves continuity]
+    Let $(f_{n})$ be a sequence of continuous functions on $E$ which converges uniformly to $f$ on $E$. Then $f$ is continuous on $E$.
+  \end{theorem}
+  Proof: For any finite $n$, $\delta$-close $x$ and $y$ have mappings $\varepsilon$-close by $f_{n}$. We also have that $|f(p)-f_{n}(p)| < \varepsilon$ for any $p$, using the same lower bound on $n$. Thus we find that $f(x)$ and $f(y)$ must be $3\varepsilon$-close.\\
+
+  \begin{lemma} \
+    $\displaystyle f_{n} \overset{u}{\to} f \Leftrightarrow \lim_{n \to \infty} \sup_{x \in E} |f_{n}(x)-f(x)| = 0$. \\
+  \end{lemma} \\
+  \begin{theorem}[Weierstrass' M-test] \
+    Suppose there exist real constants $M_{k}$ such that for all $k \in \mathbb{N}$, $x \in E$, $|u_{k}(x)| \le M_{k}$ and $\sum M_{k}$ converges. Then $\sum u_{k}(x)$ converges uniformly on $E$.
+  \end{theorem}
+
+}
+\column{0.5}
+\block{Boundedness and IVT}{
+  \begin{theorem}[Boundedness Theorem]
+    Suppose $a < b$ and $f : [a, b] \to \mathbb{R}$ is a continuous function. Then
+    \begin{itemize}
+      \item $f$ is bounded.
+      \item $f$ attains its $\sup$ and its $\inf$. That is, there exist points $\xi_{1}$ and $\xi_{2}$ in $[a,b]$ such that $\displaystyle f(\xi_{1}) = \sup_{x \in [a,b]} f(x)$ and $\displaystyle f(\xi_{2}) = \inf_{x \in [a,b]} f(x)$.
+    \end{itemize}
+  \end{theorem}
+  The proof of the former statement comes by contradiction - if $f$ is unbounded then we have both for any $n$ there exists $x_{n} \in [a,b]$ such that $|f(x_{n})| > n$, and by Bolzano-Weierstrass $(x_{n})$ has a convergent subsequence in $[a,b]$. As $f$ is continuous thus $f(x_{s_{n}})$ is also convergent and thus bounded. This creates a contradiction however, as $|f(x_{s_{n}})| > s_{n} \ge n$. \\
+
+  The second statement is proved by setting $\displaystyle M = \sup_{x \in [a,b]} f(x)$, and using the approximation property of the supremum combined with the closed property of the interval, Bolzano Weierstrass, and sandwiching. \\
+
+  \begin{theorem}[IVT]
+    Assume $a < b$, $f : [a,b] \to \mathbb{R}$ is continuous, and $c \in (f(a),f(b))$. Then there is at least one point $\xi \in [a,b]$ such that $f(\xi) = c$.
+  \end{theorem}
+  Proof: divide and conquer, or using inf and sup.
+  \begin{theorem}
+    Let $f : [a,b] \to \mathbb{R}$ be continuous. Then $f([a,b]) = [c,d]$ for some $c,d \in \mathbb{R}$
+  \end{theorem}
+}
+
+\block{MVT}{
+    \begin{theorem}[MVT] \
+      Let $a < b$ and $f : [a,b] \to \mathbb{R}$. Assume that $f$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Thus there exists some $\xi \in (a,b)$ such that
+      \[
+        f'(\xi) = \frac{f(b)-f(a)}{b-a}
+      \]
+    \end{theorem}
+    Proof: Define
+    \begin{align*}
+      F(x) &= f(x)(b-a)-x(f(b)-f(a))+af(b)-bf(a), \\
+      \text{thus} \ F'(x) &= f'(x)(b-a)-(f(b)-f(a)) \\
+      F(a) &= f(a)(b-a+a-b)-f(b)(a-a) = 0 \\
+      F(b) &= f(b)(b-a-b+a)+f(a)(b-b) = 0
+    \end{align*}
+    Then we apply Rolle's theorem to achieve the result.
+    \begin{theorem}[Cauchy MVT] \
+      Let $a < b$ and $f,g : [a,b] \to \mathbb{R}$. Assume $f,g$ are continuous on $[a,b]$, and differentiable on $(a,b)$. Then there exist $\xi \in (a,b)$ such that
+      \[
+        f'(\xi)(g(b)-g(a)) = g'(\xi)(f(b)-f(a)).
+      \]
+      If $g'(x) \neq 0$ for all $x \in (a,b)$, then $g(b) \neq g(a)$ and we have
+      \[
+        \frac{f'(\xi)}{g'(\xi)} = \frac{f(b)-f(a)}{g(b)-g(a)}
+      \]
+    \end{theorem}
+    Proof: Define $F(x) = f(x)(g(b)-g(a))-g(x)(f(b)-f(a))-f(a)g(b)+f(b)g(a)$. By Rolle's theorem there exists $\xi \in (a,b)$ such that $f'(\xi)(g(b)-g(a)) = g'(\xi)(f(b)-f(a))$.
+}
+\block{L'Hopital's Rule}{
+  \begin{theorem}[Simple form]
+    Let $f, g : E \to \mathbb{R}$ with $p \in E$ a limit point of $E$. Assume that $f(p) = g(p) = 0$, $f$ and $g$ are differentiable at $p$, and $g'(p) \neq 0$. Then
+    \[
+      \lim_{x \to p} \frac{f(x)}{g(x)} = \frac{f'(p)}{g'(p)}
+    \]
+  \end{theorem}
+  This follows from algebraic manipulation of the LHS.\\
+  \begin{theorem}[\,$\frac{0}{0}$ form] \hphantom{} \\
+      Let $f, g : (a,a+\delta) \to \mathbb{R}$ for $a \in \mathbb{R}$, $\delta > 0$. If
+      \begin{enumerate}[label=\alph*)]
+        \item $f$ and $g$ are differentiable in $(a, a+\delta)$;
+        \item $\displaystyle\lim_{x\to a^{+}} f(x) = \lim_{x\to a^{+}} g(x) = 0$;
+        \item $g'(x) \neq 0$ for all $x \in (a,a+\delta)$;
+        \item $\displaystyle\lim_{x \to a^{+}} \frac{f'(x)}{g'(x)} \in \mathbb{R} \cup \{\pm \infty\}$.
+      \end{enumerate}
+    Then $g(x) \neq 0$ for any $x \in (a, a+\delta)$ (extend $g$ to $a$ then apply Taylor series), and
+    \[
+      \lim_{x \to a^{+}} \frac{f(x)}{g(x)} = \lim_{x \to a^{+}} \frac{f'(x)}{g'(x)}
+    \]
+  \end{theorem}
+  Proof: Straightforward via C-MVT. \\
+  \begin{theorem}[\,$\frac{\infty}{\infty}$ form] \hphantom{} \\
+    Let $f, g : (a, a+\delta) \to \mathbb{R}$ for some $a \in \mathbb{R}$, $\delta > 0$. Assume that
+    \begin{enumerate}[label=\alph*)]
+      \item $f$ and $g$ are differentiable in $(a,a+\delta)$;
+      \item $\displaystyle\lim_{x\to a^{+}} |f(x)| = \lim_{x \to a^{+}} |g(x)| = \infty$;
+      \item $g'(x) \neq 0$ on $(a,a+\delta)$;
+      \item $\displaystyle \lim_{x \to a^{+}} \frac{f'(x)}{g'(x)}$ exists.
+    \end{enumerate}
+    Then
+    \[
+      \lim_{x \to a^{+}} \frac{f(x)}{g(x)} = \lim_{x \to a^{+}} \frac{f'(x)}{g'(x)}.
+    \]
+  \end{theorem}
+  Unfortunately this does not immediately follow from applying the above with $\frac{1}{f}$ and $\frac{1}{g}$, as we don't immediately have that the existence of $\displaystyle \lim_{x \to a^{+}} \frac{f'(x)}{g'(x)}$ implies the existence of $\displaystyle \lim_{x \to a^{+}} \frac{f'(x)}{g'(x)} \left(\frac{g(x)}{f(x)}\right)^{2}$. Instead use Rolle's and C-MVT to get an $\varepsilon$-$\delta$ proof for the LHS.
+}
+  \end{columns}
+\end{document}

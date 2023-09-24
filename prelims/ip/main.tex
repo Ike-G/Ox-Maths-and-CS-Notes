@@ -1,0 +1,273 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=841mm, paperheight=1400mm}
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{listings}
+
+\usepackage{color}
+\definecolor{bluekeywords} {rgb}{0.13, 0.13, 0.9}
+\definecolor{greencomments}{rgb}{0.1 , 0.4 , 0.1}
+\definecolor{redstrings}   {rgb}{0.8 , 0,    0}
+
+\usepackage{listings}
+\lstset{
+  language          = Scala,
+  showspaces        = false,
+  showtabs          = false,
+  breaklines        = true,
+  showstringspaces  = false,
+  breakatwhitespace = true,
+  escapeinside      = {(*@}{@*)},
+  commentstyle      = \color{greencomments},
+  keywordstyle      = \color{bluekeywords}\bfseries,
+  stringstyle       = \color{redstrings},
+  basicstyle        = \small\ttfamily,
+}
+
+\usepackage{filecontents}
+\begin{filecontents*}{Observer.scala}
+trait Observable[T] { this: T => // Observable[T] must be mixed in with another trait.
+  val observers = new ArrayBuffer[Observable.Observer[T]]
+
+  def addObserver(observer: Observable.Observer[T]) {
+    observers.append(observer)
+  }
+
+  def notifyObservers() {
+    for (o <- observers) o.refresh(this)
+  }
+}
+
+object Observable {
+  trait Observer[T] {
+    def refresh(subject: T)
+  }
+}
+\end{filecontents*}
+\begin{filecontents*}{Iterator.scala}
+trait Iterator[+T] {
+  def hasNext(): Boolean
+  def next(): T
+}
+\end{filecontents*}
+\begin{filecontents*}{Factory.scala}
+trait Factory {
+  def apply(filename: String): Reader
+}
+
+object ReaderFactory extends Factory {
+  def apply(s: String): Reader = {
+    fileExtension(s) match {
+      case ".csv" => csvReader(s)
+      case ".json" => jsonReader(s)
+      case ".parquet" => parquetReader(s)
+      case _ => throw new RuntimeException("Unknown file type")
+    }
+  }
+}
+\end{filecontents*}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Imperative Programming}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+\column{0.5}
+\block{IP1}{
+  The focus of IP1 is on correctness and termination of simple imperative programs. To consider this we introduce the concepts of the invariant and the variant for loops, within the wider paradigm of Hoare logic. Where $\{P\} \,\mathtt{command}\, \{Q\}$ is the proposition that given $P$ is true about the state, then on the execution of $\mathtt{command}$, $Q$ is true, we get the following basic facts:
+  \begin{align*}
+    \frac{\{B \wedge P\}\,\mathtt{c_{1}}\,\{Q\} \wedge \{\neg B \wedge P\} \, \mathtt{c_{2}} \, \{Q\}} {\{P\}\, \mathtt{if }\, B \,\mathtt{then \, c_{1} \, else \, c_{2}}\,\{Q\}} && \text{correctness of }\mathtt{if} \\
+    \frac{\{P \wedge B\}\, \mathtt{c} \, \{P\}}{\{P\}\,\mathtt{while}\,B\,\mathtt{do \, c}\, \{\neg B \wedge P\}} && \text{termination with invariant }P
+  \end{align*}
+  The notion of the invariant uses the second fact: that provided we can guarantee both $\{P \wedge B\} \, \mathtt{c} \, \{P\}$ and termination of $\mathtt{while}\,B\,\mathtt{do \,c}$ given $P$, then we terminate with $P$ and $\neg B$. If we can prove the correct result from this termination, then the program is correct. \\
+
+  To prove termination, we use the notion of the variant. If we have $\{P \wedge B \wedge t = t_{0} \in \mathbb{N}\} \, \mathtt{c} \, \{P \wedge t < t_{0} \wedge t \in \mathbb{N}\}$, thus $t = 0 \Rightarrow \neg B$ so we have termination within a finite number of steps. \\
+
+  \innerblock{Binary Search}{
+    \lstinputlisting{BinarySearch.scala}
+  }
+
+}
+\block{IP2}{
+  The focus of IP2 is on datatype stability. For a specified datatype, we have both an interface and an implementation. \\
+
+  For each interface we describe it by its abstract state (e.g. an object $S$ implementing the Set[T] interface satisfies $S : \mathcal{P}(T)$), its initial state (e.g. $S = \varnothing$), and the pre- and post-conditions of each method described in the interface. \\
+
+  For each implementation we prove its correctness by describing its abstraction function $f$ from the set of states which its attributes may place the object in, to the abstract set the object represents as described in the interface. Strictly this function ought to be surjective, as otherwise there are abstract objects the implementation is incapable of representing. We also describe a datatype invariant $D$, a proposition about the attributes of the object which is true upon initialisation, and for each possible call $\mathtt{c}$ which could be required of the object, $\{D\} \, \mathtt{c} \, \{D\}$.
+}
+
+\block{IP3}{
+  Our focus in IP3 shifts towards correctness in larger program environments. \\
+
+  The first idea of object orientation is the notion of object identity - that only the object itself is identical to itself. Different instantiations create different objects. \\
+
+  The second idea is encapsulation: that the internal implementation of a component will not be accessible via its external interface. This allows debugging to occur more simply, as any problems can only occur via the failure of a distinct object of its internal means, rather than being broken from outside. \\
+
+  \coloredbox{
+    The principle of Demeter is the principle that an object should only interact with methods within itself or created by itself, rather than calling methods on other objects.
+  }
+}
+\block{Object orientation}{
+  \innerblock{Inheritance}{
+    Inheritance is a feature by which classes may automatically have access to methods defined for another class (with the capacity to override them if desired), and thus may be used as if they are that class. Additionally, they may enjoy their own methods, although only when typed as their own class rather than that of the parent. \\
+
+    While inheritance is useful for providing structure in static, short-lived environments, as it allows us to avoid repeating code blocks to achieve similar behaviour between objects, it introduces a significant problem to the coherency of the program as a whole. This is that child classes override the methods which the base class may itself call, introducing customisation points and thus potentially leading to unintended behaviour. We can however avoid this somewhat by replacing customisation points with private methods. \textbf{Is this still a problem?}
+  }
+  \phantom{}
+  \innerblock{Composition}{
+    Composition is a different pattern of coupling objects together whereby an object becomes an attribute of another, rather than inherently linking the classes. This allows for the outer class to serve as an interface to the inner class, while implementing additional functionality on top of it. \\
+
+    The main drawback of composition is that we can no longer type the class as the class it contains. Thus we cannot deal with it in a polymorphic manner. At the same time the only coupling occurring is in one dimension -- the outer class relies on the inner class to behave as expected, while the inner class may be altered however one might like without forgoing its specification.
+  }
+  \phantom{}
+}
+\column{0.5}
+\block{Design Patterns}{
+  \innerblock{Adapter}{
+    An Adapter is made up of a target, the client, the adaptee, and the adapter. The target is the interface we intend to provide, the client the codebase which expects instances the type of the target, the adaptee the current provision, and the adapter the presentation of the adaptee as the type of the target.
+  }
+  \phantom{}
+  \innerblock{Iterator}{
+    An iterator is a method of getting access to the elements of a collection without being able to change it or needing to store it in any way.
+    \lstinputlisting{Iterator.scala}
+  }
+  \phantom{}
+  \innerblock{Observer}{
+    An Observer pattern is composed of four components:
+    \begin{itemize}
+            \item \textbf{Observer}: An interface with a method to be called when changes occur.
+            \item \textbf{Subject}: A class for notifying observers of changes.
+            \item \textbf{Concrete Subject}: The class to be observed, responsible for notifying the observer.
+            \item \textbf{Concrete Observer}: A concrete implementation of the observer.
+    \end{itemize}
+    We can write the subject and observer as follows:
+    \lstinputlisting{Observer.scala}
+    and then any concrete subject extends T with Observable[T] while any concrete observer extends Observable.Observer[T].
+  }
+  \phantom{}
+  \innerblock{Model View Controller}{
+    The model-view-controller design pattern is an architecture for structuring GUI applications. It is composed of the model, the view (the code responsible for the presentation of the model to users), and the controller, which is responsible for processing user input and updating the model.
+  }
+  \phantom{}
+  \innerblock{Fa\c cade}{
+    A fa\c cade is a pattern formed of a subsystem, a client, and an interface between the two (the fa\c cade class itself).
+  }
+  \phantom{}
+  \innerblock{Factory}{
+    The factory pattern is a pattern whereby instead of creating objects by explicitly instantiating the class alongside its arguments, one creates a factory object with a method that abstracts the details of the constructor away from the user. \\
+
+    For the purpose of generality, we have an abstract factory class which defines a creation method, and each class to be created using it has an associated factory object inheriting it. Take below as an example:
+    \lstinputlisting{Factory.scala}
+  }
+  \phantom{}
+  \innerblock{Command}{
+    The command design pattern contains the command interface, typically containing the method execute returning Unit, a receiver which performs the command, the concrete commands implementing the interface, the client object creating commands, and the invoker object which runs the commands when appropriate.
+  }
+  \phantom{}
+  \innerblock{Memento}{
+    A Memento is a pattern which captures the state of an originator object, allowing for the restoration of the object without exposing anything further. It ought not to be possible for the state to be accessed prior to its restoration.
+  }
+  \phantom{}
+  \innerblock{Decorator}{
+    The Decorator pattern entails that instead of creating an explosion of subclasses, define a subclass meant to be ``decorated''. It is an example of an instance where inheritance is a very poor solution to the overall problem, as we desire to alter the behaviour of an object at runtime. \\
+
+    The components of a decorator are as follows:
+    \begin{itemize}
+            \item The component interface, for the objects being decorated.
+            \item The concrete implementation of the component, inheriting the component interface.
+            \item The base decorator, inheriting the component interface and storing a component object.
+            \item The set of concrete decorators inheriting the base decorator. \\
+    \end{itemize}
+    To implement these, we write the base decorator's methods to imitate those of its wrapped component. Thus the concrete decorators may then implement theirs to call the super methods in between doing their own extra work.
+  }
+}
+\end{columns}
+
+\end{document}

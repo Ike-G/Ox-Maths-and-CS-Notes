@@ -1,0 +1,251 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=841mm, paperheight=1350mm}
+\usepackage{amsmath}
+% \usepackage{amsthm}
+\usepackage{bm}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Image}{Im}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Row}{Row}
+\DeclareMathOperator{\Col}{Col}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+\newtheorem{solution}{Solution}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Linear Algebra MT22}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+\column{0.55}
+\block{Vector Spaces}{
+  A vector space is a non-empty set $V$ together with the binary operations of addition and scalar multiplication ($(u,v) \mapsto u + v : V \times V \to V$, and $(\lambda, v) \mapsto \lambda v : \mathbb{F} \times V \to V$) satisfying \\
+  \begin{itemize}
+    \item \,$u+v = v + u$ for all $u, v \in V$ (commutativity);
+    \item \,$u+(v+w) = (u + v) + w$ for all $u, v, w \in V$ (associativity);
+    \item \,$v + 0_{V} = v = 0_{V} + v$ for some $0_{V} \in V$, for all $v \in V$ (additive identity);
+    \item \,for all $v \in V$ there exists $w \in V$ such that $v + w = 0_{V} = w + v$ (additive inverse);
+    \item \,$\lambda(v+u) = \lambda v + \lambda u$ for all $v, u \in V$, $\lambda \in \mathbb{F}$ (distributivity over vector addition);
+    \item \,$(\lambda + \mu) v = \lambda v + \mu v$ for all $v \in V$, $\lambda, \mu \in \mathbb{F}$ (distributivity over scalar addition);
+    \item \,$(\lambda \mu ) v = \lambda (\mu v)$ for all $v \in V$, $\lambda, \mu \in \mathbb{F}$;
+    \item \,$1v = v$ for all $v \in V$ (multiplicative identity). \\
+  \end{itemize}
+
+  While the above axioms are normally the means of introduction to the field, it's worth pointing out that this specific system is more of a consequence of mathematicians having already done work on linear problems before gradually noticing that their linearity was a common theme, rather than anyone coming up with axioms out of thin air. The field in general can be roughly described as trying to clamp firmly down on the `well-behaved' problems in maths, and trying to cast the net of `well-behaved`-ness as wide as possible.
+}
+
+\block{Reduced Row Echelon Form}{
+  Reduced row echelon (RRE) form is a class of matrix satisfying the conditions:
+  \begin{itemize}
+    \item \,Any row containing a non-zero element is above all rows which do not.
+    \item \,The first non-zero element of a row is $1$.
+    \item \,The leading $1$ of every non-zero row is to the right of the leading $1$s of the rows above.
+    \item \,In a column that contains a leading $1$, all other entries are zero. \\
+  \end{itemize}
+  The usefulness of this notion stems from the linear independence of non-zero rows in RRE form. The solutions to a linear system are invariant under invertible maps, so any solution of a linear system in RRE form is a solution to the original system. \\
+
+  \begin{lemma}[Row space invariance under row-reduction]
+    Let $A$ be an $m \times n$ matrix and $B$ a $k \times m$ matrix, with $R$ the RRE form matrix of $A$.
+    \begin{enumerate}
+      \item The non-zero rows of $R$ are independent.
+      \item The rows of $R$ are linear combinations of the rows of $A$.
+      \item $\Row(BA)$ is contained in $\Row(A)$.
+      \item If $k = m$ and $B$ is invertible then $\Row(BA) = \Row(A)$.
+      \item $\Row(R) = \Row(A)$.
+    \end{enumerate}
+  \end{lemma}
+  \phantom{}
+
+  \innerblock{Existence}{
+    \begin{theorem}[Existence of RRE form]
+      Every $m \times n$ matrix $A$ can be reduced to a matrix in RRE form by an invertible matrix.\\
+    \end{theorem}
+    The proof of this claim follows by strong induction on the number of rows in an arbitrary matrix. For an arbitrary matrix, take the first column with a non-zero element, and swap its row with the first. Then divide by its value and subtract from the rows below. \\
+
+    By strong induction, row operations may then be performed to place the matrix formed of the lower right quadrant into RRE form. Subtraction of these rows in RRE form from the first row where leading ones are present, and thus the matrix is in RRE form. \\
+
+    Additionally, note that each row operation is represented by an invertible matrix. \\
+
+    \begin{theorem}
+      The system $Ax = b$ is consistent (has a solution) if and only if $\rank (A|b) = \rank(A)$. \\
+    \end{theorem}
+
+    Note that the rank can be observed from the number of non-zero rows of the RRE form of a matrix (as it's just the number of LI columns), so the above essentially just says that $b$ is linearly dependent with the columns of $A$. \\
+
+    It can be easily shown that the number of leading ones in a matrix's RRE form is equivalent both to the number of linearly independent rows, and linearly independent columns. This is probably more straightforward than the inductive proof of column/row-rank equality given in the lecture notes?
+  }
+  \hphantom{}
+  \innerblock{Dimension}{
+    \begin{theorem}[Steinitz Exchange Lemma] \
+      Let $V$ be a vector space over a field $\mathbb{F}$. Take $X = \{v_{1}, \dots, v_{n}\} \subseteq V$. Suppose that $u \in \langle X \rangle$ but that $u \notin \langle X \setminus \{v_{i}\} \rangle$ for some $v_{i} \in X$. Let
+      \begin{align*}
+        Y = (X \setminus \{v_{i}\}) \cup \{u\}
+      \end{align*}
+      then $\langle Y \rangle = \langle X \rangle$. \\
+    \end{theorem}
+
+    This theorem is useful for generating bases, and proving statements about dimensionality. It mainly captures the intuition that each vector space has a well-defined dimension, and so swapping out elements of a basis while preserving linear independence will also preserve the span. \\
+
+    \begin{lemma}
+      \ Let $V$ and $W$ be vector spaces, with $V$ finite-dimensional. If $T : V \to W$ is linear and $U \le V$, then
+      \[
+        \dim U - \mathrm{null}\, T \le \dim T(U) \le \dim U.
+      \]
+    \end{lemma}
+
+    To prove this, take $S = T(U)$ as the restriction of $T$ to $U$. By rank-nullity this lemma follows.
+  }
+}
+\column{0.45}
+\block{A note on Matrix-Vector Multiplication}{
+  The definition of matrix-vector multiplication for a matrix $A \in M_{m\times n}(\mathbb{F})$, vector $x \in M_{n}(\mathbb{F})$ specifies that for any $i \in {1, \dots, m}$:
+  \[
+    (Ax)_{i} = \sum_{k=1}^{n} A_{ik}x_{k}
+  \]
+  The most obvious way of conceptualising this is as just being the dot product between $A$'s $i$th row and $x$, however for many applications it is more useful to see that
+  \begin{align*}
+    \begin{bmatrix}
+      \mid & \mid & & \mid \\
+      \bm{a_{1}} & \bm{a_{2}} & \cdots & \bm{a_{n}} \\
+      \mid & \mid & & \mid
+    \end{bmatrix}
+    \begin{bmatrix}
+      x_{1} \\
+      x_{2} \\
+      \vdots \\
+      x_{n}
+    \end{bmatrix}
+    = \sum_{k=1}^{n} x_{k}\bm{a_{k}}.
+  \end{align*}
+  The main thing this exposes is that matrix vector multiplication is the same as taking a linear combination of vectors.
+
+}
+\block{Linear Transformations}{
+  Where $V$ and $W$ are vector spaces, a transformation $T : V \to W$ is linear if $T(v + \lambda u) = T(v) + \lambda T(u)$ for all $v, u \in V$, $\lambda \in \mathbb{F}$.\\
+  \innerblock{Matrix Representation}{
+    There is a one-to-one correspondence between an $n$ by $m$ matrix and a linear transformation from a vector space of dimension $m$ to one of dimension $n$ with respect to a specific ordered bases for each vector space. This follows easily from just applying any arbitrary linear transformation to the elements of a basis, noting that the corresponding outputs are sufficient to determine all other outputs of the transformation via linearity. \\
+    \begin{theorem}[Change of basis]
+      Let $V, W$ be finite-dimensional vector spaces over $\mathbb{F}$ with ordered bases $\mathcal{V}$, $\widetilde{\mathcal{V}}$, and $\mathcal{W}$, $\widetilde{\mathcal{W}}$ respectively. Let $T : V \to W$ be a linear map. Then
+      \[
+        {}_{\widetilde{\mathcal{W}}}T_{\widetilde{\mathcal{V}}} = ({}_{\widetilde{\mathcal{W}}} I_\mathcal{W}) ({}_{\mathcal{W}} T_{\mathcal{V}}) ({}_{\mathcal{V}} I_{\widetilde{\mathcal{V}}})
+      \]
+    \end{theorem}
+    An immediate consequence of this is that any two matrices representing the same linear transformation from a vector space back to itself within different bases are similar.
+  }
+}
+
+\block{Bilinear Forms}{
+  It's often useful to have some notion of vector `distance'. In Euclidean geometry we tend to use the dot product for this purpose, but a more general notion of this can be found from the inner product, which is itself a special case of a bilinear form. \\
+
+  We define a bilinear form as a function $B : V \times V \to \mathbb{F}$ such that $B(v + \alpha u, w) = B(v,w) + \alpha B(u,w)$ and $B(v, w + \alpha u) = B(v, w) + \alpha B(v, u)$ for any $u, v, w \in V$, $\alpha \in \mathbb{F}$. Otherwise put, the function is linear in both of its arguments. Helpfully this gives a nice general form when taking $V$ with respect to an ordered basis $\{e_{1}, \dots, e_{n}\}$. For any $v, u \in V$:
+  \begin{align*}
+    v &= \sum_{i=1}^{n} x_{i} e_{i} \\
+    u &= \sum_{i=1}^{n} y_{i} e_{i}
+  \end{align*}
+  for some $\bm{x}, \bm{y} \in \mathbb{F}^{n}$, and consequently by linearity
+  \begin{align*}
+    B(v, u) &= B\left(\sum_{i=1}^{n} x_{i}e_{i}, \sum_{j=1}^{n} y_{j}e_{j}\right) \\
+            &= \sum_{i=1}^{n} x_{i} B\left(e_{i}, \sum_{j=1}^{n} y_{j} e_{j}\right) \\
+            &= \sum_{i=1}^{n} x_{i} \sum_{j=1}^{n} y_{j} B(e_{i}, e_{j}) \\
+    &= \sum_{i=1}^{n} \sum_{j=1}^{n} x_{i} a_{ij} y_{j} && \text{writing $a_{ij} = B(e_{i}, e_{j})$} \\
+    &= \bm{x}^{\top} A \bm{y} && \text{with $A = (a_{ij})$}
+  \end{align*}
+  $A$ in this case is called the gram matrix. Every unique bilinear form with respect to a certain ordered basis has a unique gram matrix, and to every gram matrix corresponds a bilinear form. \\
+  \innerblock{Inner Products}{
+    As already mentioned, an inner product is a special case of a bilinear form. Specifically, it is a bilinear form that is positive definite, meaning that for non-zero $v \in V$, $B(v, v) > 0$ (at least, this is its definition for real inner product spaces), and symmetric, so for any $v, u \in V$, $B(v, u) = B(u, v)$. We normally write inner products using the notation $\langle v, u \rangle := B(v, u) $. \\
+
+    Like many properties that can apply to bilinear forms, positive definiteness is basis invariant, and thus also a property of any corresponding gram matrix. Immediate consequences of positive definiteness include that the matrix has full rank, and that all the eigenvectors of the matrix are positive (the latter being equivalent). \\
+
+    There isn't in all honesty a great deal that one can do with inner product spaces at this point in the course, apart from noting some of their properties. The lecture notes introduce orthogonality in the context of bilinear forms, but this again is something that isn't obviously significant until later on in Linear Algebra II.
+  }
+}
+
+\end{columns}
+
+
+\end{document}

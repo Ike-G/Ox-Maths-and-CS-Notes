@@ -1,0 +1,234 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\mesh}{mesh}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Analysis III}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{The Riemann Integral}{
+  Let $f : [a,b] \to \mathbb{R}$ be a bounded function. We consider step functions $\phi_{-}$ and $\phi_{+}$ satisfying $\phi_{-} \le f \le \phi_{+}$. Any $\phi_{-}$ is a minorant for $f$ if $f \ge \phi_{-}$ pointwise, and any $\phi_{+}$ a majorant if vice-versa. We define the integral $I(\phi)$ of any step function, and give the following definition of integrability:
+  \begin{definition}[Integrability]
+    $f$ is integrable if
+    \[
+      \sup_{\phi_{-}} I(\phi_{-}) = \inf_{\phi_{+}} I(\phi_{+})
+    \]
+  \end{definition}
+  Specifically, we label a function $\phi : [a,b] \to \mathbb{R}$ a step function if there is a finite increasing sequence $(x_{n}) \in [a,b]$ beginning at $a$ and ending at $b$ such that $\phi$ is constant on each open interval $(x_{i}, x_{i+1})$.
+  \begin{lemma}
+    A function $\phi : [a,b] \to \mathbb{R}$ is a step function if and only if it is a finite linear combination of indicator functions of intervals (open and closed).
+  \end{lemma}
+  With $\phi(x) = c_{i}$ on the interval $(x_{i-1},x_{i})$
+  \[
+    I(\phi) = \sum_{i=1}^{n}c_{i}(x_{i}-x_{i-1})
+  \]
+  \begin{lemma}
+    Let $f : [a,b] \to \mathbb{R}$ be a bounded function. Then $f$ is integrable if and only if for every $\varepsilon > 0$, there exists a majorant $\phi_{+}$ and a minorant $\phi_{-}$ such that $I(\phi_{+}) - I(\phi_{-}) < \varepsilon$.
+  \end{lemma}
+  This is shown via the approximation property. \\
+
+  \begin{theorem}
+    Any continuous function $f : [a,b] \to \mathbb{R}$ is integrable.
+  \end{theorem}
+  This follows from the uniform continuity of $f$ on $[a,b]$, ensuring that as we make the mesh of $\mathcal{P}$ smaller, $I(\phi^{+})-I(\phi^{-})$ decreases. \\
+  \innerblock{Mean Value Theorem}{
+    \begin{theorem}
+      Let $f : [a,b] \to \mathbb{R}$ be continuous. Then there is some $c \in [a,b]$ such that $\int_{a}^{b} f = (b-a)f(c)$. When $a \neq b$, we then have
+      \[
+        \frac{1}{b-a}\int_{a}^{b} f = f(c)
+      \]
+    \end{theorem}
+    As $f$ is continuous, it attains its bounds, and so we have that the mean value of $f$ is between its minimum and maximum, we know $f[a,b]$ is an interval by the IVT. \\
+
+    \begin{theorem}[A second MVT] \
+      Suppose that $f : [a,b] \to \mathbb{R}$ is continuous, and that $w : [a,b] \to \mathbb{R}$ is a nonnegative integrable function. Then there is some $c \in [a,b]$ such that
+      \[
+        \int_{a}^{b} fw = f(c)\int_{a}^{b}w
+      \]
+    \end{theorem}
+    Roughly the same proof as above follows here, with the caveat to check if $\int_{a}^{b} w = 0$.
+  }
+  \phantom{}
+  \innerblock{Monotone functions}{
+    \begin{theorem}
+      Any monotone function $f : [a,b] \to \mathbb{R}$ is integrable.
+    \end{theorem}
+    Assume increasing, then divide $\mathcal{P}$ into $n$ parts. On $(x_{i}, x_{i+1})$ define $\phi^{+}(x) = f(x_{i+1})$, $\phi^{-}(x) = f(x_{i})$. We then show that with the parts equal and size $\frac{1}{n}$, we get a telescoping in $I(\phi^{+})-I(\phi^{-})$ that allows us to get the difference as small as desired.
+  }
+}
+
+\block{Differentiation}{
+  \begin{theorem}[First fundamental theorem] \
+    Suppose that $f$ is integrable on $(a,b)$. Define $F : [a,b] \to \mathbb{R}$ by
+    \[F(x) := \int_{a}^{x} f.\]
+    Then $F$ is continuous. Moreover, if $f$ is continuous at $c \in (a,b)$ then $F$ is differentiable at $c$ and $F'(c) = f(c)$.
+  \end{theorem}
+  This follows fairly immediately from writing $|F(c+h)-F(c)-hf(c)|$ with $h < \delta$ for which $|f(c+h)-f(c)| < \varepsilon$. \\
+  \begin{theorem}[Second fundamental theorem] \
+    Suppose that $F : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Suppose furthermore that its derivative $F'$ is integrable on $(a,b)$. Then
+    \[
+      \int_{a}^{b} F' = F(b) - F(a)
+    \]
+  \end{theorem}
+  Note that we may have a derivative which is non-integrable, for example $x \sin \frac{1}{x}$ with unbounded derivative $\sin \frac{1}{x} - \frac{1}{x} \cos \frac{1}{x}$ on $(-1,1)$. \\
+
+  By the mean value theorem we can select $\xi_{i}$ such that $F'(\xi_{i})(x_{i}-x_{i-1}) = F(x_{i})-F(x_{i-1})$, giving us a telescoping sum that returns the above result. \\
+
+  \coloredbox{
+    Technically this result can also be used for $F$ differentiable on all but finitely many elements of $(a,b)$.
+  }
+}
+\column{0.5}
+
+\block{Riemann sums}{
+  If $\mathcal{P}$ is a partition of $[a,b]$ and $f : [a,b] \to \mathbb{R}$ is a function then by a Riemann sum adapted to $\mathcal{P}$ we mean an expression of the form
+  \[
+    \Sigma(f; \mathcal{P}; \bm{\xi}) = \sum_{j=1}^{n}f(\xi_{j})(x_{j}-x_{j-1})
+  \]
+  where $\bm{\xi} = (\xi_{1},\dots,\xi_{n})$ for $\xi_{i} \in [a,b]$. \\
+
+  \begin{theorem} \
+    Let $f : [a,b] \to \mathbb{R}$ be a bounded function. Fix a sequence of partitions $\mathcal{P}^{(n)}$. For each $n$, let $\Sigma(f; \mathcal{P}^{(n)}; \bm{\xi}^{(n)})$ be a Riemann sum adapted to $\mathcal{P}^{(n)}$. Suppose that there is some constant $c$ such that as $n \to \infty$, $\Sigma(f;\mathcal{P}^{(n)};\bm{\xi}^{(n)}) \to c$ irrespective of how $\bm{\xi}^{(n)}$ is chosen. Then $f$ is integrable and $c = \int_{a}^{b} f$. \\
+  \end{theorem}
+  The proof of his follows immediately from selecting $\xi^{i}$ to get $f(\xi^{i})$ $\varepsilon$-close to its supremum on $[x_{i},x_{i+1}]$, then using this to define majorants and minorants. \\
+  \begin{theorem} \
+    Let $\mathcal{P}^{(n)}$ be a sequence of partitions with $\mesh\mathcal{P}^{(n)} \to 0$ as $n \to \infty$. If $f$ is integrable, then $\lim_{n \to \infty} \Sigma(f;\mathcal{P}^{(n)};\bm{\xi}^{(n)}) = \int_{a}^{b} f$ irrespective of $\bm{\xi}^{(n)}$. \\
+  \end{theorem}
+  To prove this, we take a small enough $\delta$, then compare the majorant / minorant used by the Riemann sum with the optimal majorant / minorant on some arbitrary partition. Show that we can only get so many overlapping intervals, and on the ``good'' intervals we can have the former step functions be good approximations, meaning the overall approximation is good. \\
+
+  The former theorem serves to provide a criteria for integrability - that if there is a partition sequence for which the Riemann sum converges independently of $\bm{\xi}^{(n)}$, $f$ is integrable - while the latter theorem provides that integrability implies this to be true for any $\mathcal{P}^{(n)}$ with $\mesh \mathcal{P}^{(n)} \to 0$. A candidate method of dealing with this is to use the step-function definition of integrability to then apply the latter theorem. Thus we get the following theorem: \\
+
+  \begin{theorem}
+    Let $f : [a,b] \to \mathbb{R}$ be a function. Let $(\mathcal{P}^{(n)})$ be a sequence of partitions with $\mesh \mathcal{P}^{(n)} \to 0$. Then $f$ is integrable if and only if $\lim_{n \to \infty} \Sigma(f, \mathcal{P}^{(n)}, \bm{\xi}^{(n)})$ is constant in the choice of $\bm{\xi}^{(n)}$. If so, it is equal to $\int_{a}^{b} f$.
+  \end{theorem}
+
+}
+\block{Basic results}{
+    \begin{proposition}[Integration by parts] \
+    Suppose that $f, g : [a,b] \to \mathbb{R}$ are continuous functions, differentiable on $(a,b)$. Suppose that $f', g'$ are integrable on $(a,b)$. Then
+    \[
+      \int_{a}^{b} fg' + \int_{a}^{b} f'g = f(b)g(b) - f(a)g(a)
+    \]
+  \end{proposition}
+  The above is clear from the second fundamental theorem. \\
+
+  \begin{proposition}[Substitution rule] \
+    Suppose that $f : [a,b] \to \mathbb{R}$ is continuous and that $\varphi : [c,d] \to [a,b]$ is continuous on $[c,d]$, has $\varphi(c) = a$ and $\varphi(d) = b$, and maps $(c,d)$ to $(a,b)$. Suppose moreover that $\varphi$ is differentiable on $(c,d)$ and that its derivative $\varphi'$ is integrable on this interval. Then
+  \[
+    \int_{a}^{b} f(x)\, \mathrm{d}x = \int_{c}^{d} f(\varphi(t)) \varphi'(t) \,\mathrm{d}t.
+  \]
+  \end{proposition}
+  We have that $f \circ \varphi$ is continuous and hence integrable on $[c,d]$, so $(f \circ \varphi) \varphi'$ is integrable on $[c,d]$. By the fundamental theorem $\int_{c}^{d} (f \circ \varphi) \varphi' = (F \circ \varphi)(d) - (F \circ \varphi)(c) = \int_{a}^{b} f$.
+
+}
+\block{Limits and the integral}{
+  \begin{theorem}
+    Suppose that $f_{n} : [a,b] \to \mathbb{R}$ are integrable, and that $f_{n} \to f$ uniformly on $[a,b]$. Then $f$ is also integrable, and
+    \[
+      \lim_{n \to \infty} \int_{a}^{b}f_{n} = \int_{a}^{b} f = \int_{a}^{b} \lim_{n \to \infty} f_{n} .
+    \]
+  \end{theorem}
+  to prove this, first show integrability by comparing $I(\phi^{+}_{n})$ and $I(\phi^{-}_{n})$ when selecting an $n$ for which $I(\phi^{+}_{n})-I(\phi^{+}) \le \varepsilon$, then take the difference of integrals and show it converges to zero. \\
+
+  As corollary, the weierstrass $M$-test then allows us to take the integral of a sum where each term of the sum is bounded with convergent bound. \\
+
+  We may use the fundamental theorem of calculus to prove further results about differentiation.
+  \begin{theorem}
+    Suppose that $f_{n} : [a,b] \to \mathbb{R}$, $n \in \mathbb{N}$ is a sequence of functions where $f_{n}$ is continuously differentiable on $(a,b)$, $f_{n} \to f$ on $[a,b]$, and that $f'_{n} \to g$ uniformly where $g$ is bounded on $(a,b)$. Then $f$ is differentiable and $f' = g$. In particular, $\lim_{n \to \infty} f'_{n} = (\lim_{n \to \infty} f_{n})'$.
+  \end{theorem}
+  We must have $g$ continuous by uniform convergence of continuous functions. As $g$ is bounded then we must also have that $g$ is integrable. We have with $F(x) = \int_{a}^{x}g(t)\mathrm{d}t$, $F' = g$, $\int_{a}^{x}f'_{n}(t)\mathrm{d}t = f_{n}(x)-f_{n}(a)$. By the previous theorem we then get $F(x) = f(x)-f(a)$.
+}
+\end{columns}
+\end{document}

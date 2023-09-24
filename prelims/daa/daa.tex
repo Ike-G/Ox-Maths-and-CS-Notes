@@ -1,0 +1,209 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{clrscode3e}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Design and Analysis of Algorithms}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+\column{0.5}
+
+\block{Graphs}{
+  We have two main algorithms with which we may deal with graphs: Depth-first search (DFS) and breadth-first search (BFS).
+
+  \begin{codebox}
+    \Procname{$\proc{BFS}(G,s)$}
+    \li \For each vertex $u \in G.V-\{s\}$ \Do
+    \li    $u.color = \const{white}$
+    \li    $u.d = \infty$
+    \li    $u.\pi = \const{nil}$ \End
+    \li $s.color = \const{grey} $
+    \li $s.d = 0$
+    \li $s.\pi = \const{nil}$
+    \li $Q = \emptyset$
+    \li $\proc{Enqueue}(Q,s)$
+    \li \While $Q \neq \emptyset$ \Do
+    \li    $u = \proc{Dequeue}(Q)$
+    \li    \For each $v \in G.Adj[u]$ \Do
+    \li       \If $v.color = \const{white}$ \Then
+    \li          $v.color = \const{grey}$
+    \li          $v.d = u.d + 1$
+    \li          $v.\pi = u$
+    \li          $\proc{Enqueue}(Q,v)$ \End \End
+    \li    $u.color = \const{black}$ \End
+  \end{codebox}
+  This algorithm runs in $O(|V|+|E|)$. Additionally for an unweighted graph it correctly computes the distance from $s$ to any other vertex in the graph. The correctness of BFS is shown by first inducting to demonstrate that each $v.d$ has $\delta(s,v)$ as a lower bound, and then showing that the distances increase the later a vertex is enqueued, while the most recent vertex in $Q$ will never have more than a step's worth of distance away from $s$ than the oldest vertex. \\
+
+  \begin{codebox}
+    \Procname{$\proc{DFS}(G)$}
+    \li \For each vertex $u \in G.V$ \Do
+    \li    $u.color = \const{white}$
+    \li    $u.\pi = \const{nil}$ \End
+    \li $time = 0$
+    \li \For each vertex $u \in G.V$ \Do
+    \li    \If $u.color = \const{white}$ \Then
+    \li       $\proc{DFS-visit}(G,u)$ \End \End
+  \end{codebox}
+  \begin{codebox}
+    \Procname{$\proc{DFS-visit}(G,u)$}
+    \li $time = time + 1$
+    \li $u.d = time$ \>\>\>\>\>\>\Comment Start time of $u$
+    \li $u.color = \const{gray}$
+    \li \For each vertex $v \in G.Adj[u]$ \Do
+    \li    \If $v.color = \const{white}$ \Then
+    \li       $v.\pi = u$
+    \li       $\proc{DFS-visit}(G,v)$ \End \End
+    \li $u.color = \const{black}$
+    \li $time = time + 1$
+    \li $u.f = time$ \End \>\>\>\>\>\>\Comment End time of $u$
+  \end{codebox}
+  One of the most valuable theorems regarding DFS is the parenthesis theorem, which demonstrates that either one will have a path between $u$ and $v$, in which case one encapsulates the other (the ancestor on the DFS-tree), or no path exists and thus the start and finish intervals are disjoint.
+
+  \innerblock{Strongly Connected Components}{
+    A strongly connected component of $G$ is a maximal subgraph within which every vertex is reachable from every other vertex. The component graph $G^{SCC}$ is the graph with each vertex representing a component of $G$, an edges corresponding to the edges between components. This is always a directed acyclic graph (dag). \\
+
+    To determine the strongly connected components of a graph, we use the following algorithm:
+    \begin{codebox}
+      \Procname{$\proc{Strongly-Connected-Components}(G)$}
+      \li call $\proc{DFS}(G)$ to compute finishing times $u.f$ for each vertex $u$
+      \li compute $G^{\top}$
+      \li call $\proc{DFS}(G^{\top})$, but in the main loop of $\proc{DFS}$, consider the vertices
+      \zi in order of decreasing $u.f$ (as computed in line 1)
+      \li output the vertices of each tree in the depth-first forest formed in line 3
+      \zi as a separate strongly connected component
+    \end{codebox}
+    For $U \subseteq V$ we write $f(U) = \max \{u.f \,|\, u \in U\}$, $d(U) = \min \{u.d \,|\, u \in U\}$. If we have components $C_{0}$ and $C_{1}$ with an edge $(u,v)$ with $u \in C_{0}$, $v \in C_{1}$, then if $C_{0}$ is visited first all of $C_{1}$ will descend from it, giving $f(C_{0}) > f(C_{1})$. Otherwise all of $C_{1}$ will be visited first, and then complete before $C_{0}$ is visited again giving $f(C_{0}) > f(C_{1})$. \\
+
+    From this we have that if the maximum $u.f$ are considered first, they will be the ones that have outgoing edges to unvisited components, and thus in $E^{\top}$ no new components will be visited.
+  }
+}
+
+\column{0.5}
+\block{Divide and Conquer}{
+  \innerblock{Master theorem}{
+    \begin{theorem} \
+      Let $a \ge 1$ and $b > 1$ be constant integers, and let $f : \mathbb{N} \to \mathbb{R}$ be a function with a positive tail. With $T : \mathbb{N} \to \mathbb{R}$ by $T(n) = aT(n/b) + f(n)$ (technically $aT(n/b) := \sum_{k=1}^{a} T([n/b]_{k})$), the following asymptotic bounds hold:
+      \begin{enumerate}
+        \item If $f(n) = O(n^{\log_{b} a -\varepsilon})$ for some $\varepsilon > 0$, then $T(n) = \Theta(n^{\log_{b} a})$.
+        \item If $f(n) = \Theta(n^{\log_{b} a})$ then $T(n) = \Theta(n^{\log_{b} a} \log n)$.
+        \item If $f(n) = \Omega(n^{\log_{b} a + \varepsilon})$ for some $\varepsilon > 0$, and if $af(n/b) \le cf(n)$ for some $c < 1$ and all sufficiently large $n$, then $T(n) = \Theta(f(n))$.
+      \end{enumerate}
+    \end{theorem}
+  }
+}
+\block{Dynamic Programming}{
+  Dynamic programming is a solution method similar to divide and conquer, except considering cases where the subproblems overlap, unlike divide and conquer which divides a problem into disjoint subproblems. A divide and conquer method applied to these cases would do extraneous work, due to solving every subproblem without using information from solutions to other subproblems. \\
+
+  To solve a problem using dynamic programming, it must have optimal substructure. This means that the solution to the overall problem contains the solutions to subproblems. To demonstrate this, we show that any solution consists of making a choice between several options, and that this choice leaves a subproblem to be solved. Suppose that we have the optimal solution to this subproblem, and determine the solution to the problem overall in terms of this. Show then that any general solution will be improved by the solution to the subproblem.
+}
+
+\block{Greedy Algorithms}{
+  A greedy algorithm is a simpler alternative to dynamic programming, whereby instead of determining the manner in which local choices ought to be made from a global perspective, the local choice which is most immediately appealing is used. \\
+
+  A prominent greedy algorithm in graph theory is the minimum spanning tree algorithm. The logic of this algorithm is to grow a set of edges, maintaining the invariant that the set of edges is always a subset of a minimum spanning tree. To do this, note that with any cut of the edges of a graph, the edge crossing the cut with minimum weight will always be part of a minimum spanning tree. We get the following template algorithm:
+
+  \begin{codebox}
+    \Procname{$\proc{Generic-MST}(G,w)$}
+    \li $A = \emptyset$
+    \li \While $A$ does not form a spanning tree \Do
+    \li     find an edge $(u,v)$ that is safe for $A$
+    \li     $A = A \cup \{(u,v)\}$ \End
+    \li \Return $A$
+  \end{codebox}
+
+  The algorithms of Kruskal and Prim are derived from this. In the case of Kruskal, we look at edges in order of increasing weight, taking the union of the components they connect if the components are separate. This uses a disjoint set data structure. Prim's algorithm performs a Dijkstra-like search, building a tree while checking in increasing order of distance from its closest visited parent. Otherwise put, the algorithm adds the edge which does the least damage to the tree. \\
+
+}
+
+\end{columns}
+
+\end{document}

@@ -1,0 +1,187 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Continuous Maths}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{Derivatives}{
+  All functions studied in this course are continuous, or otherwise `nice'. This requires a slight generalisation of continuity to $\mathbb{R}^{n} \to \mathbb{R}^{n}$, although an unobvious one in any sense. \\
+
+  For one-dimensional functions ($f : D \subseteq \mathbb{R} \to \mathbb{R}$), provided differentiability is possible, Taylor's theorem entails that
+  \[
+    f(x) = \sum_{k=0}^{n} \frac{(x-x_{0})^{k}}{k!}\cdot\frac{\mathrm{d}^{k}f}{\mathrm{d}x^{k}}(x_{0}) + \frac{(x-x_{0})^{n+1}}{(n+1)!}\cdot\frac{\mathrm{d}^{n+1}f}{\mathrm{d}x^{n+1}}(\xi)
+  \]
+  for some $\xi$ between $x$ and $x_{0}$. \\
+  \coloredbox{For alternate error terms with respect to the $(n+1)$th derivative, we may also use $\displaystyle\frac{(x-x_{0})^{p}(x-\xi)^{n+1-p}}{n!p}\cdot\frac{\mathrm{d}^{n+1}f}{\mathrm{d}x^{n+1}}(\xi)$ for any $p \in \mathbb{R}^{*}$ as an error term. For $p = n+1$ we get the normal error term.}
+  \hphantom{} \\
+  In this way, Taylor series approximations provide straightforward error bounds with respect to a constant multiplied by the $(n+1)$th derivative's bounds. \\
+
+  In the case of functions to multiple dimensions the same general rules apply. For the sake of avoiding Tensors we reach the following result as our basis for Taylor polynomials
+  \[
+    f(\bm{x}) = f(\bm{x_{0}})+(\bm{x}-\bm{x_{0}})^{\top}\frac{\mathrm{d}f}{\mathrm{d}\bm{x}}(\bm{x_{0}})+\frac{1}{2}(\bm{x}-\bm{x_{0}})^{\top}\mathbf{H}(f)(\bm{x^{*}})(\bm{x}-\bm{x_{0}})
+  \]
+  for some $x^{*}$ between $x_{0}$ and $x$.\\
+  \coloredbox{Note that due to the definition of the Jacobian, we have \[\frac{\mathrm{d}}{\mathrm{d}\bm{x}}(g \circ \bm{f}) = \mathbf{J}(\bm{f})^{\top}\left(\frac{\mathrm{d}g}{\mathrm{d}\bm{x}} \circ \bm{f}\right),\]requiring a transpose to ensure that multiplication occurs on the same output. All other basic rules can be inferred from looking at dimensions.}
+}
+\block{Newton's Method}{
+  Newton's method is a root-finding algorithm derived from the approximation of a function by its first-order taylor polynomial:
+  \begin{align*}
+    \hat{f}(x) = f(x_{0}) + (x-x_{0})f'(x_{0}) = 0 \Leftrightarrow x = x_{0} - \frac{f(x_{0})}{f'(x_{0})}
+  \end{align*}
+  thus we use the following recurrence to approximate a root of $f$:
+  \begin{align*}
+    x_{n+1} = x_{n} - \frac{f(x_{n})}{f'(x_{n})}.
+  \end{align*}
+
+  Newton's method converges quadratically to $x^{*}$ provided $x_{0}$ is close enough to the root initially. \\
+
+  A more consistent implementation of this idea is in the form of the secant method. While this only has convergence around $1.6$, it does not rely on $x_{0}$ being close to the root. Additionally, note that it requires only one function evaluation at each step, while Newton's method requires a function evaluation as well as a derivative calculation. Both nevertheless improve on interval bisection, which is linear in its convergence. \\
+
+  Extending these to $\mathbb{R}^{d} \to \mathbb{R}^{d}$ functions, we get similar results. Newton's method now solves the following linear system in each iteration:
+  \begin{align*}
+    \mathbf{J}(\bm{f})(\bm{x_{n}})\bm{\Delta x} &= -\bm{f}(\bm{x_{n}}) \\
+    \bm{x_{n+1}} &= \bm{x_{n}} + \bm{\Delta x}
+  \end{align*}
+  We again get that quadratic convergence is guaranteed for a region around $\bm{x^{\star}}$, but again the method is fragile outside of this region.
+
+}
+\column{0.5}
+\block{Optimisation}{
+  It's often useful to be able to find or at least approximate the extrema of a function. This is the process of optimisation. Without loss of generality we mainly consider the minimisation of functions $f : \mathbb{R}^{n} \to \mathbb{R}$. \\
+
+  Any optimisation problem is given in terms of an objective function $f$, and a feasible set $D \subseteq \mathbb{R}^{n}$, with $D$ being the set of points satisfying equality constraints (of the form $g(\bm{x}) = 0$) and inequality constraints (of the form $h(\bm{x}) \ge 0$). \\
+
+  \innerblock{One dimension}{
+    In one dimension for functions which may be differentiated multiple times, the case is straightforward. We check at the edges of the feasible region, then at each root of the first derivative for which the second derivative is positive, and take the minimum of these such points. If the second derivative is zero then we continue to the third, fourth, ..., $n$th derivative.
+  }
+}
+\block{Lagrange's Method}{
+  We want to solve $\min f(\bm{x})$ for a function $f : \mathbb{R}^{n} \to \mathbb{R}$ over the feasible set
+  \begin{align*}
+  F = \left\{\bm{x} \in \mathbb{R}^{n}\,|\, \left(\forall i \in \{1,\dots,q\}\,g_{i}(\bm{x}) \le 0\right) \wedge \left(\forall i \in \{1,\dots,r\}\,h_{i}(\bm{x}) = 0\right)\right\}.
+  \end{align*}
+
+  Initially we might try to solve this by constructing a cost function
+  \begin{align*}
+    \Lambda_{0} (\bm{x}) &= \begin{cases}
+                    f(\bm{x}) & \text{if } \bm{x} \in F \\
+                    \infty & \text{otherwise}
+                  \end{cases} \\
+    &= f(\bm{x}) + \sum_{i=1}^{q}I_{\le 0}[g_{i}(\bm{x})] + \sum_{i=1}^{r} I_{=0}[h_{i}(\bm{x})]
+  \end{align*}
+  with $I : \mathbb{R} \to \{0,\infty\}$ being infinite when the respective conditions are failed, and $0$ when satisfied. \\
+
+  This guarantees that every local minimum of $f$ satisfying the constraints will also be a local minimum of $\Lambda_{0}$ (and the converse). There is little we can gain from attempting to find the minima of $\Lambda_{0}$ however, due to the discontinuity of $I$. We thus instead consider
+  \begin{align*}
+    \Lambda(\bm{x},\bm{\lambda},\bm{\mu}) &= f(\bm{x}) + \sum_{i=1}^{q} \lambda_{i} g_{i}(\bm{x}) + \sum_{i=1}^{r} \mu_{i} h_{i}(\bm{x}) \\
+    &= f(\bm{x}) + \bm{\lambda}^{\top}\bm{g}(\bm{x}) + \bm{\mu}^{\top}\bm{h}(\bm{x}).
+  \end{align*}
+  Taking $\displaystyle\max_{\bm{\lambda} \ge \bm{0}, \,\bm{\mu}} \Lambda(\bm{x},\bm{\lambda},\bm{\mu})$, we get $\Lambda_{0}$ again. If $g_{i}(\bm{x})$ is positive for some $i \in \{1,\dots,q\}$, set $\lambda_{i} = \infty$. If $h_{i}(\bm{x})$ is non-zero for some $i \in \{1,\dots,r\}$, set $\mu_{i} = \mathrm{sgn}(h_{i}(\bm{x})) \cdot \infty$. Otherwise the maximum is achieved at $\bm{\lambda} = \bm{0}$, for any $\bm{\mu}$. \\
+
+  By this observation we can rewrite our problem as solving:
+  \begin{align}\label{primal:1}
+  \min_{\bm{x}} \max_{\bm{\lambda} \ge \bm{0},\,\bm{\mu}} \Lambda(\bm{x},\bm{\lambda}, \bm{\mu})
+  \end{align}
+  \coloredbox{
+  This is a problem for which we have a lower bound using the concave dual function $g$:
+  \begin{align}\label{dual:2}
+    \max_{\bm{\lambda} \ge \bm{0},\, \bm{\mu}} \min_{\bm{x}} \Lambda(\bm{x},\bm{\lambda},\bm{\mu}) = \max_{\bm{\lambda} \ge \bm{0},\,\bm{\mu}} g(\bm{\lambda},\bm{\mu})
+  \end{align}
+  We ideally have strong duality, occurring where (\ref{primal:1}) and (\ref{dual:2}) are equal. If not we at least have a lower bound. Sufficient conditions for strong duality include convexity and continuity, or all functions and constraints being linear.
+  }
+  }
+\end{columns}
+
+\end{document}

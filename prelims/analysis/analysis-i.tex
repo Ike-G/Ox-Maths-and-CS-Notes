@@ -1,0 +1,230 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+% \usepackage{ntheorem}
+% \usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{parskip}
+\usepackage{enumitem}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Analysis I}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+
+\begin{columns}
+\column{0.6}
+\block{Sequences}{
+  \begin{definition}[Convergence]
+  Where $(a_{n})$ is a real sequence, it is said to converge to $L$ as $n \to \infty$ if for all $\varepsilon > 0$ there exists some $N \in \mathbb{N}$ such that for all $n \ge N$, $|a_{n} - L| < \varepsilon$. \\
+  \end{definition}
+  \innerblock{Elementary Results}{
+%    \begin{itemize}
+%            \item $\frac{1}{n}$
+%            \begin{align*}
+%              \left|\frac{1}{n}\right| &= \frac{1}{n} && \text{for $n > 0$} \\
+%                                       &\le \frac{1}{N} && \text{as $n \ge N > 0$} \\
+%                                       &\le \frac{1}{\ceil{\frac{1}{\varepsilon-1}}} && \text{with $N \ge \ceil{\frac{1}{\varepsilon-1}}$} \\
+%                                       &\le \varepsilon -1 \\
+%              &< \varepsilon
+%            \end{align*}
+%    \end{itemize}
+    \begin{theorem}[Sandwiching]
+      Let $(a_{n})$ and $(b_{n})$ be real sequences with $0 \le a_{n} \le b_{n}$ for all $n \ge 1$. If $b_{n} \to 0$ as $n \to \infty$, then $a_{n} \to 0$ as $n \to \infty$. \\
+    \end{theorem}
+    The proof of this is a definition chase. \\
+
+    \coloredbox{A potentially useful result for dealing with oscillating sequences is that $\sin, \cos : \mathbb{N} \to [-1,1]$ are injective. This follows trivially using their periodic properties.}
+
+    \begin{lemma}
+      (i) For $c \in \mathbb{R}$, $|c| < 1$, $c^{n} \to 0$ as $n \to \infty$. \\
+      (ii) Let $a_{n} = \frac{n}{2^{n}}$ for $n \ge 1$. Then $a_{n} \to 0$ as $n \to \infty$. \\
+    \end{lemma}
+    \emph{(i)} is proved using Bernoulli's inequality, by rewriting $|c|$. By the binomial theorem $2^{n} \ge {n \choose 2}$, from which the proof of \emph{(ii)} follows.\\
+    \begin{theorem}[Uniqueness of limits]
+      If $(a_{n})$ is convergent, then it has a unique limit.\\
+    \end{theorem}
+    Proof: given distinct limits $L_{1}$ and $L_{2}$, observe results at $\varepsilon \le \frac{|L_{1}-L_{2}|}{2}$.\\
+
+    \begin{lemma}
+      If $(a_{n})$ is convergent, then so is $(|a_{n}|)$. Moreover, if $a_{n} \to L$ as $n \to \infty$, then $|a_{n}| \to |L|$.\\
+    \end{lemma}
+
+    \begin{lemma}[Preservation of weak inequalities]
+        If $(a_{n})$ and $(b_{n})$ are real sequences with limits $L$ and $M$ respectively, and $a_{n} \le b_{n}$ for all $n$, then $L \le M$.\\
+    \end{lemma}
+    Prove by contradiction, with $\varepsilon = \frac{L-M}{2}$. \\
+
+    \begin{theorem}[Sandwiching v2]
+      Let $(a_{n})$, $(b_{n})$ and $(c_{n})$ be real sequences with $a_{n} \le b_{n} \le c_{n}$ for all $n \ge 1$. If $a_{n} \to L$ and $c_{n} \to L$ as $n \to \infty$, then $b_{n} \to L$ as $n \to \infty$.
+    \end{theorem}
+  }
+}
+\block{Series Tests}{
+  \innerblock{Alternating Series}{
+    The series $\sum (-1)^{k} u_{k}$ converges if
+    \begin{itemize}
+            \item $u_{k} \to 0$ as $k \to \infty$.
+            \item $u_{k} \ge 0$.
+            \item $u_{k}$ is decreasing.
+    \end{itemize}
+    Prove that $s_{2n}$ is monotonic increasing and bounded by grouping with $\displaystyle u_{1} - \sum (u_{k} - u_{k+1})$, then show that $s_{2n+1} = s_{2n} + u_{2n+1} \to s + 0$ if $s_{2n} \to s$.
+  }
+  \hphantom{.}\\
+  \innerblock{Ratio}{
+    For a positive sequence $a_{k}$, if $\frac{a_{k+1}}{a_{k}} \to L$:
+    \begin{itemize}
+      \item If $L > 1$, then $\sum a_{k}$ diverges.
+      \item If $0 \le L < 1$, then $\sum a_{k}$ converges.
+    \end{itemize}
+For this proof, use $\alpha = \frac{1+L}{2}$, and the respective intervals within which this lies. Set $\varepsilon = L - \alpha$, then from the definition of the limit find a relation between $a_{k}$ and $\alpha^{k-N}a_{N}$ for some $N$. This leads to conclusions based on the comparison test with $\sum a_{k}$. \\
+
+    The conclusion for $L = \infty$ is only slightly more involved, using $\alpha = 2$.
+  }
+}
+\column{0.4}
+\block{Fields}{
+  Any field $\mathbb{F}$ is a set with closed commutative and associative operations $+$ and $\cdot$, an additive identity $0$, multiplicative identity $1$, additive invertibility and multiplicative invertibility (except for denominator $0$). Additionally $\cdot$ must distribute over $+$, and to rule out the possibility that $\mathbb{F} = \{0\}$, $0 \neq 1$. \\
+
+  To define $\mathbb{R}$, an ordering on the set is defined by identifying a partition $\{\mathbb{P}, \{0\}, -\mathbb{P}\}$ such that for any $a, b \in \mathbb{R}$ if $a, b \in \mathbb{P}$ then $a + b \in \mathbb{P}$ and $a \cdot b \in \mathbb{P}$. Note that if any other singleton had been selected this would not be a partition. \\
+
+  \coloredbox{\textbf{Question: What if the multiplicative inverse were used instead of additive to form the partition?}}
+
+  \begin{theorem}[Bernoulli's Inequality]
+    \ Let $x$ be a real number with $x > -1$. If $n \in \mathbb{Z}^{+}$, then $(1+x)^{n} \ge 1 + nx$. \\
+  \end{theorem}
+
+  The proof of this follows immediately from induction on $n$.\\
+
+  \begin{theorem}[Triangle Inequality]
+    \ For any $a, b \in \mathbb{R}$, \[\left||a|-|b|\right| \le |a+b| \le |a|+|b|.\]
+  \end{theorem}
+
+  To prove, use $|a| \le b \Leftrightarrow -b \le a \le b$. \\
+
+  \innerblock{Completeness}{
+    \begin{definition}[Supremum and Infimum]
+      \ For a set $S \subseteq \mathbb{R}$,
+      \begin{align*}
+        \sup S &= \min\, \{ \alpha \in \mathbb{R} \,|\, \alpha \ge s \text{ for all } s \in S \} \\
+        \inf S &= \max\, \{ \alpha \in \mathbb{R} \,|\, \alpha \le s \text{ for all } s \in S \}
+      \end{align*}
+      if defined. \\
+    \end{definition}
+
+    \begin{axiom}[Completeness]
+    \ For any non-empty subset $S \subset \mathbb{R}$, if $S$ is bounded above then $S$ has a supremum. \\
+    \end{axiom}
+
+    \begin{theorem}[Approximation]
+      \ Let $S \subseteq \mathbb{R}$ be non-empty and bounded above. For any $\varepsilon > 0$, there exists $s_{\varepsilon}$ such that $\sup S - \varepsilon < s_{\varepsilon} \le \sup S$. \\
+    \end{theorem}
+
+    Prove this by contradiction (this is where the $<$ comes from). By this theorem, one may prove the existence of roots through showing that both $(\sup S)^{2} > 2$ and $(\sup S)^{2} < 2$ give a contradiction. The idea here is to show that assuming $\sup S$ is on either side of $2$, there is a value contradicting $\sup S$ closer to $2$.\\
+
+    \begin{theorem}[Archimedean Property]
+    \ $\mathbb{N}$ is not bounded above.\\
+    \end{theorem}
+
+    If $\mathbb{N}$ is bounded above, then (as a non-empty subset of $\mathbb{R}$), $\sup \mathbb{N}$ exists. By the approximation property there is an element of $n$ immediately below this, to which we may add $1$ to find a number greater than $\sup \mathbb{N}$ in $\mathbb{N}$. \\
+
+    \coloredbox{In general, the majority of statements regarding completeness are best proven by contradiction.}
+  }
+}
+
+\block{Countability}{
+  A set $A$ is countable where there exists an injection from $A$ to $\mathbb{N}$. \\
+
+  The following are countably infinite:
+  \begin{itemize}
+    \item $\mathbb{N}$ (trivially).
+    \item $\mathbb{N} \times \mathbb{N}$ (using $f((m,n)) = 2^{m-1}(2n-1)$).
+    \item $\mathbb{N}^{n}$ for all $n \in \mathbb{N}$ (by induction).
+    \item $A \times B$ where $A$ and $B$ are countable (using $h((a,b)) = 2^{f(a)}3^{g(b)}$).
+    \item $\mathbb{Q}$ (as $\mathbb{Q}^{>0}$ is countable and bijects $\mathbb{N} \times \mathbb{N}$).
+    \item $A \mathbin{\mathaccent\cdot\cup} B$ where $A$ and $B$ are countable.
+  \end{itemize}
+}
+
+\end{columns}
+
+\end{document}

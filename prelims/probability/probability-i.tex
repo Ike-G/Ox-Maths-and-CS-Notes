@@ -1,0 +1,145 @@
+\documentclass[a0paper,blockverticalspace=5pt]{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{parskip}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+%\definenotestyle{NewNote}{
+%    targetoffsetx=0pt, targetoffsety=0pt, angle=0, radius=8cm, width=8cm,
+%    connection=false, rotate=0, roundedcorners=0, linewidth=0pt, innersep=1cm
+%}{
+%  \draw[color=notefrcolor, fill=notebgcolor, rounded
+%    corners=0] (notecenter.south west) -- (notecenter.north
+%    west) -- (notecenter.north east) -- (notecenter.south east) -- cycle;
+%}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+% \usenotestyle{NewNote}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Probability I}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+
+\begin{columns}
+  \column{0.45}
+  \block{Probability Space}{
+    Any probability space is a triple $\langle \Omega, \mathcal{F}, \mathbb{P}\rangle$ where
+    \begin{itemize}
+            \item $\Omega$ is the sample space -- it exists as a set from which $\mathcal{F}$ may be formed.
+            \item $\mathcal{F}$ is the set of events -- an event being a subset of $\Omega$, satisfying
+
+            $\mathbf{F}_{1}$ (universal set): $\Omega \in \mathcal{F}$.
+
+            $\mathbf{F}_{2}$ (closed under complementation): $A \in \mathcal{F}$ implies that $\Omega \setminus A \in \mathcal{F}$.
+
+            $\mathbf{F}_{3}$ (closed under countable unions): If $A_{k} \in \mathcal{F}$ for every $k \in \mathbb{N}$, then $\displaystyle \bigcup_{k \in \mathbb{N}} A_{k} \in \mathcal{F}$.
+
+            \coloredbox{Equivalently, $\mathcal{F}$ is a $\sigma$-algebra with respect to $\Omega$. This means $\mathcal{F}$ is measurable, so a non-negative real value may be assigned to each element of $\mathcal{F}$.}
+            \item $\mathbb{P}$ is a measure on $\mathcal{F}$ satisfying
+
+            $\mathbf{P}_{1}$ (non-negative): For all $A \in \mathcal{F}$, $\mathbb{P}(A) \ge 0$.
+
+            $\mathbf{P}_{2}$ (1 on whole space): $\mathbb{P}(\Omega) = 1$.
+
+            $\mathbf{P}_{3}$ ($\sigma$-additivity): If $A_{k} \in \mathcal{F}$ for every $k \in \mathbb{N}$, and $A_{i} \cap A_{j} = \varnothing$ for every $i \neq j$, then $\displaystyle\mathbb{P}\left(\bigcup_{k \in \mathbb{N}} A_{k}\right) = \sum_{k \in \mathbb{N}} \mathbb{P}(A_{k})$.
+    \end{itemize}
+    The first immediate consequence of $\mathbf{P}_{3}$ is the formula for $\mathbb{P}(A \setminus B)$: $\mathbb{P}(A \setminus B) + \mathbb{P}(A \cap B) = \mathbb{P}(A)$. Consequently, $\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B) - \mathbb{P}(A \cap B)$. The inclusion-exclusion formula is then derived with $S_{n} = \bigcup_{k=1}^{n} A_{k}$ by induction.
+
+    \innerblock{Random Variables}{
+      A discrete random variable is a function from samples to values $X : \Omega \to \mathbb{R}$, such that for every value in $\mathrm{Im } X$ there is an event to which it corresponds (Equivalently, there is a well-defined $f : \mathbb{R} \to \mathcal{F}$ where $f(x) = \{\omega \in \Omega \,|\, X(\omega) = x\}$, $f(\mathbb{R})$ is a partition of $\mathcal{F}$). Additionally, $\mathrm{Im }X$ is countable. \\
+
+      In the case where the random variable is continuous, then the notion of $X : \Omega \to \mathbb{R}$ as a function becomes more general. In this case we redefine $f : \mathbb{R} \to \mathcal{F}$ to $f(x) = \{\omega \in \Omega \,|\, X(\omega) \le x\}$. Note here that $\mathrm{Im }X$ need not be countable. \\
+
+      Given that this occurs in conjunction with $\mathbf{F}_{3}$ and $\mathbf{P}_{3}$, if $\mathcal{F}$ was merely a set of uncountable singletons, then one would not be able to apply $\sigma$-additivity. Instead, we ensure that $\mathcal{F}$ is formed of uncountable sets.
+    }
+  }
+  \column{0.55}
+  \block{Difference Equations}{
+    A $n$th order difference equation has the form
+    \begin{align*}
+      \sum_{j=0}^{k}a_{j}u_{n+j} = f(n)
+    \end{align*}
+    with $a_{0} \neq 0$, $a_{k} \neq 0$, $a_{k}$ independent of $n$ for all $k$. \\
+
+    To solve equations of this form one initially solves the homogeneous equation using the $u_{j} = A\lambda^{j}$ ansatz, then finds a particular solution with respect to $f$. The ansatz gives $k$ solutions, and the auxiliary equation gives an additional solution.
+
+    The set of solutions to any homogeneous $k$th order difference equation is $k$-dimensional.
+
+  }
+
+\end{columns}
+
+\end{document}
