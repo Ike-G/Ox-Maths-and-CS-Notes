@@ -94,7 +94,7 @@
 \maketitle[titletoblockverticalspace=0.4cm]
 
 \begin{columns}
-  \column{0.45}
+  \column{0.65}
   \block{Probability Space}{
     Any probability space is a triple $\langle \Omega, \mathcal{F}, \mathbb{P}\rangle$ where
     \begin{itemize}
@@ -108,6 +108,7 @@
             $\mathbf{F}_{3}$ (closed under countable unions): If $A_{k} \in \mathcal{F}$ for every $k \in \mathbb{N}$, then $\displaystyle \bigcup_{k \in \mathbb{N}} A_{k} \in \mathcal{F}$.
 
             \coloredbox{Equivalently, $\mathcal{F}$ is a $\sigma$-algebra with respect to $\Omega$. This means $\mathcal{F}$ is measurable, so a non-negative real value may be assigned to each element of $\mathcal{F}$.}
+
             \item $\mathbb{P}$ is a measure on $\mathcal{F}$ satisfying
 
             $\mathbf{P}_{1}$ (non-negative): For all $A \in \mathcal{F}$, $\mathbb{P}(A) \ge 0$.
@@ -116,7 +117,8 @@
 
             $\mathbf{P}_{3}$ ($\sigma$-additivity): If $A_{k} \in \mathcal{F}$ for every $k \in \mathbb{N}$, and $A_{i} \cap A_{j} = \varnothing$ for every $i \neq j$, then $\displaystyle\mathbb{P}\left(\bigcup_{k \in \mathbb{N}} A_{k}\right) = \sum_{k \in \mathbb{N}} \mathbb{P}(A_{k})$.
     \end{itemize}
-    The first immediate consequence of $\mathbf{P}_{3}$ is the formula for $\mathbb{P}(A \setminus B)$: $\mathbb{P}(A \setminus B) + \mathbb{P}(A \cap B) = \mathbb{P}(A)$. Consequently, $\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B) - \mathbb{P}(A \cap B)$. The inclusion-exclusion formula is then derived with $S_{n} = \bigcup_{k=1}^{n} A_{k}$ by induction.
+
+    The first immediate consequence of $\mathbf{P}_{3}$ is the formula for $\mathbb{P}(A \setminus B)$: $\mathbb{P}(A \setminus B) + \mathbb{P}(A \cap B) = \mathbb{P}(A)$. Consequently, $\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B) - \mathbb{P}(A \cap B)$. The inclusion-exclusion formula is then derived with $S_{n} = \bigcup_{k=1}^{n} A_{k}$ by induction. \\
 
     \innerblock{Random Variables}{
       A discrete random variable is a function from samples to values $X : \Omega \to \mathbb{R}$, such that for every value in $\mathrm{Im } X$ there is an event to which it corresponds (Equivalently, there is a well-defined $f : \mathbb{R} \to \mathcal{F}$ where $f(x) = \{\omega \in \Omega \,|\, X(\omega) = x\}$, $f(\mathbb{R})$ is a partition of $\mathcal{F}$). Additionally, $\mathrm{Im }X$ is countable. \\
@@ -126,7 +128,7 @@
       Given that this occurs in conjunction with $\mathbf{F}_{3}$ and $\mathbf{P}_{3}$, if $\mathcal{F}$ was merely a set of uncountable singletons, then one would not be able to apply $\sigma$-additivity. Instead, we ensure that $\mathcal{F}$ is formed of uncountable sets.
     }
   }
-  \column{0.55}
+  \column{0.35}
   \block{Difference Equations}{
     A $n$th order difference equation has the form
     \begin{align*}
@@ -134,7 +136,7 @@
     \end{align*}
     with $a_{0} \neq 0$, $a_{k} \neq 0$, $a_{k}$ independent of $n$ for all $k$. \\
 
-    To solve equations of this form one initially solves the homogeneous equation using the $u_{j} = A\lambda^{j}$ ansatz, then finds a particular solution with respect to $f$. The ansatz gives $k$ solutions, and the auxiliary equation gives an additional solution.
+    To solve equations of this form one initially solves the homogeneous equation using the $u_{j} = A\lambda^{j}$ ansatz, then finds a particular solution with respect to $f$. The ansatz gives $k$ solutions, and the auxiliary equation gives an additional solution. \\
 
     The set of solutions to any homogeneous $k$th order difference equation is $k$-dimensional.
 
