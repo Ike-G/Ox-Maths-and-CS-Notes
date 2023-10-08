@@ -8,6 +8,7 @@
 \usepackage{verbatim}
 \usepackage{nicefrac}
 \usepackage{csquotes}
+\usepackage{bm}
 
 \definecolor{nbYellow}{HTML}{FCF434}
 \definecolor{nbPurple}{HTML}{9C59D1}
@@ -86,26 +87,12 @@
 \begin{columns}
   \column{0.5}
   \block{Induction}{
-    Mathematically, induction is a method of proof for a countable number of cases.
-    \innerblock{Principle of Induction}{
-      Let $P(n)$ be a family of statements indexed by the natural numbers (that is, where $P(n)$ is well-defined for any $n \in \mathbb{N}$). Suppose that
-      \begin{itemize}
-        \item $P(0)$ is true.
-        \item For any $n$, if $P(n)$ is true then $P(n+1)$ is also true.
-      \end{itemize}
-      then $P(n)$ is true for all $n \in \mathbb{N}$.
-    }
-    The definition of the natural numbers for this purpose is provided by the Peano axioms, that
-    \begin{itemize}
-    \item $0 \in \mathbb{N}$
-    \item $S(n) \in \mathbb{N}$, where $S \colon \mathbb{N} \to \mathbb{N}$ is the successor function.
-    \item For any $n \in \mathbb{N}$, $S(n) \neq 0$.
-    \item $S(x) = S(y)$ iff $x = y$.
-    \item
-    \end{itemize}
-  }
+    Induction is a very general principle within proof that uses characteristics of a problem whereby it is easier to reason about how the former case varies from the next than each individual case. One often first sees induction as defined in terms of the natural numbers, although this isn't the general case.\\
 
-  \note[targetoffsety=-10cm, width=15cm]{Mathematical induction proves that we can climb as high as we like on a ladder, by proving that we can climb onto the bottom rung (the basis) and that from each rung we can climb up to the next one (the step).}
+    \innerblock{Natural Induction}{
+    Given the family of propositions $P_{n}$ for some $n \in \mathbb{N}$, if $P_{0}$ is true and for any $k \in \mathbb{N}$ we have $P_{k}$ implies $P_{k+1}$, then for all $n \in \mathbb{N}$ we have $P_{n}$ true.
+    }
+  }
 \end{columns}
 
 \end{document}
