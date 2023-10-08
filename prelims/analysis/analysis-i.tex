@@ -92,11 +92,14 @@
 \maketitle[titletoblockverticalspace=0.4cm]
 
 \begin{columns}
-\column{0.6}
+\column{0.45}
 \block{Sequences}{
   \begin{definition}[Convergence]
   Where $(a_{n})$ is a real sequence, it is said to converge to $L$ as $n \to \infty$ if for all $\varepsilon > 0$ there exists some $N \in \mathbb{N}$ such that for all $n \ge N$, $|a_{n} - L| < \varepsilon$. \\
   \end{definition}
+
+  The only inequality in the above definition that is necessarily strict is that $\varepsilon > 0$. Apart from that, $n \ge N$ vs $n > N$ is often switched between, although out of ease the inequality $|a_{n} - L| < \varepsilon$ is usually kept strict. \\
+
   \innerblock{Elementary Results}{
 %    \begin{itemize}
 %            \item $\frac{1}{n}$
@@ -109,14 +112,15 @@
 %            \end{align*}
 %    \end{itemize}
     \begin{theorem}[Sandwiching]
-      Let $(a_{n})$ and $(b_{n})$ be real sequences with $0 \le a_{n} \le b_{n}$ for all $n \ge 1$. If $b_{n} \to 0$ as $n \to \infty$, then $a_{n} \to 0$ as $n \to \infty$. \\
+    \ Let $(a_{n})$ and $(b_{n})$ be real sequences with $0 \le a_{n} \le b_{n}$ for all $n \ge 1$. If $b_{n} \to 0$ as $n \to \infty$, then $a_{n} \to 0$ as $n \to \infty$. \\
     \end{theorem}
     The proof of this is a definition chase. \\
 
     \coloredbox{A potentially useful result for dealing with oscillating sequences is that $\sin, \cos : \mathbb{N} \to [-1,1]$ are injective. This follows trivially using their periodic properties.}
+    \phantom{}
 
     \begin{lemma}
-      (i) For $c \in \mathbb{R}$, $|c| < 1$, $c^{n} \to 0$ as $n \to \infty$. \\
+    \ (i) For $c \in \mathbb{R}$, $|c| < 1$, $c^{n} \to 0$ as $n \to \infty$. \\
       (ii) Let $a_{n} = \frac{n}{2^{n}}$ for $n \ge 1$. Then $a_{n} \to 0$ as $n \to \infty$. \\
     \end{lemma}
     \emph{(i)} is proved using Bernoulli's inequality, by rewriting $|c|$. By the binomial theorem $2^{n} \ge {n \choose 2}$, from which the proof of \emph{(ii)} follows.\\
@@ -126,16 +130,16 @@
     Proof: given distinct limits $L_{1}$ and $L_{2}$, observe results at $\varepsilon \le \frac{|L_{1}-L_{2}|}{2}$.\\
 
     \begin{lemma}
-      If $(a_{n})$ is convergent, then so is $(|a_{n}|)$. Moreover, if $a_{n} \to L$ as $n \to \infty$, then $|a_{n}| \to |L|$.\\
+    \ If $(a_{n})$ is convergent, then so is $(|a_{n}|)$. Moreover, if $a_{n} \to L$ as $n \to \infty$, then $|a_{n}| \to |L|$.\\
     \end{lemma}
 
     \begin{lemma}[Preservation of weak inequalities]
-        If $(a_{n})$ and $(b_{n})$ are real sequences with limits $L$ and $M$ respectively, and $a_{n} \le b_{n}$ for all $n$, then $L \le M$.\\
+    \  If $(a_{n})$ and $(b_{n})$ are real sequences with limits $L$ and $M$ respectively, and $a_{n} \le b_{n}$ for all $n$, then $L \le M$.\\
     \end{lemma}
     Prove by contradiction, with $\varepsilon = \frac{L-M}{2}$. \\
 
     \begin{theorem}[Sandwiching v2]
-      Let $(a_{n})$, $(b_{n})$ and $(c_{n})$ be real sequences with $a_{n} \le b_{n} \le c_{n}$ for all $n \ge 1$. If $a_{n} \to L$ and $c_{n} \to L$ as $n \to \infty$, then $b_{n} \to L$ as $n \to \infty$.
+    \ Let $(a_{n})$, $(b_{n})$ and $(c_{n})$ be real sequences with $a_{n} \le b_{n} \le c_{n}$ for all $n \ge 1$. If $a_{n} \to L$ and $c_{n} \to L$ as $n \to \infty$, then $b_{n} \to L$ as $n \to \infty$.
     \end{theorem}
   }
 }
@@ -149,7 +153,7 @@
     \end{itemize}
     Prove that $s_{2n}$ is monotonic increasing and bounded by grouping with $\displaystyle u_{1} - \sum (u_{k} - u_{k+1})$, then show that $s_{2n+1} = s_{2n} + u_{2n+1} \to s + 0$ if $s_{2n} \to s$.
   }
-  \hphantom{.}\\
+  \hphantom{}
   \innerblock{Ratio}{
     For a positive sequence $a_{k}$, if $\frac{a_{k+1}}{a_{k}} \to L$:
     \begin{itemize}
@@ -161,13 +165,11 @@ For this proof, use $\alpha = \frac{1+L}{2}$, and the respective intervals withi
     The conclusion for $L = \infty$ is only slightly more involved, using $\alpha = 2$.
   }
 }
-\column{0.4}
+\column{0.55}
 \block{Fields}{
   Any field $\mathbb{F}$ is a set with closed commutative and associative operations $+$ and $\cdot$, an additive identity $0$, multiplicative identity $1$, additive invertibility and multiplicative invertibility (except for denominator $0$). Additionally $\cdot$ must distribute over $+$, and to rule out the possibility that $\mathbb{F} = \{0\}$, $0 \neq 1$. \\
 
   To define $\mathbb{R}$, an ordering on the set is defined by identifying a partition $\{\mathbb{P}, \{0\}, -\mathbb{P}\}$ such that for any $a, b \in \mathbb{R}$ if $a, b \in \mathbb{P}$ then $a + b \in \mathbb{P}$ and $a \cdot b \in \mathbb{P}$. Note that if any other singleton had been selected this would not be a partition. \\
-
-  \coloredbox{\textbf{Question: What if the multiplicative inverse were used instead of additive to form the partition?}}
 
   \begin{theorem}[Bernoulli's Inequality]
     \ Let $x$ be a real number with $x > -1$. If $n \in \mathbb{Z}^{+}$, then $(1+x)^{n} \ge 1 + nx$. \\
@@ -194,6 +196,8 @@ For this proof, use $\alpha = \frac{1+L}{2}$, and the respective intervals withi
     \begin{axiom}[Completeness]
     \ For any non-empty subset $S \subset \mathbb{R}$, if $S$ is bounded above then $S$ has a supremum. \\
     \end{axiom}
+
+    To get a bit of intuition for what this axiom means: every irrational number can be understood as equivalent to a sequence of rational numbers, converging to some point. For any increasing bounded sequence we get a non-empty subset of $\mathbb{R}$ with its supremum the limit of the sequence, so by completeness the above follows. Helpfully, although completeness technically says that the limit of any real sequence is real, we can still get every real number just from rational sequences. \\
 
     \begin{theorem}[Approximation]
       \ Let $S \subseteq \mathbb{R}$ be non-empty and bounded above. For any $\varepsilon > 0$, there exists $s_{\varepsilon}$ such that $\sup S - \varepsilon < s_{\varepsilon} \le \sup S$. \\
