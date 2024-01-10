@@ -1,0 +1,706 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=3500mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\res}{res}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Complex Analysis}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+\column{0.33}
+
+\block{Multifunctions}{
+    \begin{definition}[Branch]
+    \ A multifunction on a subset $U \subseteq \mathbb{C}$ is a map $f : U \to \mathcal{P}(\mathbb{C})$ assigning each point in $U$ a subset of the complex numbers. A branch of $f$ on a subset $V \subseteq U$ is a function $g : V \to \mathbb{C}$ such that $g(z) \in f(z)$ for all $z \in V$. If $g$ is continuous on $V$ we refer to it as a continuous branch of $f$, and the same respectively for holomorphicity.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Branch point]
+    \ Suppose that $f : U \to \mathcal{P}(\mathbb{C})$ is a multifunction defined on an open $U \subseteq \mathbb{C}$. We say that $z_{0} \in U$ is not a branch point of $f$ if there is an open disk $D \subseteq U$ containing $z_{0}$ such that there is a holomorphic branch of $f$ defined on $D \setminus \{z_{0}\}$. Otherwise it is not. \\
+
+      When $\mathbb{C} \setminus U$ is bounded, $f$ does not have a branch point at $\infty$ if there is a holomorphic branch of $f$ defined on some $\mathbb{C} \setminus B(0,R) \subseteq U$. Otherwise $\infty$ is a branch point.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Branch cut]
+    \ A branch cut for a multifunction $f$ is a curve in the plane on whose complement there is a holomorphic branch of $f$. Consequently a branch cut must contain all the branch points.
+    \end{definition}
+    \hphantom{}
+
+    As an example, take $z^{1/2}$. Defined as $re^{i\theta} \mapsto r^{1/2}e^{i\theta/2}$ (a multifunction with two branches), neither branch is continuous on $\mathbb{C}$ as we get different values with $\theta \to 0$ and $2\pi - \theta \to 2\pi$. They are however holomorphic on $\mathbb{C} \setminus [0,\infty)$. Thus $[0,\infty)$ is a branch cut of $z^{1/2}$. \\
+
+    Multifunctions can be discontinuous either accidentally, or unavoidably. For $[z^{1/2}]$ the points in $(0,\infty)$ are accidental, as we can select a branch on an open set containing some of them which is holomorphic. $0$ however is unavoidable, because for any ball around $0$ there will be a discontinuity.  \\
+
+    We can write $z^{\alpha}$ as the multifunction $[z^{\alpha}] = [\exp(\alpha \Log(z))]$, noting that $\Log$ is a multifunction here. Note that many power laws begin to fail here, due to using multifunctions and being able to select different branches. \\
+
+    \begin{theorem}[Open maps]
+    \ Suppose $f : \mathbb{U} \to \mathbb{C}$ is holomorphic and non-constant. $V$ open in $U$ implies that $f(V)$ is open in $\mathbb{C}$.
+    \end{theorem}
+    \hphantom{}
+
+    \textbf{Prove, and consider moving this}
+  }
+\block{Integration}{
+  \begin{definition}[Functions from intervals]
+  \ For $F : [a,b] \to \mathbb{C}$, $F(t) = G(t) + iH(t)$, $F$ is integrable if $G, H$ are integrable:
+    \begin{align*}
+      \int_{a}^{b} F(t) \, \mathrm{d}t &:= \int_{a}^{b} G(t) \, \mathrm{d}t + i\int_{a}^{b} H(t) \,\mathrm{d}t
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+    \ A path is a continuous function $\gamma : [a,b] \to \mathbb{C}$. A path is closed if $\gamma(a) = \gamma(b)$. A path is simple if it is injective on $[a,b]$, and closed where $\gamma(a) = \gamma(b)$ (note we still call a closed $\gamma$ simple if $\gamma(a) = \gamma(b)$ is the only exception to injectivity). \\
+
+    We write the image of $\gamma$ as $\gamma^{*}$. If $\gamma$ is simple and closed, $\mathbb{C} \setminus \gamma^{*}$ has two connected components, the bounded one of which we designate the interior, and the unbounded one the exterior. (These properties are not shown in this course).
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ $\gamma_{1}: [a,b] \to \mathbb{C}$ and $\gamma_{2} : [c,d] \to \mathbb{C}$ are equivalent if there is a continuously differentiable bijective function $s : [a,b] \to [c,d]$ such that $s'(t) > 0$ for all $t \in [a,b]$ and $\gamma_{1} = \gamma_{2} \circ s$.
+  \end{definition}
+  \hphantom{}
+
+  \coloredbox{Query: Is $s$ strictly increasing not sufficient here? $x \mapsto x^{2}$ on $[0,1]$ would be disallowed, which seems intuitively strange.}
+  \hphantom{}
+
+  \begin{definition}
+  \ If $\gamma : [a,b] \to \mathbb{C}$ is a $C_{1}$ path then we define the length of $\gamma$ to be
+    \begin{align*}
+      l(\gamma) = \int_{a}^{b} |\gamma'(t)|\,\mathrm{d}t
+    \end{align*}
+    More generally, we define the integral with respect to arc-length of a function $f : U \to \mathbb{C}$ with $\gamma^{*} \subseteq U$ to be
+    \begin{align*}
+      \int_{\gamma} f(z) \,\mathrm{d}z = \int_{a}^{b} f(\gamma(t)) |\gamma'(t)| \, \mathrm{d}t
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  We get immediately from the definition and $s'(t) \ge 0$ that the length of a path is invariant under reparametrization. \\
+
+  \begin{definition}
+  \ A path $\gamma : [a,b] \to \mathbb{C}$ is piecewise $C^{1}$ if it is continuous on $[a,b]$ and there are $a = a_{0} < a_{1} < \cdots < a_{n-1} < a_{n} = b$ such that $\gamma_{a_{k},a_{k+1}}$ is $C^{1}$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ If $\gamma : [a,b] \to \mathbb{C}$ is a piecewise $C^{1}$ path in $U$ and $f : U \to \mathbb{C}$ is continuous then the integral of $f$ along $\gamma$ is
+    \begin{align*}
+      \int_{\gamma} f(z)\, \mathrm{d}z = \int_{a}^{b} f(\gamma(t)) \gamma'(t) \, \mathrm{d}t
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  Note that the integral still exists where $\gamma'$ does not exist at finitely many points, because we can take a sum of the individual pieces to reform the integral. \\
+
+  Under this definition we get yet another property of equivalent paths: they preserve integrals. To show this, take $\gamma : [a,b] \to \mathbb{C}$, $\psi : [c,d] \to [a,b]$, and we get
+  \begin{align*}
+    \int_{\gamma \circ \psi} f(z) \, \mathrm{d}z &= \int_{c}^{d} f(\gamma(\psi(t))) \gamma'(\psi(t)) \psi'(t) \, \mathrm{d}t \\
+                                  &= \int_{a}^{b} f(\gamma(u)) \gamma'(u) \, \mathrm{d}u \\
+    &= \int_{\gamma} f(z) \, \mathrm{d}z
+  \end{align*}
+
+  In addition to this, we get various fairly standard / expected results from this definition of integration. For equivalent paths, linearity follows immediately. For a path $\gamma$, with its reverse $\gamma^{-}(t) = \gamma(a+b-t)$, the integral is multiplied by $-1$. Additionally, for paths $\gamma_{1}, \gamma_{2}$ from $[a,b]$, $[b,c]$, their concatenation $\gamma_{1} \cup \gamma_{2}$ gives $\int_{\gamma_{1} \cup \gamma_{2}} f = \int_{\gamma_{1}} f + \int_{\gamma_{2}} f$.\\
+
+  \begin{lemma}[Estimation lemma]
+    \ For $f : U \to \mathbb{C}$ continuous on an open subset $U \subseteq \mathbb{C}$ and $\gamma : [a,b] \to \mathbb{C}$ piecewise $C^{1}$ in $U$:
+    \begin{align*}
+      \left|\int_{\gamma} f(z) \, \mathrm{d}z \right| \le l(\gamma)\sup_{z \in \gamma^{*}} |f(z)|
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  \begin{theorem}
+    Let $U \subseteq \mathbb{C}$ be open and let $f : U \to \mathbb{C}$ be a continuous function. If $F : U \to \mathbb{C}$ is a primitive for $f$ ($F'(z) = f(z)$ on some open set $U \subseteq \mathbb{C}$) and $\gamma : [a,b] \to U$ is a piecewise $C^{1}$ path in $U$ then we have
+    \begin{align*}
+      \int_{\gamma} f(z) \, \mathrm{d} z = F(\gamma(b)) - F(\gamma(a)).
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  This follows immediately from the real FTC, and indeed we will later see that $F$ being holomorphic on $U$ implies that $f$ is continuous, so that condition becomes unnecessary. \\
+
+  \begin{theorem}
+    If $U$ is a domain and $f : U \to \mathbb{C}$ is a continuous function such that for any closed piecewise $C^{1}$ path in $U$ we have $\int_{\gamma} f(z) \, \mathrm{d}z = 0$, then $f$ has a primitive.
+  \end{theorem}
+  \hphantom{}
+
+  \begin{lemma}
+    Suppose $f_{n} \overset{u}{\to} f$ on $\gamma$. Then
+    \begin{align*}
+      \lim_{n \to \infty} \int_{\gamma} f_{n}(z) \, \mathrm{d}z &= \int_{\gamma} f(z) \, \mathrm{d}z
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  \begin{definition}
+    Let $\gamma_{1}, \gamma_{2} : [0,1] \to U$ be two closed paths in a domain $U$. We say that $\gamma_{1}$ and $\gamma_{2}$ are homotopic if there is a continuous function $H : [0,1]^{2} \to \mathbb{C}$ such that for each $u \in [0,1]$, then $H(\cdot, u) : [0,1] \to U$ is a closed path in $U$ with $H(\cdot, 0) = \gamma_{1}$, $H(\cdot, 1) = \gamma_{2}$.
+  \end{definition}
+
+  \begin{theorem}[Deformation theorem]
+    Let $f$ be holomorphic on a domain $U$ and let $\gamma_{1}$ and $\gamma_{2}$ be homotopic closed paths in $U$. Then
+    \begin{align*}
+      \int_{\gamma_{1}} f(z) \, \mathrm{d}z = \int_{\gamma_{2}} f(z) \, \mathrm{d}z
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+}
+
+\block{Riemann Sphere}{
+  With $S^{2}$ the unit sphere in $\mathbb{R}^{3}$, $N = (0,0,1)$ the north pole, identifying $\mathbb{R}^{2}$ with $\mathbb{C}$ in the natural way, the stereographic projection is the map
+  \begin{align*}
+    \pi &: S^{2} \setminus \{N\} \to \mathbb{C} \\
+    \pi(x,y,z) &= \frac{x + iy}{1 - z}
+  \end{align*}
+  We then get that we can identify $S^{2}$ with $\mathbb{C}_{\infty}$ by having $\pi(N) = \infty$. This gives various initial geometric results. For example, $\pi(-M) = -1/\overline{\pi(M)}$, and any circle or line in $\mathbb{C}_{\infty}$ is mapped to a circle in $S^{2}$ (with lines mapped to circles that include $N$). \\
+
+  \begin{definition}[Mobius maps]
+    Mobius maps are $f : \mathbb{C}_{\infty} \to \mathbb{C}_{\infty}$ of the form for $a, b, c, d \in \mathbb{C}$, $ad-bc \neq 0$:
+    \begin{align*}
+      f(z) &= \frac{az+b}{cz+d} \\
+      f(\infty) &= \frac{a}{c}
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  Any mobius map is a continuous bijection, as it is the composition of more basic continuous bijections. The only non-trivial step here is that $1/z$ is continuous in $\mathbb{C}_{\infty}$, which follows from defining the metric as the distance in $S^{2}$, which gives continuity at $0$. \\
+
+  The group of mobius functions under composition are isomorphic to $GL(2, \mathbb{C}) / C(GL(2, \mathbb{C}))$. Using the following isomorphism
+  \begin{align*}
+    \varphi\left(z \mapsto \frac{az+b}{cz+d}\right) &= \begin{pmatrix}
+                                             a & b \\
+                                             c & d
+                                           \end{pmatrix}
+                                                 \cdot C(GL(2,\mathbb{C}))
+  \end{align*}
+  we get from algebra that the properties work out. We denote this group $PGL(2, \mathbb{C})$. \\
+
+  \begin{definition}
+  \ A holomorphic map $f : U \to \mathbb{C}$ is said to be conformal if $f'(z) \neq 0$ for all $z \in U$.
+  \end{definition}
+  \hphantom{}
+
+  For $f : U \to \mathbb{C}$ conformal, take $z_{0} \in U$, $\gamma_{1}, \gamma_{2}$ paths in $U$ which meet at $z_{0} = \gamma_{1}(0) = \gamma_{2}(0)$. We denote the angle between the paths at this point as $\theta = \arg \gamma_{2}'(0) / \gamma_{1}'(0)$. Thus $\varphi = \arg (f\gamma_{2})'(0) / (f\gamma_{1})'(0) = \arg f'(z_{0})\gamma_{2}'(0) / f'(z_{0}) \gamma_{1}'(0) = \theta$ so $f$ is angle preserving. \\
+
+  The three most important examples of conformal maps for this course are Mobius transformations, power maps (for $0 \notin U$), and exponents. To construct Mobius transformations to manipulate sets conformally as desired, note the invariance of the cross-ratio under Mobius transformations giving us the following:
+  \begin{align*}
+    f(z) &= \frac{(z-z_{1})(z_{2}-z_{3})}{(z-z_{2})(z_{1}-z_{3})} \\
+         &= (z,z_{1},z_{2},z_{3}) \\
+         &= (f(z), f(z_{1}), f(z_{2}), f(z_{3})) \\
+    &= (f(z), 0, \infty, 1)
+  \end{align*}
+  This allows us to send bounded sets to unbounded ones. Note that these only ever send circlines to circlines, so we only actually need 3 points to determine to where any circline has been mapped. \\
+
+  We say that if there is a conformal bijection between two domains, then they are conformally equivalent. \\
+
+  \begin{theorem}
+  \ Let $U$ be a simply connected domain with $U \neq \mathbb{C}$. Then $U$ is conformally equivalent to $D(0,1)$. In the case that the boundary of $U$ is smooth then the conformal equivalence can be extended between $U \cup \partial U$ and $D(0,1)$.
+  \end{theorem}
+  \hphantom{}
+
+  The proof of this is beyond the scope of the course. \\
+
+  \begin{lemma}
+  \ With $U$ and $V$ domains, if $f : U \to V$ is holomorphic then if $\varphi : V \to \mathbb{R}$ is harmonic then $\varphi \circ f$ is harmonic.
+  \end{lemma}
+}
+
+
+\column{0.33}
+\block{Differentiation}{
+  \begin{definition}
+    With $U \subseteq \mathbb{C}$ a domain, $f : U \to \mathbb{C}$, $f$ is differentiable at $z_{0} \in U$ if the limit
+    \begin{align*}
+      \lim_{z \to z_{0}} \frac{f(z)-f(z_{0})}{z-z_{0}}
+    \end{align*}
+    exists. Then $f'(z_{0})$ is equal to this limit.
+  \end{definition}
+  \hphantom{}
+
+  Almost every prelims proof about differentiation applies identically to $\mathbb{C}$. We immediately get every standard algebraic rule, as well as that differentiability implies continuity. \\
+
+  We refer to functions differentiable on a domain to be \emph{holomorphic}. \\
+
+
+  Write $f(z) = f(x,y) = u(x,y) + iv(x,y)$ for $u, v : \mathbb{R}^{2} \to \mathbb{R}$. Then we can write partial derivatives of $u$ and $v$ in the normal way as per the reals. \\
+
+  \begin{theorem}[Cauchy-Riemann equations]
+    For $f : U \to \mathbb{C}$ differentiable at $z_{0} = x_{0} + iy_{0} \in U$. Then all partial derivatives $u_{x}, u_{y}, v_{x}, v_{y}$ exist and
+    \begin{align*}
+      u_{x} &= v_{y} \\
+      u_{y} &= -v_{x} \\
+      f'(z_{0}) &= u_{x}(x_{0}, y_{0}) + i v_{x}(x_{0},y_{0})
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  To show this, approach the limit both horizontally and vertically:
+  \begin{align*}
+    f'(z_{0}) &= \lim_{z \to z_{0}}\frac{f(z)-f(z_{0})}{z-z_0} \\
+              &= \lim_{x \to 0}\frac{f(z_{0}+x)-f(z_{0})}{x} = u_{x} + iv_{x} \\
+              &= \lim_{y \to 0} \frac{f(z_{0} + iy) - f(z_{0})}{iy} \\
+    &= -i \lim_{y \to 0}  \frac{f(z_{0} + iy) - f(z_{0})}{y} = v_{y} - iu_{y}\\
+  \end{align*}
+  then separate the real and imaginary parts to get $v_{y} = u_{x}$, $v_{x} = -u_{y}$. \\
+
+  \coloredbox{
+    Note from Rolf: virtually everything that can be proved using the Cauchy-Riemann equations can be proved from other methods, regularly in far nicer ways. They are useful for applications like fluid dynamics and harmonic functions, but for anything actually within complex analysis they're not too useful - in general it's worth being suspicious of stuff that reduces $\mathbb{C}$ to $\mathbb{R}^{2}$.
+  }
+  \hphantom{}
+
+  \begin{lemma}
+    If $f : U \to \mathbb{C}$ is holomorphic and $f' \equiv 0$ then $f$ is constant.
+  \end{lemma}
+  \hphantom{}
+
+  We get this from using the Cauchy-Riemann equations and noting that if $f' \equiv 0$ for real $f$, then $f$ is constant. \\
+
+  \begin{lemma}
+    With $f : U \to \mathbb{C}$ holomorphic and real-$\mathbb{C}^{2}$ (meaning partial derivatives of $u$ and $v$ can be continuously taken to order $2$) then $u$ and $v$ are harmonic, meaning that where $f : \mathbb{R}^{2} \to \mathbb{R}$, defining the laplacian by
+    \[
+      \Delta f = \frac{\partial^{2} f}{\partial x^{2}} + \frac{\partial^{2} f}{\partial y^{2}}
+    \]
+    we have $\Delta u = \Delta v = 0$.
+  \end{lemma}
+  \hphantom{}
+
+  This follows from $u_{xx} = v_{yx} = -u_{yy}$ and $v_{xx} = -u_{xy} = -v_{yy}$. Note that later results in the course will demonstrate that any holomorphic function is infinitely complex differentiable, so ultimately we will not need the real-$\mathbb{C}^{2}$ condition.
+}
+
+  \block{Laurent's Theorem}{
+    \begin{theorem}
+    \ Let $f$ be holomorphic on the annulus
+      \begin{align*}
+        A = \{z \in \mathbb{C} \,|\, R < |z-a| < S\}
+      \end{align*}
+      then there exist unique $c_{k}$ for $k \in \mathbb{Z}$ such that
+      \begin{align*}
+        f(z) = \sum_{k=-\infty}^{\infty} c_{k}(z-a)^{k}
+      \end{align*}
+      for $z \in A$, where
+      \begin{align*}
+        c_{k} = \frac{1}{2 \pi i} \int_{\gamma(a, r)} \frac{f(w)}{(w-a)^{k+1}} \, \mathrm{d}w
+      \end{align*}
+      for $r \in (R,S)$.
+    \end{theorem}
+    \hphantom{}
+
+    Note that for $k \ge 0$ these are the same coefficients as are present in the Taylor series. \\
+
+    To prove this, for fixed $z \in A$ take $R < P < |z-a| < Q < S$. We then take two halves of the ring formed, constructing $\gamma_{1}$ to traverse half of the outer circle positively oriented, move to the inner circle to traverse its half negatively oriented, and then return to its starting point. $\gamma_{2}$ does the same to the other half, and we define the halves so as to keep $z$ on the interior of these paths. Consequently we get $z$ on one side, but not the other, and without loss of generality say that it is on the interior of $\gamma_{1}$. Thus
+    \begin{align*}
+      f(z) &= \frac{1}{2\pi i} \int_{\gamma_{1}} \frac{f(w)}{w-z} \, \mathrm{d}w \\
+      0 &= \frac{1}{2\pi i} \int_{\gamma_{2}} \frac{f(w)}{w-z} \, \mathrm{d}w
+    \end{align*}
+    by Cauchy's integral formula and Cauchy's theorem respectively. Thus by taking the sum of these integrals the lines connecting the outer to the interior are cancelled, so we integrals in terms of new paths, and
+    \begin{align*}
+      f(z) &= \frac{1}{2 \pi i} \int_{\gamma(a,Q)} \frac{f(w)}{w-z} \, \mathrm{d}w - \frac{1}{2\pi i} \int_{\gamma(a,P)} \frac{f(w)}{w-z} \, \mathrm{d}w \\
+      &= \frac{1}{2 \pi i} \int_{\gamma(a,Q)} \frac{f(w)/(w-a)}{1-\frac{z-a}{w-a}} \, \mathrm{d}w + \frac{1}{2 \pi i} \int_{\gamma(a,P)} \frac{f(w)/(z-a)}{1-\frac{w-a}{z-a}} \, \mathrm{d}w \\
+      &= \frac{1}{2 \pi i} \int_{\gamma(a,Q)} \sum_{k=0}^{\infty} \frac{f(w)(z-a)^{k}}{(w-a)^{k+1}} \, \mathrm{d}w + \frac{1}{2 \pi i}\int_{\gamma(a,P)} \sum_{k=0}^{\infty} \frac{f(w)(w-a)^{k}}{(z-a)^{k+1}} \, \mathrm{d}w \\
+      &= \sum_{k=-\infty}^{\infty} \left(\frac{1}{2 \pi i} \int_{\gamma(a,r)} \frac{f(w)}{(w-a)^{k+1}} \, \mathrm{d}w\right) (z-a)^{k}.
+    \end{align*}
+    These steps follow respectively from setting up the infinite sums to converge properly, applying the $M$-test to demonstrate uniform convergence, then using the deformation theorem to get a single $R < r < S$ so to integrate over $\gamma(a,r)$. We then get uniqueness from taking arbitrary coefficients for a power series of $f$ of this form, then applying them within the expression for $c_{n}$ to demonstrate equivalence. \\
+
+    Helpfully, uniqueness gives us that if $f$ is holomorphic at $a$, then it is holomorphic on some neighbourhood of $a$, so $f$ has a Taylor series and is thus equal to this Taylor series. \\
+
+    \begin{definition}
+      For $f : U \to \mathbb{C}$ defined on a domain $U$:
+      \begin{itemize}
+        \item \ $a \in U$ is a regular point if $f$ is holomorphic at $a$.
+        \item \ $a \in U$ is a singularity if $f$ is not holomorphic at $a$ but $a$ is a limit point of regular points.
+        \item \ We say that a singularity $a \in U$ is isolated if $f$ is holomorphic on some $B(a,r) \setminus \{a\} \subseteq U$.
+      \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}
+    \ For $f$ with an isolated singularity $a$, we have Laurent series coefficients $c_{n}$ such that for $z \in B(a,r) \setminus \{a\}$
+      \begin{align*}
+        f(z) = \sum_{n=-\infty}^{\infty} c_{n}(z-a)^{n}
+      \end{align*}
+      \begin{itemize}
+        \item \ The principal part of $f$ at $a$ is
+              \begin{align*}
+                \sum_{n=1}^{\infty} c_{-n}(z-a)^{-n}
+              \end{align*}
+        \item \ The residue of $f$ at $a$ is $c_{-1}$.
+        \item \ $a$ is said to be a removable singularity of $f$ if $c_{n} = 0$ for $n < 0$.
+        \item \ $a$ is said to be a pole of order $k$ if $c_{-k}$ is nonzero and $c_{n} = 0$ for all $n < -k$.
+        \item \ $a$ is said to be an essential singularity if $c_{n} \neq 0$ for infinitely many negative $n$.
+      \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    Suppose that $f$ has a zero of order $m$ at $a$ and $g$ has a zero of order $n$ at $a$. Then $f / g = (z-a)^{m-n} F / G$ for $F$, $G$ holomorphic, so has a removable singularity at $a$ for $m \ge n$, and a pole of order $n-m$ at $a$ otherwise. \\
+
+    \begin{lemma}
+    \ If for some $g$ holomorphic and non-zero at $a$,
+      \begin{align*}
+        f(z) = \frac{g(z)}{(z-a)^{n}}
+      \end{align*}
+      then
+      \begin{align*}
+        \res(f;a) = \frac{g^{(n-1)}(a)}{(n-1)!}
+      \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    We immediately get that $f$ is holomorphic on some annulus around $a$, so it has a Laurent series, and where $(c_{k})$ are the coefficients of the Taylor series of $g$, $(d_{k})$ the coefficients of $f$'s Laurent series, $d_{k} = c_{n+k}$, and $n!c_{n} = g^{(n)}(a)$ by Taylor's theorem. \\
+
+    Note that if $f$ has a non-essential pole of order $n$ at $a$, then automatically $(z-a)^{n}f(z)$ has a removable singularity at $a$, so we get
+    \begin{align*}
+      \res(f;a) = \lim_{z \to a} \sum_{k=0}^{n-1} {n \choose k+1}\frac{1}{k!} (z-a)^{k+1}f^{(k)}(z)
+    \end{align*}
+  }
+
+\block{Refinements}{
+  The residue theorem makes it far easier for us to calculate various real integrals. With finite limits in certain cases we can convert integrals to ball contours (where substitution gives a holomorphic function), while for infinite limits we take the semicircle $\gamma^{+}(0,R)$ concatenated with the line segment $[-R,R]$, hoping to show that the contribution from the semicircle tends to $0$.\\
+
+  The process given a real integral to solve is as follows: we find a contour integral, or sequence of contour integrals, for which each integrand is holomorphic on its contour, meromorphic inside, and some part of the contour goes along the real line (or the sequence of contours has a part which approaches the real line). We calculate explicitly the part outside of the limits of the original real integral (hopefully in most cases this should just be zero), and then calculate the contour integral via the residue theorem. The real integral's value is thus the difference of these two values. \\
+
+  \textbf{TODO: Explain indentation, keyhole contours, Jordan's lemma} \\
+
+  \begin{lemma}
+    \ For $0 < \theta < \pi/2$
+    \begin{align*}
+      \frac{2}{\pi} < \frac{\sin \theta}{\theta} < 1
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  Proof of this is straightforward from showing that the function is decreasing. \\
+
+  \begin{lemma}
+  \ For $f : U \to \mathbb{C}$ holomorphic on all but a discrete set, with a simple pole at $a \in U$,
+    \begin{align*}
+      \lim_{\varepsilon \to 0} \int_{\restr{\gamma(a, \varepsilon)}{[\alpha,\beta]}} f(z) \, \mathrm{d}z = (\beta - \alpha)i\res(f;a)
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  Proof of this follows from rewriting $f$ as the sum of its principal value and $1/(z-a)$.
+
+  \begin{lemma}
+  \ Suppose that $\varphi$ is holomorphic at $n \in \mathbb{Z}$ with $\varphi(n) \neq 0$. Then
+    \begin{itemize}
+            \item \ $\pi \varphi(z) \cot \pi z$ has a simple pole at $n$ with residue $\varphi(n)$;
+            \item \ $\pi \varphi(z) \csc \pi z$ has a simple pole at $n$ with residue $(-1)^{n}\varphi(n)$.
+    \end{itemize}
+  \end{lemma}
+  \hphantom{}
+
+  $\tan \pi z$ and $\sin \pi z$ have simple zeros at $z = n$ and hence both the above functions have simple poles there. Thus we get their residues immediately by differentiation. \\
+
+  The usefulness of this comes in wherever it is easier to calculate the path integral of $\varphi(z) \csc \pi z$ or $\varphi(z) \cot \pi z$ along $\Gamma_{N}$, the square path with corners $(N+1/2)(\pm 1 \pm i)$, than to otherwise calculate $\sum (-1)^{n}/\varphi(n)$ or $\sum 1/\varphi(n)$. This is made easier with the following lemma: \\
+
+  \begin{lemma}
+  \ There is some $C > 0$ such that for all $N$, $z \in \Gamma_{N}^{*}$
+    \begin{align*}
+      \left| \frac{\pi}{\tan \pi z} \right| \le C \quad \text{and} \quad \left|\frac{\pi}{\sin \pi z} \right| \le C
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  This allows us to hopefully have the path integral tend to $0$, giving the resultant value as an additional residue introduced by the particular $\varphi$. \\
+}
+
+  \column{0.33}
+\block{Cauchy's theorem}{
+  Cauchy's theorem states that if we have $f$ holomorphic on the area including and enclosed by the path $\gamma$, then the integral of $f$ over $\gamma$ is $0$. \textbf{Explain why this is important.} \\
+
+  \begin{theorem}[Cauchy's theorem]
+    Suppose that $f$ is holomorphic inside and on a closed path $\gamma$. Then
+    \begin{align*}
+      \int_{\gamma} f(z) \, \mathrm{d}z = 0.
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  While it is beyond the scope of this course to give a full proof for this result, we can show the same result for various special cases of closed paths $\gamma$. \\
+
+  \begin{theorem}[Cauchy's theorem for a triangle]
+    Let $f$ be holomorphic on a domain which includes a closed triangular region $T$. Let $\Delta$ deote the boundary of the triangle, positively oriented. Then
+    \begin{align*}
+      \int_{\Delta} f(z) \, \mathrm{d}z  = 0
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  To show this, we divide each triangle up into four triangular regions, and note that taking the integrals of these positively oriented, we get $|\int_{\Delta_{n}} f| \le 4|\int_{\Delta_{n+1}} f| $, where $\Delta_{n+1}$ is the triangle dividing $\Delta_{n}$ with the largest integral, $\Delta_{0} = \Delta$. There can only ever be one element in all $\Delta_{n}$ however, as the triangles lie in discs with radius tending to $0$, of which all but one point must eventually exit. For this point $\zeta$ then we write $f(z) = f(\zeta) + f'(\zeta)(z-\zeta) + \varepsilon(z)(z-\zeta)$, and we can get the integral over $\Delta_{n}$ bounded above by $\varepsilon 4^{-n} l(\Delta)^{2}$ (note $l(\Delta_{n}) = l(\Delta_{n-1})/2$), giving $\int_{\Delta} f = 0$. \\
+
+  Note that we \emph{do} have such a $\zeta$, because $\mathbb{C}$ is compact, so if a decreasing sequence of closed non-empty subsets were to have empty intersection, then their complements would form an open cover of $\mathbb{C}$, implying their must be a finite subcover of these sets, contradicting non-emptiness.\\
+
+  \begin{lemma}
+    Let $M$ be a compact metric space and $C_{n}$ a decreasing sequence of closed non-empty subsets. Then $\displaystyle \bigcap_{n=0}^{\infty} \neq \varnothing$.
+  \end{lemma}
+  \hphantom{}
+
+  \begin{theorem}
+    Let $f$ be a function which is holomorphic on a convex domain $U$. Then there exists a holomorphic function $F$ on $U$ such that $F'(z) = f(z)$.
+  \end{theorem}
+  \hphantom{}
+
+  To prove this, take some $h \in \mathbb{C}$ with $|h| > 0$. Fix $a \in U$, and write $F(z) = \int_{[a,z]} f$. Thus by Cauchy's theorem for triangles $\int_{[z,z+h]} f = F(z+h) - F(z)$, and via basic manipulation one can get that $F'(z) = f(z)$. This then immediately gives us by the FTC that Cauchy's theorem holds on convex domains.
+
+  \begin{lemma}
+    Let $\gamma$ be a simple closed curve, and $a$ is a point not on $\gamma$, then
+    \begin{align*}
+      \frac{1}{2\pi i} \int_{\gamma} \frac{\mathrm{d}z}{z-a}
+    \end{align*}
+    is an integer, called the winding number of $\gamma$ around $a$.
+  \end{lemma}
+  \hphantom{}
+
+  We can define interiors using this notion, as an interior is any point for which the winding number is non-zero. \\
+
+  \begin{theorem}[Cauchy's integral formula]
+  \ Let $f$ be holomorphic on and inside a positively oriented, simple, closed curve $\gamma$ and let $a$ be a point inside $\gamma$. Then
+    \begin{align*}
+      f(a) = \frac{1}{2\pi i} \int_{\gamma} \frac{f(w)}{w-a} \, \mathrm{d}w
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  This is a slightly incredible result, because it indicates that the values which a holomorphic function takes on some boundary entirely determine its values on the interior. \\
+
+  To prove it, we take $r \to 0$, noting that by the deformation theorem the following is all constant:
+  \begin{align*}
+    \left| \left(\frac{1}{2\pi i} \int_{\gamma(a,r)} \frac{f(w)}{w-a} \, \mathrm{d}w \right) - f(a) \right | &= \frac{1}{2\pi } \left| \int_{\gamma(a,r)} \frac{f(w)-f(a)}{w-a} \, \mathrm{d}w\right| \\
+                                                                                                   &= \frac{1}{2\pi } \left| \int_{0}^{2\pi} f(a+re^{i\theta}) - f(a) \, \mathrm{d}\theta \right| \\
+    &\le \sup_{\theta} |f(a+re^{i\theta}) - f(a)|
+  \end{align*}
+  and as $f$ is continuous this tends to $0$, so the expression is constantly $0$ for all closed, simple, positively oriented $\gamma$ for which $f$ is continuous on the path and interior. \\
+
+  \begin{theorem}[Taylor's theorem]
+    Let $a \in \mathbb{C}$, $\varepsilon > 0$ and let $f : D(a, \varepsilon) \to \mathbb{C}$ be a holomorphic function. Then there exist unique $c_{n} \in \mathbb{C}$ such that
+    \begin{align*}
+      f(z) = \sum_{n=0}^{\infty} c_{n} (z-a)^{n}
+    \end{align*}
+    and additionally
+    \begin{align*}
+      c_{n} = \frac{f^{(n)}(a)}{n!} = \frac{1}{2 \pi i} \int_{\gamma(a,r)} \frac{f(w)}{(w-a)^{n+1}} \, \mathrm{d}w
+    \end{align*}
+    for $0 < r < \varepsilon$.
+  \end{theorem}
+  \hphantom{}
+
+  This is a fairly quick consequence of Cauchy's integral formula. We can now write any $f(z)$ as an integral provided $f$ is holomorphic on a region around $z$, and then by some manipulation we can get a geometric series within this integral in $(z-a)$, which commutes with integration provided the series converges uniformly (which we can get via the $M$-test), which ultimately gives us Cauchy's integral coefficients for Taylor series. \\
+
+  Uniqueness of these coefficients follows from $f^{(k)}(a) = k!c_{k}$ (note that by showing $f$ is a power series we implicitly show that it is infinitely differentiable). \\
+
+  \begin{definition}
+    With $f$ holomorphic on some domain $U$ and $a \in U$. With the coefficients of the Taylor series of $f$ at $a$ the sequence $(c_{n})$, $a$ is a zero of $f$ if $c_{0} = 0$, and the order of this zero is the least $n$ such that $c_{n} \neq 0$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{theorem}[Liouville's theorem]
+    If an entire function $f$ is bounded, then it is constant.
+  \end{theorem}
+  \hphantom{}
+
+  This follows by taking $\gamma(0,R)$ with $R$ large enough, showing that $|f(w)-f(0)| \to 0$ as $R \to \infty$ when using the integral formula to calculate them. We get from this the result that if $f$ is holomorphic and non-constant, then $f(\mathbb{C})$ is dense in $\mathbb{C}$, because otherwise there is an $a \in \mathbb{C}$, $\delta > 0$ pair such that $|f(z)-a| \ge \delta$, so $(f(z)-a)^{-1}$ is bounded and holomorphic creating a contradiction. \\
+
+  \begin{theorem}[Fundamental theorem of Algebra]
+    Let $p$ be a non-constant polynomial with complex coefficients. Then there exists $\alpha \in \mathbb{C}$ such that $p(\alpha) = 0$.
+  \end{theorem}
+  \hphantom{}
+
+  If $p$ has no roots then $1/p$ is holomorphic, and so we can use Cauchy's integral formula to get a contradiction (in this case, that $1/p(0) = 0$). \\
+
+  \begin{theorem}[Morera's theorem]
+    Let $f : U \to \mathbb{C}$ be a continuous function on a domain such that
+    \begin{align*}
+      \int_{\gamma} f(z) \, \mathrm{d} z = 0
+    \end{align*}
+    for any closed $\gamma$. Then $f$ is holomorphic.
+  \end{theorem}
+  \hphantom{}
+
+  For fixed $z_{0}$, we can write $F(z)$ as the integral of $f$ along a path ending in $z$ (well-defined by the hypothesis), creating a function we can differentiate to prove is holomorphic, with $F' = f$ and thus by infinite differentiability of holomorphic functions so is $f$. \\
+
+  \begin{theorem}[Removable Singularity theorem]
+    Suppose that $U$ is an open subset of $\mathbb{C}$ and $z_{0} \in U$. If $f : U \setminus \{z_{0}\} \to \mathbb{C}$ is holomorphic and bounded near $z_{0}$, then $f$ extends to a holomorphic function on all of $U$.
+  \end{theorem}
+  \hphantom{}
+
+  As proof, write
+  \begin{align*}
+    h(z) = \begin{cases}
+             (z - z_{0})^{2}f(z) & \text{if $z \neq z_{0}$} \\
+             0 & \text{if $z = z_0$}
+           \end{cases}
+  \end{align*}
+  which is differentiable on $U$ with $h(z_{0}) = h'(z_{0}) = 0$, so as $h$ is differentiable and thus analytic, we can write $h(z) = \sum a_{k}(z-z_{0})^{k}$, and as the first two coefficients are $0$ thus $f(z) = \sum a_{k+2} (z - z_{0})^{k}$. \\
+
+  \begin{theorem}[The Identity theorem]
+    Let $f, g$ be two holomorphic functions on a domain $U$, and let $S = \{z \in U \,|\, f(z) = g(z)\}$ be the locus on which they are equal. Then if $S$ has a limit point in $U$ we have $f \equiv g$.
+  \end{theorem}
+  \hphantom{}
+
+  To prove, first consider $S = \{z \in U \,|\, f(z) = 0\}$. If $z_{0} \in S$ then either it is isolated, in which case $f$ is non-zero on $B(z_{0}, r) \setminus \{z_{0}\}$, or $f$ is $0$ on a disc around $z_{0}$. As $S$ has a limit point thus there is a $z_{0}$ that is not isolated, we can get by continuity that the taylor expansion of $f$ around $z_{0}$ has all coefficients equal to $0$, from which we can then show that $S$ is both open and closed, so equal to the whole set. It is then trivial to prove that this shows identity for two functions. \\
+
+  \begin{lemma}[Counting Zeros]
+    For $f$ holomorphic inside and on a positively oriented closed path, if $f$ is non-zero on $\gamma$, then the number of zeros of $f$ in $\gamma$ (counting multiplicities) is
+    \begin{align*}
+      \frac{1}{2\pi i} \int_{\gamma} \frac{f'(z)}{f(z)} \, \mathrm{d}z
+    \end{align*}
+  \end{lemma}
+  \hphantom{}
+
+  For each zero $a_{i}$ of $f$ with multiplicity $m_{i}$, we can write $f(z) = (z-a_{i})^{m_{i}}g(z)$ for $g(z)$ holomorphic and $g(a_{i}) \neq 0$. Thus we get
+  \begin{align*}
+    \frac{f'(z)}{f(z)} = \frac{m_{i}}{z-a_{i}} + \frac{g'(z)}{g(z)}
+  \end{align*}
+  and in particular
+  \begin{align*}
+    F(z) = \frac{f'(z)}{f(z)} - \sum_{i=1}^{k} \frac{m_{i}}{z-a_{i}}
+  \end{align*}
+  is holomorphic. By Cauchy's theorem we then get that its integral is zero, giving immediately the above result.
+}
+
+\block{Residue Theorem}{
+  \begin{theorem}
+    Let $f$ be holomorphic inside and on a simple closed, positively oriented path $\gamma$ except at points $a_{1}, \dots, a_{n}$ inside $\gamma$. Then
+    \begin{align*}
+      \int_{\gamma} f(z)\, \mathrm{d}z = 2 \pi i \sum_{k=1}^{n} \res(f(x);a_{k}).
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  Around each $a_{k}$ we can split $f$ into its holomorphic and principal parts. Note that the principal part converges for $z \neq a_{k}$, so inductively we can get $F(z) = f(z) - \sum_{k=1}^{n} h_{k}(z)$ holomorphic on and inside $\gamma$ with removable singularities at each $a_{k}$. Cauchy's theorem then gives us that the integral of $f$ along $\gamma$ is equal to the sum of the integrals of each $h_{k}$ around each $a_{k}$, which evaluates to $2 \pi i \res(f, a_{k})$. \\
+
+
+  \begin{theorem}[The Argument principle]
+    \ With $f : U \to \mathbb{C}$ meromorphic on domain $U$, if $B(a,r) \subseteq U$ and $N$, $P$ respectively the number of zeros and number of poles in $B(a,r)$, both counted with multiplicity, and $f$ is holomorphic and non-zero on $\partial B(a,r)$, then
+    \begin{align*}
+      N - P = \frac{1}{2 \pi i} \int_{\gamma(a,r)} \frac{f'(z)}{f(z)} \, \mathrm{d}z.
+    \end{align*}
+    Moreover this is the winding number of the path $\Gamma = f \circ \gamma$ about the origin.
+  \end{theorem}
+  \hphantom{}
+
+  Suppose that $f$ has a zero of order $k$ at $z_{0} \in U$. Then $f(z) = (z-z_{0})^{k}g(z)$ for $g$ holomorphic close to $z_{0}$ and non-zero at $z_{0}$, so
+  \begin{align*}
+    \frac{f'(z)}{f(z)} &= \frac{k(z-z_{0})^{k-1}g(z)+(z-z_{0})^{k}g'(z)}{(z-z_{0})^{k}g(z)} \\
+    &= \frac{k}{z-z_{0}} + \frac{g'(z)}{g(z)}
+  \end{align*}
+  meaning $f'/f$ has a simple pole of residue $k$ at $z_{0}$. Suppose alternatively that $f$ has a pole of order $k$ at $z_{0} \in U$. Then $f(z) = (z-z_{0})^{-k}g(z)$ for $g$ holomorphic close to $z_{0}$ and non-zero at $z_{0}$. Similarly, we get $f'(z)/f(z) = -k/(z-z_{0}) + g'(z)/g(z)$, so residue $-k$. \\
+
+  Consequently by the residue theorem the integral is precisely as above. \\
+
+  \begin{theorem}
+  \ Suppose that $f, g$ are holomorphic on $U$. If $|f(z)| > |g(z)|$ for all $z$ on some disc, then $f$ and $f+g$ have the same change in argument around that disc, and hence the same number of zeros on the disc's interior (counted with multiplicities).
+  \end{theorem}
+  \hphantom{}
+
+  The proof of this follows from showing that $(f+g)/f$ has the same number of zeros as poles. To do this, we use the winding number formulation of the zero-pole difference integral, noting that by $|f| > |g|$ we are integrating $1/z$ over a path entirely contained in the right half-plane, which is $0$ by Cauchy's theorem. \\
+
+  \begin{theorem}
+  \ If $f : U \to \mathbb{C}$ is holomorphic and non-constant, then for any open set $V \subseteq U$, $f(V)$ is open.
+  \end{theorem}
+  \hphantom{}
+
+  If $f(z_{0}) = w_{0}$ for some $z_{0} \in V$, then $g(z) = f(z) - w_{0}$ has a zero at $z_{0}$, which is isolated. Take a disc around $z_{0}$, and $|g(z)| \ge \delta > 0$ on this disc provided it is close enough \textbf{Finish this - it's an application of rouche's thm. Can also do it via the inverse function theorem, writing $f(z) = (z(\hat{f}(z))^{1/k})^{k}$.}
+  }
+\end{columns}
+\end{document}

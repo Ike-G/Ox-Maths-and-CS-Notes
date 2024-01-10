@@ -1,0 +1,480 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=2300mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Metric Spaces}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.34}
+\block{Notions of Distance}{
+  \begin{definition}[Distance]
+    \ A distance on $X$ is a function $d : X \times X \to [0,\infty)$ such that
+    \begin{itemize}
+            \item \ $d(x, y) = 0$ if and only if $x = y = 0$.
+            \item \ $d(x,y) = d(y,x)$.
+            \item \ $d(x,y) + d(y,z) \ge d(x,z)$.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  A metric space is a set accompanied by a distance. The above definition of distance allows for various different approaches which may or may not conform to one's intuitions. Note that there is no additional structure required of $X$ at any point thus far, so we cannot define distances in terms of $x - y$ or something to that extent (neither may we want to). \\
+
+  For $X$ a vector space over a subfield of $\mathbb{C}$, we may use a norm $||\cdot|| : X \to \mathbb{R}$ to define $d(x,y) = ||x - y||$. The norm has the properties $||x+y|| \le ||x||+||y||$, $||\lambda x|| = |\lambda| ||x||$, and positive definiteness. Many norms are defined by inner products, to which the Cauchy-Schwarz inequality applies, although not all. \\
+
+  By introducing a notion of distance to a metric space, we can provide a general notion of the limit (and further consequences of continuity) already familiar to us in $\mathbb{R}$. \\
+
+  \innerblock{$l^{p}$-norms}{
+    A natural (although not obvious) set of norms which are regularly applied to vector spaces are the $p$-norms, defined as follows:
+    \begin{align*}
+      ||x||_{p} &= \left(\sum_{k=1}^{n} |x_{k}|^{p}\right)^{1/p} \\
+      ||x||_{\infty} &= \max_{k} |x_{k}|
+    \end{align*}
+    The $l^{2}$-norm is especially prevalent in $\mathbb{R}^{n}$, playing a defining role in Euclidean geometry. At the same time however, all $p$-norms are equivalent with finite dimensions, and thus it is often more useful to refer to the $l^{1}$ or $l^{\infty}$ norms when proving statements of continuity.
+  }
+  \hphantom{}
+
+  \begin{definition}[Limit]
+  \ With $(x_{n})_{n=1}^{\infty} \in X^{\mathbb{N}}$, $X$ a metric space under $d$, then $x_{n} \to x$ if for every $\varepsilon > 0$ there exists an $N$ such that for all $n \ge N$, $d(x_{n}, x) < \varepsilon$.
+  \end{definition}
+  \hphantom{}
+  \begin{definition}[Continuity]
+  \  With $(X, d_{X})$, $(Y, d_{Y})$ metric spaces, $f : X \to Y$ is continuous at $a \in X$ if for any $\varepsilon > 0$ there is $\delta > 0$ such that for all $x \in X$ with $d_{X}(a, x) < \delta$, $d_{Y}(f(a), f(x)) < \varepsilon$.
+  \end{definition}
+  \hphantom{}
+
+  An alternative definition is given by the following theorem:
+  \begin{theorem}
+  \ For some $f : X \to Y$ with both metric spaces, $f$ is continuous iff for all open $U \subseteq Y$, $f^{-1}(U)$ is open in $X$.
+  \end{theorem}
+  \hphantom{}
+
+  We can consider this as a definition chase to some extent. The main idea is that for any element in the image of $f$, and some region around it, we should find that we can get a ball around the element in the domain that is contained in the preimage. \\
+
+  Note that this makes the difficulty of continuity proofs contingent on the prevalence of open sets in the domain. With many open sets it becomes more difficult, while with very few proofs become more obvious.
+}
+
+\block{Balls}{
+  We define balls as expected: an open ball $B(x_{0}, r) = \{x \,|\, d(x, x_{0}) < r\}$, while a closed ball $\overline{B}(x_{0}, r) = \{x \,|\, d(x, x_{0}) \le r\}$. \\
+
+  \begin{definition}[Open and closed sets]
+  \ If $X$ is a metric space then $U \subseteq X$ is open if for all $x \in U$ there is $r > 0$ such that $B(x, r) \subseteq U$, and closed if $X \setminus U$ is open.
+  \end{definition}
+  \hphantom{}
+
+  We immediately get from this that unions of open sets are also open, as are finite intersections of them, and vice versa intersections of closed sets are closed, as are finite unions. Prove the former two statements and the latter follow by De Morgan's laws. \\
+
+  Note that openness depends on the superset, so even within the same metric space, a set $U$ may be open in $V$ but not $W$. For example, any set $U$ is open in $U$, because any open ball in $U$ must be a subset of $U$. Note that if a set $U$ is open in $X$, then it is open in any $Y$ such that $U \subseteq Y \subseteq X$. \\
+
+  \begin{definition}[Limit point]
+  \ For a metric space $X$, $Y \subseteq X$, $y_{0}$ is a limit point of $Y$ if for all $\varepsilon > 0$ we have $(B(y_{0}, \varepsilon) \cap Y) \setminus \{y_{0}\}$ nonempty.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}[Interior and closure]
+  \ The interior $\Int (A)$ is the union of all open subsets of $A$. The closure $\cl(A)$ of $A$ is the intersection of all closed sets containing $A$, and we denote the boundary $\partial A = \cl(A) \setminus \Int(A)$. If $A \subseteq X$ has $\cl(A) = X$ then it is dense in $X$.
+  \end{definition}
+  \hphantom{}
+
+  The above definitions give rise to the immediate following consequences for a more practical view:
+  \begin{lemma}
+    \ For $Y \subseteq X$:
+    \begin{itemize}
+      \item \ $y_{0} \in \cl(Y)$ iff for all $\varepsilon > 0$, $B(y_{0}, \varepsilon) \cap Y \neq \varnothing$.
+      \item \ $y_{0} \in \Int(Y)$ iff there exists $\varepsilon > 0$ s.t. $B(y_{0}, \varepsilon) \subseteq Y$.
+      \item \ $y_{0} \in \partial Y$ iff for all $\varepsilon > 0$, $B(y_{0}, \varepsilon) \cap Y \neq \varnothing$ and $B(y_{0}, \varepsilon) \cap Y^{c} \neq \varnothing$.
+    \end{itemize}
+  \end{lemma}
+  \hphantom{}
+
+  These should all follow fairly easily from the definitions. Commonly when dealing with set complements it is easier to work via contradiction. Note we can see from above that $\Int Y = \cl (Y^{c})^{c}$.\\
+
+  \innerblock{Subspaces}{
+    We can get a subspace of an arbitrary metric space $(X,d)$ simply by taking $Y \subseteq X$ and $\restr{d}{Y \times Y}$. \\
+
+    \begin{lemma}
+      \ For $U \subseteq Y \subseteq X$, all equipped with the same metric, $U$ is open in $Y$ if and only if there is $V$ open in $X$ such that $U = Y \cap V$. \\
+
+      Further, $U$ is closed if and only if there is $V$ closed in $X$ such that $U = Y \cap V$.
+    \end{lemma}
+  }
+}
+
+\block{Connected Spaces}{
+  \begin{definition}
+  \ $X$ is disconnected if there exist $A$ and $B$ open in $X$, non-empty, and disjoint such that $X = A \cup B$. $X$ is connected if it is not disconnected.
+  \end{definition}
+  \hphantom{}
+
+  \begin{lemma}
+  \ The following are equivalent:
+    \begin{itemize}
+      \item \ $X$ is connected.
+      \item \ The only subsets of $X$ that are open and closed are $\varnothing$, $X$.
+      \item \ Any continuous $f : X \to \mathbb{Z}$ is constant.
+    \end{itemize}
+  \end{lemma}
+  \hphantom{}
+
+  We should immediately get from definition that connectedness is equivalent to only having $X$ and $\varnothing$ both open and closed. Further, if the only subsets open and closed are $\varnothing$, $X$, then for some continuous $f : X \to \mathbb{N}$ and any $U \subseteq \mathbb{N}$, both $f^{-1}(U)$ and $X \ f^{-1}(U) = f^{-1}(\mathbb{N} \ U)$ are open, so thus one must be empty. This works not just for $\mathbb{N}$, but any space for which every subset is both open and closed. \\
+
+  As corollary, $[a,b]$ is connected by the third equivalent statement, using IVT. Alternatively, we may show it, and use it to demonstrate IVT, by showing that any connected subset of $\mathbb{R}$ must have the interval property. \\
+
+  \begin{lemma}
+  \ Let $X$ be a metric space, with $Y \subseteq X$. $Y$ is connected if and only if for any $U, V \subseteq X$ with $U \cap V \cap Y = \varnothing$ and $Y \subseteq U \cup V$, either $Y \subseteq U$ or $Y \subseteq V$.
+  \end{lemma}
+  \hphantom{}
+
+  Note that the open subsets of $Y$ are of the form $U \cap Y$ where $U$ is an open subset of $X$. Take any pair of such sets, and by the definition of connectedness we have that $Y$ is connected if and only if where $U \cap V \cap Y = \varnothing$ and $U$ and $V$ cover $Y$, at least one of $U \cap Y$ and $V \cap Y$ is empty. \\
+
+  From this we fairly immediately get the following lemma about the closure of a connected set:
+
+  \begin{lemma}
+    For $X$ a metric space, if $A \subseteq X$ is connected then if we have $A \subseteq B \subseteq \cl A$, $B$ is connected.
+  \end{lemma}
+  \hphantom{}
+
+  \begin{lemma}[Sunflower lemma]
+  \ For $A_{i}$ connected, if $\bigcap A_{i} \neq \varnothing$, then $A = \bigcup A_{i}$ is connected.
+  \end{lemma}
+  \hphantom{}
+
+  As proof, for any continuous $f : A \to \mathbb{N}$, there is $x_{0} \in \bigcap A_{i}$, and we have $\restr{f}{A_{i}}$ is constant on each $A_{i}$, which are equal to each other by $\restr{f}{A_{i}}(x_{0}) = \restr{f}{A_{j}}(x_{0})$. \\
+
+  We consequently get that if $\mathcal{U}_{x}$ is the union of all connected sets containing $x$, $\mathcal{U}_{x}$ is connected, and $\mathcal{U}_{x}$ and $\mathcal{U}_{y}$ are either disjoint or equal. \\
+
+
+
+  \innerblock{Path Connectedness}{
+  \begin{definition}
+  \ $X$ is path connected if for all $x, y \in X$ there is a continuous curve $\gamma : [a,b] \to X$ such that $\gamma$ is continuous, $\gamma(a) = x$, and $\gamma(b) = y$.
+  \end{definition}
+  \hphantom{}
+
+  Note that we use $a$ and $b$ here, but there is an easy continuous linear bijection from $[0,1]$ to $[a,b]$ so we can equivalently just take $\gamma : [0,1] \to X$. \\
+
+  \begin{lemma} \
+    If $X$ is path-connected, then $X$ is connected.
+  \end{lemma}
+  \hphantom{}
+
+  We can get this by contradiction. Assume $X$ is not connected so we have a continuous non-constant $f : X \to \mathbb{Z}$, and continuous $\gamma : [0,1] \to X$ for all endpoints, so continuous non-constant $f \circ \gamma : [0,1] \to \mathbb{Z}$ despite $[0,1]$ being clearly connected. Note however that the converse is not true. We can get connected subspaces which are not path-connected. \\
+
+  Take the set in $\mathbb{R}^{2}$ given by
+  \begin{align*}
+    \{(0,y) \,|\, |y| \le 1\} \cup \{(x, \sin(1/x)) \,|\, x \in (0,1]\}
+  \end{align*}
+  we have that this is connected, as it is the closure of the connected set $\{(x, \sin(1/x)) \,|\, x \in (0,1]\}$. Assume that this is path-connected from $(0,0)$ to $(1,\sin(1))$ via $\gamma$. We must have some supremum $t$ such that for all $t' > t$, $\gamma(t') \notin \{0\} \times [-1,1]$, yet we can find a jump at this point violating continuity.
+  }
+ }
+
+  \column{0.33}
+  \block{Isometries and homeomorphisms}{
+    \begin{definition}[Isometry]
+      \ For $f : X \to Y$, $f$ is an isometry if for all $x_{1}, x_{2} \in X$,
+      \[d_{Y}(f(x_{1}), f(x_{2})) = d_{X}(x_{1}, x_{2}).\]
+    \end{definition}
+    \hphantom{}
+    \coloredbox{NOTE: There are several competing definitions of an isometry. This is the definition currently accepted by Professor Belyaev.}
+    \hphantom{}
+
+    We should immediately get that any isometry must be injective, as otherwise with $f(x_{1}) = f(x_{2})$, $x_{1} \neq x_{2}$, $d_{Y}(f(x_{1}), f(x_{2})) = 0$. We do not automatically get surjectivity. \\
+
+    \begin{definition}[Homeomorphism]
+    \ $f : X \to Y$ between metric spaces is a homeomorphism if both $f$ and $f^{-1}$ are continuous.
+    \end{definition}
+    \hphantom{}
+
+    The immediate consequence of this by our alternate definition of continuity is that for any $U \subseteq Y$, it is open iff $f^{-1}(U)$ is open. In $\mathbb{R}$ we generally have this taken for granted with a continuous $f$, however if we take a non-convex domain we can have a continuous bijection with a discontinuous inverse. \\
+
+    \begin{definition}[Equivalence]
+      For a set $X$ with metrics $d$ and $d'$, $d$ and $d'$ are equivalent where the identity map $\iota : (X,d) \to (X,d')$ is a homeomorphism.
+    \end{definition}
+    \hphantom{}
+
+    If any two metrics are equivalent, then continuity is independent of the metric used. Note that as the identity map is trivially bijective, this definition just says two metrics are equivalent where for any $U \subseteq X$, $U \leq (X,d)$ is open iff $U \le (X,d')$ is open. \\
+
+    Taking the $\varepsilon$-$\delta$ definition of continuity we get the alternate equivalence that $d$ and $d'$ are equivalent iff every open ball $B(x,\varepsilon)$ in the $d$-metric contains an open ball $B'(x,\varepsilon')$ in the $d'$-metric, and vice versa.
+  }
+  \block{Completeness}{
+    \begin{definition}[Cauchy]
+    \ For $X$ a metric space, $(x_{n})$ is a sequence in $X$. $(x_{n})$ is Cauchy if for all $\varepsilon > 0$ there is $N \ge 0$ such that $n, m \ge N$ implies $d(x_{n}, x_{m}) < \varepsilon$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Completeness]
+    \ $(X,d)$ is complete if any Cauchy sequence in $X$ converges.
+    \end{definition}
+    \hphantom{}
+
+    We should immediately get the consequences that any convergent sequence is Cauchy, and that any Cauchy sequence is bounded. For an example of an incomplete space, take a sequence in $\mathbb{Q}$ converging to $\pi$. This must be Cauchy, but as $\pi \notin \mathbb{Q}$, the sequence does not converge in this space. \\
+
+    \begin{lemma}
+    \ If $(x_{n})$ is Cauchy and there is a convergent subsequence of $(x_{n})$, then $(x_{n})$ converges.
+    \end{lemma}
+    \hphantom{}
+
+    If we have $f : X \to Y$ an isometry, then $Y$ complete implies that $X$ is complete. \\
+
+    \begin{lemma}
+    \ For a complete set $X$ with $Y \leq X$, $Y$ is complete iff $Y$ is closed.
+    \end{lemma}
+    \hphantom{}
+
+    If $Y$ is not complete then there is a cauchy $(y_{n}) \in Y$ which converges in $X$, but does not converge in $Y$, so $Y$ does not contain all of its limit points and thus it is not closed. If $Y$ is complete then every cauchy sequence $(y_{n})$ in $Y$ converges to a point in $Y$, so $Y$ is closed. \\
+
+    To prove completeness, generally first find a plausible candidate for a limit of an arbitrary sequence. Show that this limit is in the correct space, and then that the sequence actually converges to this limit. \\
+
+    \begin{theorem}
+    \ With $B(X)$ the set of bounded functions $f : X \to \mathbb{R}$, under the metric generated by the norm $||f||_{\infty} = \sup_{x \in X} |f(x)|$, $B(X)$ is complete.
+    \end{theorem}
+    \hphantom{}
+
+    If $(f_{n})$ is Cauchy then for each $x \in X$, $(f_{n}(x))$ is Cauchy in $\mathbb{R}$ so converges. Denoting the limit of $(f_{n}(x))$ as $f(x)$, the candidate limit of $(f_{n})$ is $f$, and we just have to show that $f$ is bounded and $||f_{n} - f ||_{\infty} \to 0$ as $n \to \infty$. \\
+
+    \begin{theorem}
+    \ With $X$ a metric, $C_{B}(X) \subseteq B(X)$ the set of bounded continuous functions $f : X \to X$, then $C_{B}(X)$ is complete.
+  \end{theorem}
+  \hphantom{}
+
+  This follows as the uniform limit of any continuous bounded $(f_{n})$ is continuous. \\
+
+  \innerblock{Contraction Mapping}{
+    \begin{definition}
+      \ For $(X,d_{X})$, $(Y, d_{Y})$ metric spaces, $f : X \to Y$, $f$ is Lipschitz if there exists $K \ge 0$ such that for all $x, y \in X$, $d_{Y}(f(x),f(y)) \le Kd_{X}(x,y)$. \\
+
+      Further, $f$ is a contraction if the above holds with $K < 1$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ With $X$ a nonempty complete metric space, with $f : X \to X$ a contraction. Then $f$ has a unique fixed point.
+  \end{theorem}
+    \hphantom{}
+
+    To prove this, just use the sequence $x_{n+1} = f(x_{n})$. For $x_{n-1}$, $x_{n}$, $d(x_{n+1},x_{n}) \le Kd(x_{n},x_{n-1})$, so $d(x_{n+1},x_{n}) \to 0$ as $n \to \infty$, from which we get $(x_{n})$ cauchy and thus it converges. That this limit is a fixed point follows by continuity. \\
+
+    As an example, say we need to solve for a continuous function $f : [0,1] \to \mathbb{R}$:
+    \begin{align*}
+      f(x) = x + \frac{1}{2}\int_{0}^{1} f(y) \sin(xy) \,\mathrm{d}y.
+    \end{align*}
+    We then take with $F : C[0,1] \to C[0,1]$
+    \begin{align*}
+      F(f)(x) = x + \frac{1}{2} \int_{0}^{1} f(y) \sin(xy) \,\mathrm{d}y.
+    \end{align*}
+    We can shortly see that $F$ is a contraction with $K = \frac{1}{2}$, so thus there is a function with $F(f) = f$. \\
+
+    In this case we rely a bit on the $\frac{1}{2}$ term, however in general we can often manipulate functions to become contractions while preserving the solution to the original function as the fixed point. (Example given: $f(x) = 2x$ has the same fixed point solution as $f(x) = \frac{2x}{5}$)
+  }
+}
+  \block{Examples}{
+    \innerblock{Distance metrics}{
+      For $f : (-1, 1) \to \mathbb{R}$ bounded and differentiable, take $\displaystyle ||f|| = \sup_{x \in (-1, 1)} |f(x)|$, or $d(f,g) = \sup | f - g | + \sup | f' - g' |$. \\
+
+      The $p$-adic metric is defined for $\mathbb{Z}$ such that $d(x,y) = \frac{1}{\max\{p^{m} \,:\, m \in \mathbb{N},\ p^{m} | x-y\}}$. \\
+
+      For any set we can always define the discrete metric as $d(x,y) = \mathds{1}(x \neq y)$. \\
+
+      For $\mathbb{R}^{n}$ (including $n = \infty$), $d(x,y) = \sum_{k=1}^{n} \frac{1}{2^{n}}\frac{|x_{k}-y_{k}|}{1+|x_{k}-y_{k}|}$. \\
+
+      For $\mathbb{R}^{2}$ take the norm $|x|+|y|+c|x-y|$ for some $c \ge 0$. \\
+
+      $|f(x)-f(y)|$ for some $f : \mathbb{R} \to (0,1)$ on $\mathbb{R}$, for which $\mathbb{R}$ is incomplete.
+
+%      \begin{array}{l l c}
+%        \text{Set} & \text{Metric} & \text{Notes} \\
+%        \{f : (-1,1) \to \mathbb{R} \text{bounded and differentiable}\} & \sup |f-g| & \text{Norm properties} \\
+%          & \sup | f - g| + \sup | f' - g'| & \\
+%          \mathbb{Z} & \frac{1}{\max\{p^{m} \,:\, m \in \mathbb{N},\ p^{m} | |x-y|\}} & \text{Labelled $p$-adic.} \\
+%          \text{Any}\,X & \begin{cases}
+%                        0 & \textrm{x \neq y} \\
+%                        1 & \textrm{otherwise}
+%                      \end{cases} & \text{Labelled the ``discrete metric''}.
+%      \end{array}
+      }
+  }
+  \column{0.33}
+  \block{Compactness}{
+    \begin{definition}
+    \ $(X,d)$ is sequentially compact if every sequence has a convergent subsequence.
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}
+    \ A sequentially compact subspace of a metric space is closed and bounded.
+    \end{lemma}
+    \hphantom{}
+
+    Prove both of these statements via contradiction. If $Y$ is sequentially compact but not closed, then we can get a sequence which converges outside of $Y$, preventing any subsequence from converging in $Y$. If $Y$ is unbounded then fix a $y_{0}$ and construct $(y_{n})$ such that $d(y_{0}, y_{n}) \ge n$. Then take a convergent subsequence and note the contradiction. \\
+
+    \begin{lemma}
+    \ A closed subset of a sequentially compact metric space is sequentially compact.
+    \end{lemma}
+    \hphantom{}
+
+    Take a sequence of this subset, and for any convergent subsequence it will converge within the subset, so we have sequential compactness again. \\
+
+    \begin{lemma}
+    \ Let $X$ be a metric space. Suppose that $K$ is a sequentially compact subset of $X$, and that we have $U$ open with $K \subseteq U \subseteq X$. Then there is some $\varepsilon > 0$ such that $\bigcup_{z \in K} B(z,\varepsilon) \subseteq U$.
+    \end{lemma}
+    \hphantom{}
+
+    Suppose that this is false for any $\varepsilon = 1/n$. Then for some $y_{n} \in K$, there is some $x_{n}$ with $d(x_{n},y_{n}) < 1/n$ but $x_{n} \notin U$. By sequential compactness there is a subsequence of $(y_{n})$ which converges, so then $(x_{n})$ also has a subsequence converging to the same element of $K$, and by openness thus $(x_{n})$ must eventually enter $U$. \\
+
+    \begin{definition}
+    \ A metric space is said to be totally bounded if for any $\varepsilon > 0$ it may be covered by finitely many open balls of radius $\varepsilon$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ $X$ is sequentially compact if and only if $X$ is complete and totally bounded.
+    \end{theorem}
+    \hphantom{}
+
+    That $X$ is complete if sequentially compact is fairly straightforward. Assume that $X$ is not totally bounded, so there is an $\varepsilon > 0$ such that no finite cover exists. We can get a sequence $(x_{n})$ of elements all separated from one another by at least $\varepsilon$, and yet we have a convergent subsequence, which is a contradiction. \\
+
+    The reverse direction is a kind of diagonal argument, taking a sequence of sequences each residing within balls of decreasing radius, and showing that we can get a cauchy subsequence. \\
+
+    \begin{definition}
+    \ Let $X$ be a sequentially compact space $\mathcal{F} \subseteq C(X)$. $\mathcal{F}$ is uniformly bounded if there is $M$ such that for all $f \in \mathcal{F}$, $x \in X$, $|f(x)| < M$. \\
+
+      $\mathcal{F}$ is equicontinuous if for all $\varepsilon > 0$ there is $\delta > 0$ such that for all $f \in \mathcal{F}$, $x, y \in X$ such that $d(x,y) < \delta$ we have $|f(x)-f(y)| < \varepsilon$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}[Arzela-Ascoli]
+    \ If, with $X$ sequentially compact, $\mathcal{F} \subseteq C(X)$ is uniformly bounded and equicontinuous, any sequence of elements of $\mathcal{F}$ has a subsequence which converges in $C(X)$. In particular, if $\mathcal{F}$ is closed in $C(X)$ then $\mathcal{F}$ is sequentially compact.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{definition}
+    \ $X$ is compact if for every open cover $\{\mathcal{U}_{i}\}_{i \in I}$ with $\mathcal{U}_{i}$ open, $X = \bigcup_{i \in I} \mathcal{U}_{i}$, there is a finite subcover.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ If $X$ is compact, then $X$ is sequentially compact.
+    \end{theorem}
+    \hphantom{}
+
+    If $X$ is compact and we have a nested sequence $S_{1} \supseteq S_{2} \supseteq \cdots$ of nonempty closed subsets of $X$, then if the intersection is empty we have $\{S_{i}^{c}\}_{i}$ an open cover of $X$, but any prefix of the sequence will not include elements, contradicting compactness. Take $S_{n} = \{x_{m} \,|\, m \ge n\}$ and we can get a convergent subsequence. \\
+
+    The converse is also true but not covered here. \\
+
+    \begin{theorem}[Heine-Borel]
+      $[a,b] \subseteq \mathbb{R}$ is compact.
+    \end{theorem}
+    \hphantom{}
+
+    Take any open cover of $[a,b]$. Then take $S$ the set of $x \in [a,b]$ such that $[a,x]$ has a finite subcover. Take $\sup S$, and if $\sup S < b$ then we arrive at a contradiction. \\
+
+    \begin{definition}[*Pseudocompactness]
+      A space $X$ is pseudocompact if every $f : X \to \mathbb{R}$ continuous is bounded.
+    \end{definition}
+  }
+
+\end{columns}
+
+\end{document}

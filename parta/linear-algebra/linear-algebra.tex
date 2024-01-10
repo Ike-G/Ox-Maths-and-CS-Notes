@@ -1,0 +1,440 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=2000mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\im}{im}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  %\vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Linear Algebra}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.33}
+  \block{Polynomials and Rings}{
+    We often consider polynomials in matrices or linear maps. We write
+    \begin{align*}
+      \mathbb{F}[x] = \left\{\sum_{k=0}^{n} a_{k}x^{k} \,|\, a_{i} \in \mathbb{F},\, n \in \mathbb{N}\right\}
+    \end{align*}
+    as the set of polynomials over $\mathbb{F}$. \\
+
+    \begin{definition}[Field]
+      \ A field $(F, +, \times)$ satisfies
+      \begin{itemize}
+              \item \ $(F, +)$ is an abelian group.
+              \item \ $(F^{*}, \times)$ is an abelian group.
+              \item \ $a(b+c) = ab+ac$ and $(a+b)c = ac + bc$.
+      \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Ring]
+      \ A ring $(R,\,+,\,\times)$ satisfies
+      \begin{itemize}
+        \item \ $(R,\, +)$ is an Abelian group.
+        \item \ $\times$ is associative.
+        \item \ $a(b+c) = ab + ac$ and $(a+b)c = ac + bc$.
+      \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    Any field is a commutative ring. A particular class of rings of interest is the integral domains, which are the nonzero commutative rings for which $ab = 0$ implies that $a = 0$ or $b = 0$. We generally consider mainly commutative rings that have an identity element (and therefore only lack multiplicative inverses). \\
+
+    We say that a field is algebraically closed if every non-constant $p \in \mathbb{F}[x]$ has a root in $\mathbb{F}$. We can always embed a field $\mathbb{F}$ into a minimal algebraically closed field $\overline{\mathbb{F}}$, for example we can embed $\mathbb{R}$ in $\mathbb{C}$.\\
+
+    \begin{definition}
+    \ A map $\phi : R \to S$ between two rings is a ring homomorphism if for all $r, r' \in R$
+      \begin{align*}
+        & \phi(r+r') = \phi(r) + \phi(r') \\
+        \text{and }\, & \phi(rr') = \phi(r)\phi(r').
+      \end{align*}
+      If this is bijective we call it a ring isomorphism.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}
+    \ A non-empty subset $I$ of a ring $R$ is an ideal if for all $s, t \in I$ and $r \in R$ we have $s - t \in I$ and $sr$, $rs \in I$.
+  \end{definition}
+  \hphantom{}
+
+    We write the above fact as $I \trianglelefteq R$, and as consequence $R / I = \{r + I \,|\, r \in R\}$ is a commutative ring, which just follows by showing that multiplication and addition are well defined and satisfy the ring properties. From following basic pattern matching over from group theory we then get the following isomorphism theorem:\\
+
+   \begin{theorem}[Isomorphism theorem]
+   \ For any ring homomorphism $\phi : R \to S$ we have
+     \begin{align*}
+       R / \ker \phi &\cong \im \phi \\
+       \im \phi &\le S \\
+       \ker \phi &\trianglelefteq R
+     \end{align*}
+     via $r + \ker \phi \mapsto \phi(r)$.
+   \end{theorem}
+   \hphantom{}
+
+   We write $\langle a \rangle$ as the principal ideal in $R$ containing $a$. That is, it is the set of all $ar$ or $ra$ for $r \in \mathbb{R}$. \\
+
+   \innerblock{Polynomials}{
+     Any field $\mathbb{F}$ induces the commutative ring $\mathbb{F}[x]$, which is the set of polynomials with coefficients in $\mathbb{F}$. Potentially surprisingly, it turns out that we can deal with most elements of $\mathbb{F}[x]$ in very similar ways to $\mathbb{Z}$. Writing $f(x) \,|\, g(x)$ where $\frac{g(x)}{f(x)} \in \mathbb{F}[x]$, we get the division algorithm: \\
+
+     \begin{theorem}
+       \ For any $f, g \in \mathbb{F}[x]$ with $g(x) \neq 0$, there exist $q, r \in \mathbb{F}$ with $\deg r < \deg g$ such that
+       \begin{align*}
+         f(x) = q(x)g(x) + r(x)
+       \end{align*}
+     \end{theorem}
+     \hphantom{}
+
+     We can prove this by induction on the degree of $f(x)$ until $\deg f < \deg g$. From this statement we then quickly get Bezout's lemma. \\
+
+     For an arbitrary matrix $A$, we write $m_{A}(x)$ as the least degree polynomial with $m_{A}(A) = 0$. This polynomial must exist, as we must eventually find that a linearly dependent $A^{n}$ is introduced to the sequence $I$, $A$, $A^{2}$, $\dots$, meaning by definition we can have $m_{A}(A) = 0$. Indeed this also shows that the smallest degree occurs for the first $A^{n}$ linearly dependent on $\{I, \cdots, A^{n-1}\}$. Note that for any polynomial $f$, $f(P^{-1}AP) = P^{-1}f(A)P$, so $m_{P^{-1}AP}(A) = 0$. Further as each minimum polynomial is monic (has the same highest coefficient), thus the minimum polynomial of $A$ is unique so $m_{P^{-1}AP} = m_{A}$. \\
+
+     \begin{theorem}
+     \ Where for $A$, a polynomial $f$ is annihilating if $f(A) = 0$. If $f$ is annihilating, then $m_{A}(x)\,|\,f(x)$.
+     \end{theorem}
+     \hphantom{}
+
+     $f(A) = q(A)m_{A}(A)+r(A)$ with $\deg r < \deg m_{A}$, so $r(A) = 0$, leaving the only possibility that $r(x) = 0$. An alternative way of looking at this is to say that with fixed $A$, the map $f(x) \mapsto f(A)$ is a ring homomorphism with kernel the set of annihilating polynomials -- this set is an ideal, and $\mathbb{F}[x]$ is a principal ideal domain, so thus each annihilating polynomial is generated by a single one, $m_{A}$. \\
+
+     For $v$ an eigenvector of $A$, note that we get $f(A)v = \sum_{k=0}^{n}a_{k}\lambda^{k}v = f(\lambda)v$. Thus every root of $\chi_{A}(x)$ (each eigenvalue) must be a root of $m_{A}(x)$. Further, for $\lambda$ a root of $m_{A}(x)$, $m_{A}(x) = (x-\lambda)g(x)$, and $g(A) \neq 0$ so there is $v$ such that $0 = m_{A}(A)v = (A-\lambda I) g(A)v$ but $g(A)v \neq 0$, so $\lambda$ is an eigenvalue and thus a root of $\chi_{A}(x)$. \\
+
+     \begin{theorem}[Cayley-Hamilton]
+     \ If $T : V \to V$ is a linear transformation and $V$ is a finite dimensional vector space, then $\chi_{T}(T) = 0$. In particular, $m_{T}(x) \,|\, \chi_{T}(x)$.
+     \end{theorem}
+     \hphantom{}
+
+     As proof just take the upper triangular matrix $A$ representing $T$ with each eigenvalue occurring as many times in the diagonal as they occur in $\chi_{T}$ (if $\mathbb{F}$ is not closed just use $\overline{\mathbb{F}}$, and we will still have conjugacy), and use $\prod_{i=1}^{n} (A-\lambda_{i}I) = 0$ for such a matrix.
+   }
+ }
+ \column{0.33}
+ \block{Quotient Spaces}{
+   \begin{definition}[Coset]
+   \ A coset of a subspace $U$ of a vector space $V$ is a set $v + U = \{v+u \,|\, u \in U\}$ for some $v \in V$.
+   \end{definition}
+   \hphantom{}
+
+   \begin{definition}[Quotient space]
+   \ The quotient space $V / U$ is the set of cosets of $U$ in $V$.
+   \end{definition}
+   \hphantom{}
+
+   We carry over from group theory the key fact that $v_{1} + U = v_{2} + U$ iff $v_{1} - v_{2} \in U$. We should also get relatively immediately that $V / U$ is a vector space with operations defined as expected. Further, we can also get that if $\{u_{1}, \cdots, u_{k}\}$ is a basis for $U$, extending this to a basis $\{u_{1}, \cdots, u_{k}, v_{k+1}, \cdots, v_{n}\}$, $\{v_{k+1}, \cdots, v_{n}\} / U$ is a basis for $V / U$. We can then also see conversely that if $B_{1}$ is a basis for $U$ and $B_{2} / U$ a basis for $V / U$, then $B_{1} \cup B_{2}$ is a basis for $V$. \\
+
+   \begin{theorem}[Isomorphism theorem for vector spaces]
+   \ Let $T : V \to W$ be linear, then $V / \ker T \cong \im T$ via $v + \ker T \mapsto \im T$.
+   \end{theorem}
+   \hphantom{}
+
+   This also serves as a proof for rank-nullity where $V$ and $\im T$ are finite. \\
+
+   \begin{theorem}
+   \ A linear map $T : V \to V$ induces a linear map $\overline{T} : V / U \to V / U$ by $v + U \mapsto Tv + U$ iff $T$ is $U$-invariant.
+   \end{theorem}
+   \hphantom{}
+
+   This is clear from the definition, and we get from this that where we have a transformation $U$-invariant for some $U$, extending a basis for $U$ to a basis for $V$ gives a matrix of the form
+   \begin{align*}
+     \begin{bmatrix}
+       A & * \\
+       \bm{0} & B
+     \end{bmatrix}
+   \end{align*}
+   where $A$ is a representation of $\restr{T}{U}$ and $B$ is a representation of $\overline{T}$. \\
+
+   \begin{theorem}[Triangular form]
+   \ Let $T : V \to V$. Suppose $\chi_{T}(x)$ is the product of linear (possibly repeated) factors. Then there is a basis for which $T$ is upper triangular.
+   \end{theorem}
+   \hphantom{}
+
+   Note that this holds immediately in any algebraically closed field, and so we can use this for any linear transformation $T$ by passing from $\mathbb{F}$ to its algebraic closure $\overline{\mathbb{F}}$. \\
+
+   To prove this, note that $T$ is $E_{\lambda}$ invariant for any eigenvalue $\lambda$. From here we just show that by taking each $(x-\lambda)$ out of $\chi_{T}$ one by one we can form a matrix where each eigenvalue occurs in equal number to its geometric multiplicity.
+ }
+
+ \block{Decomposition}{
+   In order to find more informative ways to conjugate matrices, we consider how, where $T : V \to V$ for $V$ the direct sum of $T$-invariant subspaces $W_{i} = \langle \mathcal{B}_{i} \rangle$, we can get a matrix for $T$:
+   \begin{align*}
+     \phantom{}_{\mathcal{B}}T_{\mathcal{B}} = \begin{bmatrix}
+                             A_{1} & \cdots & 0 \\
+                             \vdots & \ddots & \vdots \\
+                             0 & \cdots & A_{r}
+                           \end{bmatrix}
+   \end{align*}
+   where $A_{i} = \mathop{\vphantom{\big|}}_{\mathcal{B}_{i}}\!\!\left[\restr{T}{W_{i}}\right]_{\mathcal{B}_{i}}$. \\
+
+   \begin{lemma}
+     Assume $f(x) = a(x)b(x)$ with $\gcd(a,b) = 1$ and $f(T) = 0$. Then
+     \begin{align*}
+       V = \ker(a(T)) \oplus \ker(b(T))
+     \end{align*}
+     is a $T$-invariant decomposition. Furthermore, if $f = m_{T}$ and $a$ and $b$ are monic, then $a$ and $b$ are the minimal polynomials of $T$ restricted to $\ker(a(T))$ and $\ker(b(T))$ respectively.
+   \end{lemma}
+   \hphantom{}
+
+   We have $p, q \in \mathbb{F}[x]$ such that $ap+bq = 1$, so $a(T)p(T) + b(T)q(T)$ is the identity. Thus we immediately decompose $V$ into $\im (a(T)p(T))$ and $\im (b(T)q(T))$, and see that $\im (a(T)p(T)) \subseteq \ker b(T)$ and $\im (b(T)q(T)) \subseteq \ker a(T)$, and additionally that if $a(T)v = b(T)v = 0$ then $v = 0$ so it is a direct sum (giving that the images are actually equal to the kernels). It is $T$-invariant as $T(a(T)p(T)v) = a(T)p(T)(Tv)$ and $T(b(T)q(T)v) = b(T)q(T)(Tv)$. The last claim follows immediately with similar approaches as to the others. \\
+
+   \begin{theorem}[Primary Decomposition]
+   \ Let $m_{T}$ be the minimal polynomial and write it in the form
+     \begin{align*}
+       m_{T}(x) = \prod_{i=1}^{r} f_{i}^{q_{i}}(x)
+     \end{align*}
+     where $f_{i}$ are distinct monic irreducible polynomials. With $W_{i} = \ker(f_{i}^{q_{i}}(T))$Then
+     \begin{align*}
+       V &= \bigoplus_{i=1}^{r} W_{i} \\
+       T[W_{i}] &\subseteq W_{i} \\
+       m_{\restr{T}{W_{i}}} &= f_{i}^{q_{i}}.
+     \end{align*}
+   \end{theorem}
+
+   These all follow immediately from the above lemma. Consequently we have that every $T$ has a primary decomposition into $r$ matrices, and where $\mathbb{F}$ is closed $r$ is the number of eigenvalues. We then desire to move forward by finding out the specific form of the matrices $\phantom{}_{\mathcal{B}_{i}}[\restr{T}{W_{i}}]_{\mathcal{B}_{i}}$. In fact, we get from later results that for closed $\mathbb{F}$, these are all of the form $J_{i}(\lambda_{j}) = \lambda_{j} I_{i} + J_{i}$. \\
+
+   \begin{theorem}[Nilpotency]
+     \ If $T$ is nilpotent, so there is some $n > 0$ such that $T^{n} = 0$, then $m_{T}(x) = x^{m}$ for some $m \le n$, and there is a basis $\mathcal{B}$ such that
+     \begin{align*}
+       \phantom{}_{\mathcal{B}}[T]_{\mathcal{B}} &= \begin{bmatrix}
+                                 0 & * &   & 0 \\
+                                   & \ddots & \ddots &   \\
+                                   &   & \ddots & * \\
+                                 0 &   &   & 0
+                               \end{bmatrix} \qquad \text{with each $* \in \{0,1\}$}
+     \end{align*}
+   \end{theorem}
+   \hphantom{}
+
+   The proof of this theorem follows from observing the strictly increasing (for $\{0, \dots, m\}$) sequence $\ker(T^{k})$. Take $\mathcal{B}_{i}$ such that $\mathcal{B}_{i} / \ker(T^{i-1})$ is a basis for $\ker(T^{i}) / \ker(T^{i-1})$, and collectively for $i \in {1,\dots,m}$ this forms a basis for $V$. Additionally, note that $T(\mathcal{B}_{i+1}) / \ker(T^{i-1})$ is linearly independent in $\ker(T^{i}) / \ker(T^{i-1})$, so $|\mathcal{B}_{i+1}| \le |\mathcal{B}_{i}|$. \\
+
+   To form a basis we begin with an arbitrary $\mathcal{B}_{m}$, then noting the above independence observation take $T(\mathcal{B}_{m})$ and extend it to form $\mathcal{B}_{m-1} = \mathcal{E}_{m-1} \cup T(\mathcal{B}_{m})$. We then note that we can reorder the basis as
+   \begin{align*}
+     \mathcal{B} &= \bigcup_{i=1}^{m} \mathcal{B}_{i} \\
+     &= \bigcup_{i=1}^{m} \bigcup_{j=i}^{m} T^{j-i}(\mathcal{E}_{j}) \\
+     &= \bigcup_{i=1}^{m} \left(\bigcup_{v \in \mathcal{E}_{i}} \{T^{k}v \,|\, k \in \{0, \dots, i-1\}\}\right)
+   \end{align*}
+   From here we can see both that each $\{T^{k}v \,|\, k \in \{0, \cdots, i-1\}\}$ is $T$-invariant, and that the matrix representing $T$ restricted to each set is a Jordan block $J_{i}$ of size $i \times i$ ($1$s above the diagonal). \\
+
+   The most immediate consequence of this theorem is that if a transformation has $m_{T}(x) = (x-\lambda)^{m}$, $T-\lambda I$ is nilpotent, so there is a basis such that it is a block diagonal matrix with blocks $J_{i}(\lambda) = \lambda I + J_{i}$. Given the primary decomposition theorem, we thus get that (in a complete field) every matrix is conjugate to a block diagonal matrix where each block is itself a block diagonal of Jordan blocks. \\
+
+   As $\mathcal{B}_{1} = \bigcup_{i=0}^{m-1} T^{i}(\mathcal{E}_{i+1})$ is a basis for $\ker T$ and $|\mathcal{B}_{1}| = \sum_{i=1}^{m} |\mathcal{E}_{i}|$, which is the number of Jordan blocks, thus the number of Jordan blocks corresponding to any eigenvalue is the dimension of its eigenspace. Additionally, we get obvious results such as that the sum of Jordan block dimensions for an eigenvalue is its geometric multiplicity, and the largest dimension of a Jordan block is its multiplicity in the minimal polynomial.
+   }
+   \column{0.33}
+   \block{Dual Spaces}{
+     \begin{definition}
+     \ For a vector space $V$ over $\mathbb{F}$, $V' = \Hom(V,\mathbb{F})$ (the space of linear maps from $V$ to $\mathbb{F}$) is its dual, and its elements are called linear functionals.
+     \end{definition}
+     \hphantom{}
+
+     \begin{theorem}
+     \ With $\{e_{1}, \dots, e_{n}\}$ a basis for $V$, a finite-dimensional vector space, define the dual of $e_{i}'$ of $e_{i}$ by
+       \begin{align*}
+         e'_{i} = \begin{cases}
+                    1 & \text{if $i = j$} \\
+                    0 & \text{otherwise}
+                  \end{cases}.
+       \end{align*}
+       Then $\{e'_{1}, \cdots, e'_{n}\}$ is a basis for $V'$. In particular, $e_{i} \mapsto e'_{i}$ induces an isomorphism between $V$ and $V'$.
+     \end{theorem}
+     \hphantom{}
+
+     To prove this just construct the isomorphism $\varphi(\sum a_{i}e_{i})(\sum b_{j} e_{j}) = \sum a_{i} b_{i}$. \\
+
+     \begin{theorem}
+     \ Let $V$ be a finite dimensional vector space. Then, $V \to V'' $ defined by $v \mapsto (f \mapsto f(v))$ is a natural (independent of basis) linear isomorphism.
+     \end{theorem}
+     \hphantom{}
+
+     This is a definition chase in almost all regards. \\
+
+     \begin{definition}[Annihilators]
+     \ For $U \subseteq V$ a subspace of $V$, the annihilator of $U$ is
+       \begin{align*}
+         U^{0} = \{ f \in V' \,|\, f[U] = \{0\} \}
+       \end{align*}
+     \end{definition}
+     \hphantom{}
+
+     We can very quickly get that $U^{0}$ is a subspace of $V'$, as for $f, g \in U^{0}$, $u \in U$, $\lambda \in \mathbb{F}$, $(f+\lambda g)(u) = 0$, and $0 \in U^{0}$. \\
+
+     \begin{theorem}
+       \ For $V$ finite dimensional, $U \subseteq V$ a subspace,
+       \begin{align*}
+         \dim U^{0} = \dim V - \dim U
+       \end{align*}
+     \end{theorem}
+     \hphantom{}
+
+     This follows by extending a basis for $U$ to a basis for $V$, then taking the dual basis. If $\langle e_{1}, \dots, e_{m} \rangle = U$, $\langle e_{1}, \dots, e_{n} \rangle = V$, then we have $e_{j}' \in U^{0}$ for all $j \in \{m+1, \dots, n\}$. Conversely if $f \in U^{0}$, $f = \sum_{i=1}^{n} a_{i} e_{i}'$, and $a_{i} = 0$ necessarily for $i \in \{1, \dots, m\}$ so we get $U^{0} = \langle e'_{m+1}, \dots, e'_{n} \rangle$.
+     }
+
+     \block{Inner Products}{
+       We have from prelims the definition of bilinear forms: an operator $F : V \times V \to \mathbb{F}$ linear in both arguments. Previously we had the notions of symmetric and positive definite bilinear forms, as well as how they relate to orthogonality and the spectral theorem. Introduced here we firstly have the notion of a \emph{non-degenerate} bilinear form, which is one where $F(v,w) = 0$ for all $v \in V$ implies that $w = 0$. \\
+
+       Also seen briefly in prelims linear algebra is the notion of sesquilinear forms, for vector spaces $V$ over $\mathbb{C}$ where we have additive linearity, but $F(\overline{\lambda} v, w) = \lambda F(v,w) = F(v,\lambda w)$. We say that a sesquilinear form is conjugate symmetric if for all $v, w \in V$, $F(v,w) = \overline{F(w,v)}$. We say that a conjugate symmetric form $F$ is positive definite if $F(v,v) > 0$ (note $F(v,v) = \overline{F(v,v)}$ so $F(v,v) \in \mathbb{R}$). \\
+
+       To recall, a set is orthonormal if $\langle w_{i}, w_{j} \rangle = 0$ for each $i \neq j$ (mutual orthogonality), and $\langle w_{i}, w_{i} \rangle = 1$ for each $i$. This straightforwardly gives that $\{w_{1}, \dots, w_{n}\}$ is linearly independent if orthonormal. \\
+
+       For any basis $\{v_{1}, \dots, v_{n}\}$ in an inner product space, via the induction from $w_{1} = v_{1}$ to $w_{n}$ determined by
+       \begin{align*}
+         w_{k} = v_{k} - \sum_{i=1}^{k-1} \frac{\langle w_{i}, v_{k} \rangle } {\langle w_{i}, w_{i} \rangle} w_{i}
+       \end{align*}
+       we get an orthogonal basis, transformed to an orthonormal basis via normalisation. Thus every finite dimensional inner product space has an orthonormal basis. \\
+
+       \begin{theorem}
+       \ The map $v \mapsto \langle v, \cdot \rangle$ is a natural injective map from $V$ to $V'$, linear in $\mathbb{R}$ and isomorphic for $V$ finite dimensional.
+       \end{theorem}
+       \hphantom{}
+
+       $\langle u + \lambda v, w \rangle = \langle u , w \rangle + \lambda \langle v, w \rangle$ for all $u, v, w \in V$, $\lambda \in \mathbb{R}$, so we get linearity in $\mathbb{R}$ (and conjugate linearity in $\mathbb{C}$). If $\langle u, \cdot \rangle = \langle v, \cdot \rangle$, then for all $w \in V$, $\langle u - v, w \rangle = 0$. As any inner product is non-degenerate, thus $u = v$, so we have injectivity and thus as $\dim V = \dim V'$ we get that the map is an isomorphism. \\
+
+       We define the orthogonal complement of a subspace $U \subseteq V$ of an inner product space as
+       \begin{align*}
+         U^{\bot} = \{v \in V \,|\, \langle U, v \rangle = \{0\}\}.
+       \end{align*}
+       This is a subspace, for which $U \cap U^{\bot} = \{0\}$, $U \oplus U^{\bot} = V$ (for finite dimensional $V$), $(U + W)^{\bot} = U^{\bot} \cap W^{\bot}$, $(U \cap W)^{\bot} \supseteq U^{\bot} + W^{\bot}$, and $U \subseteq (U^{\bot})^{\bot}$ (the last two both holding with equality for finite dimensional $V$). \\
+
+       The first should be clear from definitions. The second follows from writing any $v \in V$ as $v - \sum \langle v, u_{i} \rangle u_{i} + \sum \langle v, u_{i} \rangle u_{i}$ for $\{u_{1}, \dots, u_{k}\}$ a basis of $U$. The third follows from $\langle U + W, v \rangle = \{0\}$ iff $\langle U, v \rangle = \{0\}$ and $\langle W, v \rangle = \{0\}$. The fourth follows from $\langle U, v_{1} \rangle = \{0\}$, $\langle W, v_{2} \rangle = \{0\}$ implying that $\langle U \cap W , v_{1} + v_{2}\rangle = \langle U \cap W, v_{1} \rangle + \langle U \cap W, v_{2}\rangle = \{0\}$, with the reverse implication by taking an orthonormal basis of $U$, extending it to an orthonormal basis of $U + W$, and then for any $v$ orthogonal to $U \cap W$ we can write $v = v - \sum \langle v, u_{i} \rangle u_{i} + \sum \langle v, u_{i} \rangle u_{i}$, and $\langle u_{i}, w_{j} \rangle = 0$ so $v$ is the sum of an element orthogonal to $U$, and an element orthogonal to $W$. The final statement follows as if $v \in U$, $u \in U^{\bot}$, $\langle v, u \rangle = 0$, so $v \in (U^{\bot})^{\bot}$. For finite dimensional $V$ take an orthonormal basis of $U$ extended to an orthonormal basis of $V$, and clearly the basis of $(U^{\bot})^{\bot}$ is the basis of $U$.\\
+
+       Note also that the $v \mapsto \langle v, \cdot \rangle$ isomorphism maps $U^{\bot}$ to $U^{0}$ isomorphically for finite vector spaces, as $\dim U^{\bot} = \dim U^{0}$. \\
+
+       \begin{definition}
+         \ Given a linear map $T : V \to V$, $T^{*} : V \to V$ is its adjoint if for all $v, w \in V$,
+         \begin{align*}
+           \langle v, Tw \rangle = \langle T^{*}v, w \rangle
+         \end{align*}
+       \end{definition}
+       \hphantom{}
+
+       Immediately we get that if an adjoint exists it is unique, and further for finite dimensional $V$ we have a linear adjoint by taking $w \mapsto \langle v, Tw \rangle $, noting that there is $u$ such that $\langle v, T\cdot \rangle = \langle u, \cdot\rangle$ (by $v \mapsto \langle v, \cdot \rangle$ being an isomorphism for finite dimensional $V$), and thus $T^{*}v = u$ is the adjoint. Its linearity pops out from the adjoint equation it satisfies. \\
+
+       In fact, we can get the matrix of the adjoint as the conjugate transpose of the matrix for $T$ with respect to the same basis. This is clear just from $\langle e_{i}, Te_{j} \rangle = \langle T^{*}e_{i}, e_{j} \rangle = \overline{\langle e_{j}, T^{*}e_{i} \rangle}$, and noting that these are the entries of the matrices of $T$ and $T^{*}$ with respect to that basis. \\
+
+       We say that $T$ is self-adjoint where $T = T^{*}$. This essentially just translates to $T$ having a real symmetric matrix with respect to any basis, so any eigenvalue it has will be real (proof follows from algebra). Further, if $U \subseteq V$ is $T$-invariant, then so is $U^{\bot}$, as for $w \in U^{\bot}$, $\langle u, Tw \rangle = \langle Tu, w \rangle = 0$ by $Tu \in U$. \\
+
+       \begin{theorem}
+       \ If $T : V \to V$ is self-adjoint and $V$ finite dimensional, then there is an orthonormal basis of eigenvectors for $T$.
+       \end{theorem}
+       \hphantom{}
+
+       For any eigenvalue we have two $T$-invariant subspaces ($\langle v \rangle$ and $\langle v \rangle^{\bot}$ for the eigenvector $v$), orthogonal to each other. By induction we then build an orthogonal basis of eigenvectors, which is then straightforwardly transformed to an orthonormal basis. \\
+
+       \begin{definition}
+       \ If for a finite dimensional inner product space $V$, a linear transformation $T : V \to V$ has $T^{*} = T^{-1}$, then if the vector space is real then $T$ is orthogonal, and if the vector space is complex then $T$ is unitary.
+       \end{definition}
+       \hphantom{}
+
+       In either case, where we have $T^{*} = T^{-1}$, we immediately get $\langle v, w \rangle = \langle v, T^{-1}Tw \rangle = \langle Tv, Tw \rangle $, and thus $||v|| = ||Tv||$. In fact we also get $\langle v, w \rangle = \langle Tv, Tw \rangle$ implies that $T^{*}Tv = v$, so $T^{*} = T^{-1}$ and the statements are equivalent. Further, we find that length preservation determines the inner product from manipulation of $||v+w||$ and $||v+iw||$ to determine $\langle v, w \rangle$, so in fact all three statements are equivalent.\\
+
+       \begin{theorem}
+       \ If $T : V \to V$ is unitary and $V$ is a finite dimensional complex vector space, then there exists an orthonormal basis of eigenvectors.
+       \end{theorem}
+       \hphantom{}
+
+       By algebraic closure of $\mathbb{C}$ we can get an eigenvector $v$ for which $\langle v \rangle$ is $T$-invariant, so $\langle v \rangle^{\bot}$ is also $T$-invariant (see by using $m_{T}$ to write $T^{-1}$ as a polynomial in $T$). We can induct using this to prove the theorem. \\
+
+       \begin{theorem}
+       \ If $T : V \to V$ is orthogonal and $V$ is a finite dimensional real vector space, then there exists an orthonormal basis such that the matrix of $T$ is block diagonal formed of $I$, $-I$, and 2-dimensional rotation matrices.
+       \end{theorem}
+       \hphantom{}
+
+       Write $S = T + T^{-1} = T + T^*$, so $S$ is self-adjoint, meaning there is an orthonormal basis of eigenvectors for $S$. We can thus decompose $V$ into the direct sum of $V_{i} = E_{\lambda_{i}}$ with $\lambda_{i}$ the $i$th eigenvalue of $S$. $S$ commutes with $T$ so each of these is also $T$-invariant. We can get the eigenvalues of $\restr{T}{V_{i}}$ as the roots of the polynomial $x^{2} - \lambda_{i} x + 1$. If $\lambda_{i} \neq \pm 2$ then by orthogonality the eigenvalues are complex, so $\{v, Tv\}$ are LI, and $\langle v, Tv \rangle$ is $T$-invariant so we can use a 2D rotation matrix for this subspace.
+       }
+\end{columns}
+
+\end{document}

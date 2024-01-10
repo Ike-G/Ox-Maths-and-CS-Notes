@@ -1,0 +1,608 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=841mm, paperheight=3700mm}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{dsfont}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\var}{Var}
+\DeclareMathOperator{\Markov}{Markov}
+\DeclareMathOperator{\Exp}{Exp}
+\DeclareMathOperator{\Ber}{Ber}
+\DeclareMathOperator{\Bin}{Bin}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Part A Probability}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{Basics}{
+  To recap, any probability space is a tuple of a sample space, a collection of subsets of that sample space, and a function from the event space to $[0,1]$, where the event space and probability function each satisfy three natural conditions ($\mathcal{F}$ is a $\sigma$-algebra, plus the basic propeties of $\mathbb{P}$). We take random variables as functions from $\Omega$, representing an observable. Formally they must also have that each $\{X(\omega) \le x\} \in \mathcal{F}$. \\
+
+  In prelims probability there was a distinction between discrete and continuous random variables. These do not cover every possible notion of a random variable, and so we ideally want to unify these definitions to a more abstract notion. Beginning in this way we define expectation axiomatically:\\
+
+  \begin{definition}[Expectation] \
+    \begin{itemize}
+      \item \ $\mathbb{E} I_{A} = \mathbb{P}(A)$ for any event $A$.
+      \item \ If $\mathbb{P}(X \ge 0) = 1$ then $\mathbb{E} X \ge 0$.
+      \item \ $\mathbb{E}(X + aY) = \mathbb{E}X + a\mathbb{E}Y$ for any $a \in \mathbb{R}$.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  We immediately get consequences of these axioms for notions of variance and covariance, so we need not add additional baggage to each of these for the moment. \\
+
+  \begin{definition}[Independence] \
+    A collection of events $\{A_{i} \,|\, i \in I\}$ are independent if
+    \[
+      \mathbb{P}\left(\bigcap_{i \in I} A_{i}\right) = \prod_{i \in I} \mathbb{P}(A_{i})
+    \]
+  \end{definition}
+  \hphantom{}
+  The application of this to random variables is exactly as one would expect.
+}
+\block{Convergence of random variables}{
+  Take $X, Y$ random variables. In certain cases we would like a concept of distance between $X$ and $Y$. \\
+
+  \begin{definition}[Convergence]
+    Take a sequence $(X_{n})$ of random variables, and random variable $X$.
+    \begin{itemize}
+            \item \ $X_{n} \to X$ (almost surely) if $\mathbb{P}(\{X_{n} \to X \text{ as } n \to \infty\}) = 1$.
+            \item \ $X_{n} \overset{P}{\to} X$ (in probability) as $n \to \infty$ if for every $\varepsilon > 0$, $\mathbb{P}(|X_{n} - X| < \varepsilon) \to 1$ as $n \to \infty$.
+            \item \ $X_{n} \overset{d}{\to} X$ (in distribution) as $n \to \infty$ if for every $x \in \mathbb{R}$ such that $F$ is continuous at $x$, $F_{n}(x) \to F(x)$ as $n \to \infty$.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  We should find that the above notions are decreasing in strength. By its nature we can often write distribution convergence not with a random variable $X$, but just with its distribution. \\
+
+  To show that almost sure convergence implies probabilistic convergence, we first state the following lemma:
+  \begin{lemma}
+  \ Let $A_{n}$ be an increasing sequence of events (For all $k \in \mathbb{N}$, $A_{k} \subseteq A_{k+1}$). Then
+    \[\mathbb{P}(A_{n}) \to \mathbb{P}\left(\bigcup_{k=0}^{\infty} A_{k} \right)\].
+  \end{lemma}
+  As proof, write
+  \begin{align*}
+    \mathbb{P}(A_{n}) = \mathbb{P}\left(\bigcup_{k=0}^{n} A_{k}\right) &= \mathbb{P}\left(A_{0} \cup \bigcup_{k=1}^{n} A_{k} \setminus A_{k-1}\right) \\
+                                    &= \mathbb{P}(A_{0}) + \sum_{k=1}^{n}\mathbb{P}(A_{k} \setminus A_{k-1}) \\
+                                    &\to \mathbb{P}(A_{0}) + \sum_{k=1}^{\infty} \mathbb{P}(A_{k} \setminus A_{k-1}) \\
+    &= \mathbb{P}\left(\bigcup_{k=0}^{\infty} A_{k}\right).
+  \end{align*}
+
+  We can then consider the event defined in almost sure convergence:
+
+  \begin{align*}
+    \{X_{n} \to X \text{ as } n \to \infty\} &= \{\forall \varepsilon > 0 \,.\, \exists N \ge 0 \,.\, \forall n \ge N\,.\, |X_{n} - X| < \varepsilon\} \\
+                                    &= \bigcap_{\varepsilon > 0} \bigcup_{N=0}^{\infty} \{\forall n \ge N \,.\, |X_{n} - X| < \varepsilon\} \\
+                                    &\subseteq \bigcup_{N=0}^{\infty} \{\forall n \ge N \,.\, |X_{n}-X| < \varepsilon\} \quad \quad \text{for any $\varepsilon > 0$}
+  \end{align*}
+
+  Thus we turn the event of convergence into an infinite union of increasing sets, which is itself an event of probability $1$, so we have $\mathbb{P}(\{\forall n \ge N \,.\, |X_{n} - X| < \varepsilon\}) \to 1$ as $N \to \infty$. Further,
+  \begin{align*}
+    \{\forall n \ge N \,.\, |X_{n} - X| < \varepsilon\} &= \bigcap_{n=N}^{\infty} \{|X_{n} - X| < \varepsilon\} \\
+    &\subseteq \{|X_{n} - X| < \varepsilon\} \quad \quad \text{for any $n \ge N$}
+  \end{align*}
+  so we get $1 \ge \mathbb{P}(|X_{n} - X| < \varepsilon) \ge \mathbb{P}(\{\forall n \ge N \,.\, |X_{n} - X|\}) \to 1$ and by sandwiching probabilistic convergence is achieved. \\
+
+  To show that the inverse doesn't hold, just take a sequence of random variables wherein the probability clearly converges, but not so quickly as to have the probability of an infinite tail being within a small range being likely. See $X_{n} \sim \Ber(1/n)$. \\
+
+  To show that probabilistic convergence implies distributive convergence, note that in the limit we can get $F_{n}(x)$ in terms of an arbitrary $\varepsilon > 0$ and $X$. Then we may bound $F_{n}(x)$ and use continuity of $F$ to show convergence. \\
+
+
+  \begin{theorem}
+  \ For $(X_{n})$ all defined on the same probability space, $X_{n} \overset{d}{\rightarrow} c$ for some constant $c$ implies that $X_{n} \overset{p}{\rightarrow} c$.
+  \end{theorem}
+  \hphantom{}
+
+  This follows fairly immediately from algebra. \\
+
+  \begin{theorem}[Weak law of large numbers]
+    \ Suppose $(X_{n})$ are i.i.d. with mean $\mu < \infty$. Let $S_{n} = \sum_{k=1}^{n} X_{k}$. Then
+    \begin{align*}
+      \frac{S_{n}}{n} \overset{p}{\longrightarrow} \mu \,\, \textrm{as $n \to \infty$}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  We can prove this statement using characteristic functions:
+  \begin{align*}
+    \phi_{S_{n}/n}(t) &= \phi_{X}(t/n)^{n} \\
+                   &= \left(1+i \mathbb{E}[X] \frac{t}{n} + o(t/n)\right)^{n} \\
+    &\to e^{it\mathbb{E}[X]} \quad \quad \text{by continuity of $\exp$ and $\log$}
+  \end{align*}
+  and by the characteristic function continuity result $S_{n}/n \overset{d}{\to} \mu$, which then means $S_{n}/n \overset{p}{\to} \mu$ as $\mu$ is constant. \\
+
+  \begin{theorem}[Strong law of large numbers]
+    \ Suppose $(X_{n})$ are iid with mean $\mu < \infty$. Let $S_{n} = \sum_{k=1}^{n} X_{k}$. Then
+    \begin{align*}
+      \frac{S_{n}}{n} \to \mu \,\,\textrm{almost surely as}\,\, n \to \infty
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  The proof of this is not examinable, and a full proof is given in Probability, Measure and Martingales. \\
+
+  \begin{theorem}[Central limit theorem]
+    \ Suppose $(X_{n})$ are i.i.d., $\mathbb{E}[X_{k}] = \mu$, $\var X_{k} = \sigma^{2} < \infty$. Let $S_{n} = \sum_{k=1}^{n} X_{k}$, then
+    \begin{align*}
+      \frac{S_{n}-n\mu}{\sigma\sqrt{n}} \overset{d}{\longrightarrow} N(0,1) \,\, \textrm{as $n \to \infty$}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  We define $Y_{n} = \frac{X_{n} - \mu}{\sigma}$, so $S_{n} = \frac{1}{\sqrt{n}}\sum_{k=1}^{n} Y_{n}$, and thus
+  \begin{align*}
+    \phi_{S_{n}/\sqrt{n}}(t) &= \phi_{Y}(\frac{t}{\sqrt{n}})^{n} \\
+                 &= \left(1 - \frac{t^{2}}{2n} + o(t^{2}/n)\right)^{n} \\
+    &\to e^{-t^{2}/2}
+  \end{align*}
+  so by continuity $S_{n}/\sqrt{n} \overset{d}{\to} N(0,1)$.
+}
+
+\block{Conditional Densities}{
+  \begin{definition}
+  \ For two events $A$ and $B$ with $\mathbb{P}(A) > 0$,
+    \begin{align*}
+      \mathbb{P}(B \,|\, A) := \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(A)},
+    \end{align*}
+    and in application to random variables, we get
+    \begin{align*}
+      \mathbb{P}(X \le x\,|\, A) = \frac{\mathbb{P}(\{X \le x\} \cap A)}{\mathbb{P}(A)}
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  The second function gives a conditional cdf for $X$, implying the existence of a pdf $f_{X | A}$ for which
+  \begin{align*}
+    \mathbb{P}(X \in C \,|\, A) = \int_C f_{X | A}(x) \,\mathrm{d}x
+  \end{align*}
+  A problem which we come to is trying to observe the conditional density of $Y$ for $X = x$, as for continuous random variables $\mathbb{P}(X = x) = 0$. To resolve this, we take the distribution of $Y$ conditioned on $\{x \le X \le x + \varepsilon\}$, and for nice enough $f_{X,Y}(x,y)$, $f_{X}(x)$ we get
+  \begin{align*}
+    \mathbb{P}(Y \le y \,|\, x \le X \le x + \varepsilon) &= \frac{\int_{-\infty}^{y} \int_{x}^{x+\varepsilon} f_{X,Y}(u,v) \,\mathrm{d}u\,\mathrm{d}v}{\int_{x}^{x+\varepsilon} f_{X}(u) \,\mathrm{d}u} \\
+    &\sim \int_{-\infty}^{y} \frac{f_{X,Y}(x,v)}{f_{X}(x)} \,\mathrm{d}v \quad \text{as $\varepsilon \to 0$}
+  \end{align*}
+}
+\block{Markov Chains}{
+  \begin{definition}
+    Let $X = (X_{0}, X_{1}, X_{2}, \dots)$ be a sequence of random variables taking values in $I$. The process $X$ is called a Markov chain if for any $n \ge 0$ and $i_{0}, i_{1}, \dots, i_{n+1} \in I$,
+    \begin{align*}
+      \mathbb{P}(X_{n+1} = i_{n+1} \,|\, X_{n} = i_{n},\dots, X_{0} = i_{0}) = \mathbb{P}(X_{n+1} = i_{n+1} \,|\, X_{n} = i_{n})
+    \end{align*}
+    In addition, the Markov chain is homogeneous if $\mathbb{P}(X_{n+1} = j \,|\, X_{n} = i)$ is constant in $n \ge 0$.
+  \end{definition}
+  \hphantom{}
+
+  Intuitively, a Markov chain is a sequence wherein one need not keep track of previous states in order to determine the distribution over future states, but rather one only needs to know where they are (and potentially the time at which they are there). In the case of a homogeneous Markov chain, we can write $P = (p_{ij})$ as the matrix with the $i$th row the distribution of $X_{n+1}$ given $X_{n} = i$. \\
+
+  \coloredbox{We almost always talk about homogeneous Markov chains in this course.}
+
+  From the Markov property, we very quickly get a formula for $n$-step probabilities. \\
+
+  \begin{align*}
+    p_{ij}^{(n+m)} &= \mathbb{P}(X_{n+m+r} = j \,|\, X_{r} = i) \\
+                  &= \sum_{k \in I} \mathbb{P}(X_{m+r} = k \,|\, X_{r} = i) \mathbb{P}(X_{n+m+r} = j \,|\, X_{m+r} = k) \\
+                  &= \sum_{k \in I} p^{(m)}_{ik} p^{(n)}_{kj} \\
+    &= (P^{(m)}P^{(n)})_{ij}
+  \end{align*}
+
+  so $P^{(n)} = P^{(n-1)}P$ so by induction $P^{(n)} = P^{n}$. \\
+
+  It is not quite correct to say that in a Markov chain $X_{n}$ depends \emph{only} on $X_{n-1}$ - there is certainly still randomness involved, and this would imply a functional relationship which doesn't quite exist. We \emph{can} however say that for each $n$ we can have a random variable $Y_{n} = f(Y_{n-1}, X_{n})$ where $X_{n}$ is independent of $(Y_{0},\dots, Y_{n+1})$. Then $(Y_{n})$ is a markov chain. \\
+
+  We say that $i$ leads to $j$, or $i \to j$ where for some $n \ge 0$, $p^{(n)}_{ij} > 0$, and we say that $i$ communicates with $j$, or $i \leftrightarrow j$ where $i \to j$ and $j \to i$. This is an equivalence relation, thus partitioning $I$ into communicating classes. We say that a chain for which $I$ is a single equivalence class is irreducible. Further we say that a class is closed if the probability for ever exiting is $0$. If the singleton of a state is closed then that state is absorbing. \\
+
+  \begin{definition}[Period]
+    The periodicity of state $i$ is defined as $\gcd \{ n \,|\, p^{(n)}_{ii} > 0\}$. If this is $1$ then we say the state is aperiodic.
+  \end{definition}
+  \hphantom{}
+
+  All states within the same communicating class have the same period. To see this note that if $i$ and $j$ communicate, then we can get $a$, $b$ such that $p^{(a)}_{ij} > 0$ and $p^{(b)}_{ji} > 0$, so $p^{(a+b)}_{ii} > 0$. Further, if $p^{(m)}_{jj} > 0$, then $p^{(a+b+m)}_{ii} > 0$. Thus if $i$ has period $d$, then $d \,|\, a+b+m$ and $d \,|\, a+b$, so $d \,|\, m$. Thus the period of $i$ divides the period of $j$, and by symmetry thus the reverse holds, so the period of $i$ is equal to the period of $j$. \\
+
+  \begin{definition}
+  \ Let $(X_{n})$ be a Markov chain, and $A \subseteq I$. Define
+    \[h_{i}^{A} = \mathbb{P}\left(\bigcup_{n \ge 0} \{X_{n} \in A \} \,|\, X_{0} = i\right)\]
+    as the hitting probability of $A$ from $i$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{theorem}
+    \ The vector of hitting probabilities $(h^{A}_{i} \,|\, i \in I)$ is the minimal non-negative solution to the recurrence equations
+    \begin{align*}
+      h^{A}_{i} &= \begin{cases}
+                     1 & \text{if $i \in A$} \\
+                     \displaystyle \sum_{j \in I} p_{ij}h_{j}^{A} & \text{if $i \notin A$}
+                  \end{cases}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  The base case is obvious. For the recurrence we partition and use the Markov property. To show that the minimal non-negative solution is correct, take an arbitrary non-negative solution $\bm{x}$, and show that for all $M \in \mathbb{N}$, $i \in I$ that
+  \begin{align*}
+    x_{i} \ge \mathbb{P}\left(\bigcup_{n \le M} \{X_{n} \in A\} \,|\, X_{0} = i\right).
+  \end{align*}
+  For $M = 0$ we get if $i \in A$ that $x_{i} = 1$, and if $i \notin A$ that the right hand side is $0$. Further, if the statement is true for $M-1$, then if $i \in A$ then again $x_{i} = 1$ so the equation holds, and otherwise we can partition to maintain the inequality. \\
+
+  \innerblock{Recurrence and Transience}{
+    For $\mathbb{P}(X_{n} = i \text{ for some } n \ge 1) < 1$, we have that the total number of visits to $i$ has geometric distribution with parameter $1-p$, and so the probability that $i$ is hit infinitely often is $0$, so we call the state \emph{transient}. If however we have $\mathbb{P}(X_{n} = i \text{ for some } n \ge 1) = 1$, then clearly the probability of hitting $i$ infinitely often is $1$, so we call the state \emph{recurrent}. \\
+
+    \begin{theorem}
+    \ A state $i$ is recurrent iff $\sum_{n=0}^{\infty} p_{ii}^{(n)} = \infty$.
+    \end{theorem}
+    \hphantom{}
+
+    The total number of visits to $i$ is $\sum \mathds{1}(X_{n} = i)$, which has expectation equal to $\sum p^{(n)}_{ii}$. If $i$ is transient this expectation is finite, whereas if it is recurrent then the expectation is infinite. \\
+
+    \begin{theorem}
+    \ Let $C$ be a communicating class. Either all states in $C$ are recurrent, or all are transient. Further, every recurrent class is closed, and every finite closed class is recurrent.
+    \end{theorem}
+    \hphantom{}
+
+    Take a $C$ with a recurrent state, so $\sum_{n=0}^{\infty} p_{ii}^{(n)}$ is infinite. For some $a, b$, $p_{ji}^{(a)}, p_{ij}^{(b)}$ are positive, so $p_{ji}^{(a)}p_{ii}^{(n)}p_{ij}^{(b)} \le p_{jj}^{(a+b+n)}$, so $\frac{1}{p_{ji}^{(a)}p_{ij}^{(b)}} \sum_{n=0}^{\infty} p_{jj}^{(n)}$ is infinite. \\
+
+    \coloredbox{
+      If a drunk person was wandering with uniform random distribution around town, they would return to their original position eventually with probability $1$. If, however, they have access to a spaceship, then there is positive probability that they never come home.
+    }
+  }
+  \hphantom{}
+
+  \begin{definition}
+  \ $H^{A} = \min \{n \ge 0 \,|\, X_{n} \in A\}$ is the hitting time of $A$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{theorem}
+  \ The vector of mean hitting times $k^{A}$ is the minimal non-negative solution to
+    \begin{align*}
+      k_{i}^{A} = \begin{cases}
+                    0 & \text{if } i \in A \\
+                    1 + \sum_{j} p_{ij}k_{j}^{A} & \text{otherwise}
+                 \end{cases}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  The proof here follows straightforwardly from conditional expectations, and minimality using the same idea as for hitting probabilities. \\
+
+  From this we get the notion of a mean return time, $m_{i} = 1 + \sum_{j} p_{ij}k^{\{i\}}_{j}$. If $i$ is recurrent but $m_{i}$ is infinite, we say that $i$ is null recurrent. If however $m_{i} < \infty$ then $i$ is positive recurrent.
+}
+
+\column{0.5}
+\block{Generating Functions}{
+  We have an existing notion of generating functions for discrete random variables from prelims probability. That is, $G_{X}(s) = \mathbb{E}[s^{X}]$, defined on the radius of convergence of the corresponding power series. We have various results about these functions, such as that the exact distribution of $X$ may be extracted via differentiation, demonstrating uniqueness, and that with $(X_{n}), N$ independent, each $X_{n}$ identically distributed, $G_{\sum_{i=1}^{N}X_{i}}(s) = G_{N}(G_{X}(s))$.\\
+
+  \begin{theorem}
+  \ If each $X_{n}$ for $n \ge 1$ and $X$ have generating functions $G_{X_{n}}$ and $G_{X}$, then $G_{X_{n}} \to G_{X}$ pointwise if and only if $X_{n} \overset{d}{\to} X$.
+  \end{theorem}
+  \hphantom{}
+
+  This is hopefully clear from definitions. \\
+
+
+  \begin{definition}
+    \ The moment generating function of a random variable $X$ is defined as
+    \[M_{X}(t) = \mathbb{E}[e^{tX}]\]
+  \end{definition}
+  For example, for $\Exp(\lambda)$:
+  \begin{align*}
+    M_{X}(t) &= \mathbb{E}[e^{tX}] \\
+             &= \int_{0}^{\infty}e^{tx} f(x) \,\mathrm{d}x \\
+             &= \int_{0}^{\infty} \lambda e^{(t-\lambda)x} \,\mathrm{d}x \\
+             &= \begin{cases}
+                  \frac{\lambda}{\lambda - t} & \text{if $t < \lambda$} \\
+                  \infty & \text{otherwise}
+                \end{cases}
+  \end{align*}
+
+  We get fairly quickly a few similar results as for generating functions. For $X$ with a generating function $M_{X}$ defined for $t$,
+  \begin{align*}
+    M_{aX+b}(t) &= \mathbb{E}[e^{t(aX+b)}] \\
+             &= e^{bt} \mathbb{E}[e^{atX}] \\
+    &= e^{bt} M_{X}(at)
+  \end{align*}
+  and for $\{X_{1},\dots,X_{n}\}$ independent with generating functions defined for each on $t$,
+  \begin{align*}
+    M_{\sum_{k=1}^{n}X_{k}}(t) &= \mathbb{E}[e^{t\sum_{k=1}^{n}X_{k}}] \\
+                            &= \mathbb{E}\left[\prod_{k=1}^{n} e^{tX_{k}}\right] \\
+                            &= \prod_{k=1}^{n} \mathbb{E}[e^{tX_{k}}] \\
+    &= \prod_{k=1}^{n} M_{X_{k}}(t).
+  \end{align*}
+
+  Furthermore, we have a convergence result, that if $M_{|X|}(t_{0})$ exists for some $t_{0} > 0$, then for $t \in [-t_{0}, t_{0}]$:
+  \begin{align*}
+    M_{|X|}(t_{0}) &= \int_{0}^{\infty} e^{t_{0}x}(f(x)+f(-x)) \, \mathrm{d}x \\
+    &\ge \int_{0}^{\infty} e^{tx}(f(x)+f(-x)) \, \mathrm{d}x \quad \quad \text{for $|t| \le t_{0}$}\\
+                   &\ge \int_{-\infty}^{\infty} e^{tx} f(x) \, \mathrm{d}x \\
+    &= M_{X}(t)
+  \end{align*}
+  so $M_{X}(t)$ is defined on this interval. \\
+
+  \begin{theorem}
+  \ Suppose $\mathbb{E} [e^{t_{0}|X|}]$ is finite for some $t_{0} > 0$. Then we both have that
+    \begin{align*}
+      M_{X}(t) &= \sum_{k=0}^{\infty} \mathbb{E}[X^{k}] \frac{t^{k}}{k!} \ \ \ \text{for $|t| \le t_{0}$} \\
+               &\text{and} \\
+      M_{X}^{(k)}(0) &= \mathbb{E}[X^{k}]
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  One needs a bit of work not included in this course (Fubini's theorem) to show that the expectation operator and infinite sums can commute in this case, but assuming that the result follows. \\
+
+  Although not proven in this course, it should be hopefully clear that if there is a non-trivial interval containing $0$ on which the moment generating function exists, then all positive moments must be finite. \\
+
+  An equivalent statement to the existence of the MGF on some neighbourhood of $0$ is that for some $t_{0} > 0$, $\mathbb{P}(|X| > x) = O(e^{-t_{0}x})$. If $M_{X}(t)$ is finite on $[-t_{0}, t_{0}]$, then $\mathbb{P}(|X| > x) \le e^{-t_{0}x}M_{X}(t_{0})$ for all $x \ge 0$ by Markov's inequality. In the reverse direction, we can use $\mathbb{E}[e^{tX}] \le \mathbb{E}[e^{t|X|}]$, from which we get
+  \begin{align*}
+  \mathbb{E}[e^{t|X|}]  &= \int_{0}^{\infty} \mathbb{P}(e^{t|X|} > x) \, \mathrm{d}x \\
+                       &\le 1 + \int_{1}^{\infty} \mathbb{P}\left(|X| > \frac{\log x}{t}\right) \,\mathrm{d}x\\
+                       &\le 1 + \int_{1}^{\infty} Cx^{-t_{0}/t} \,\mathrm{d}x
+  \end{align*}
+  which is a finite integral for $0 < t < t_{0}$. \\
+
+  \begin{theorem}
+    \ If $X$ and $Y$ have the same moment generating function, which is finite on $[-t_{0}, t_{0}]$ for some $t_{0} > 0$, then $X$ and $Y$ have the same distribution. \\
+
+    More generally, if we have a sequence of random variables $(X_{n})$ and $X$ with finite moment generating functions on $[-t_{0}, t_{0}]$, and $M_{X_{n}}(t) \to M_{X}(t)$ as $n \to \infty$ for all $t \in [-t_{0}, t_{0}]$, then $X_{n} \overset{d}{\to} X$ as $n \to \infty$.
+  \end{theorem}
+  \hphantom{}
+
+  The proofs of both the above are beyond the scope of this course. \\
+
+  \begin{definition}
+  \ The characteristic function of $X$ is $\phi_{X}(t) = \mathbb{E}[e^{itX}] = \mathbb{E} \cos(tX) + i\mathbb{E} \sin(tX)$.
+  \end{definition}
+  \hphantom{}
+
+  Not only can we extend all of the basic results for MGFs to characteristic functions, but our convergence result becomes that the characteristic function always exists. This follows as $\cos (tX)$ and $\sin (tX)$ have image $[-1,1]$, so the function is just the sum of two finite integrals. \\
+
+  Thanks to this convergence result we get the following power series result:
+  \begin{align*}
+    \phi_{X}(t) = \sum_{n=0}^{\infty} \frac{i^{n}t^{n}\mathbb{E}[X^{n}]}{n!}
+  \end{align*}
+
+  Both the uniqueness and continuity statements hold in a similar way as for MGFs, but as before their proofs are beyond the scope of this course.
+}
+
+\block{Joint distributions}{
+  \begin{definition}
+  \ The joint cumulative distribution function of two random variables $X, Y$ is defined by
+    \[F_{X,Y}(x,y) = \mathbb{P}(X \le x, Y \le y).\]
+    $X$ and $Y$ are said to be jointly continuous with joint pdf $f_{X,Y}$ if their cdf can be written as an integral
+    \[
+      F_{X,Y}(x,y) = \int_{-\infty}^{x}\int_{-\infty}^{y} f(u,v) \, \mathrm{d}u \, \mathrm{d}v
+    \]
+  \end{definition}
+  \hphantom{}
+
+  While we \emph{can} change $f_{X,Y}$ at finitely many points without changing the integral, thus violating continuity, in general where $F_{X,Y}$ is differentiable it is natural to write
+  \[
+    f_{X,Y}(x,y) = \frac{\partial F_{X,Y}}{\partial x \partial y} (x,y)
+  \]
+
+  For suitably nice (Borel measurable) sets $A \subseteq \mathbb{R}^{2}$,
+  \[
+    \mathbb{P}((X,Y) \in A) = \iint_{A} f_{X,Y}(x,y) \, \mathrm{d}x \, \mathrm{d} y
+  \]
+
+  We also get the obvious results of $f_{X}(x) = \int_{\mathbb{R}} f_{X,Y}(x,y) \, \mathrm{d}y$, $f_{Y}(y) = \int_{\mathbb{R}} f_{X,Y}(x,y) \, \mathrm{d}x$. \\
+
+  \begin{theorem}
+  \ Suppose $T : (x,y) \mapsto (u,v)$ is a bijection from some $D \subseteq \mathbb{R}^{2}$ to some $R \subseteq \mathbb{R}^{2}$. We define the jacobian as
+    \begin{align*}
+      J &= \begin{vmatrix}
+            \frac{\partial x}{\partial u} & \frac{\partial y}{\partial u} \\
+            \frac{\partial x}{\partial v} & \frac{\partial y}{\partial v}
+          \end{vmatrix} \\
+        &= \left| \frac{\partial x}{\partial u}\frac{\partial y}{\partial v} -   \frac{\partial y}{\partial u}\frac{\partial x}{\partial v}\right|
+    \end{align*}
+
+  If $X, Y$ have joint pdf $f_{X,Y}$ which is $0$ outside $D$, then the random variables $(U,V) = T(X,Y)$ are jointly continuous with joint pdf
+  \begin{align*}
+    f_{U,V}(u,v) = \begin{cases}
+                     f_{X,Y}(x(u,v), y(u,v)) J(u,v) & \text{if $(u,v) \in R$} \\
+                     0 & \text{otherwise}
+                   \end{cases}
+  \end{align*}
+\end{theorem}
+\hphantom{}
+
+With $T(A) = B$:
+\begin{align*}
+  \mathbb{P}((U,V) \in B) &= \mathbb{P}((X,Y) \in A) \\
+               &= \iint_{A} f_{X,Y}(x,y) \, \mathrm{d}x \, \mathrm{d}y \\
+  &= \iint_{B} f_{X,Y}(x(u,v), y(u,v)) J(u,v) \, \mathrm{d}u \, \mathrm{d}v.
+\end{align*}
+So the result is immediate via substitution. \\
+
+\coloredbox{I'm keeping the notation from lectures here, although in all honesty some weird choices were made here. For instance, the function $(u,v) \mapsto (x(u,v),y(u,v))$ is just $T^{-1}$. The Jacobian used is that of $T^{-1}$ rather than that of $T$, so in fact the entire statement might be better expressed using $T^{-1}$ than $T$.}
+\hphantom{}
+
+The above can then be generalised to the case of joint distributions of $n > 2$ random variables, for which the Jacobian becomes the determinant of an $n \times n$ matrix. With $Z_{1}, Z_{2}, \dots, Z_{n}$ standard normal variables, their joint density function can be written as
+\begin{align*}
+  f_{\bm{Z}}(\bm{z}) &= \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi}} \exp\left(-\frac{z_{i}^{2}}{2}\right) \\
+  &= \frac{1}{(2\pi)^{n/2}} \exp\left(-\frac{1}{2}\bm{z}^{\top}\bm{z}\right)
+\end{align*}
+and we can then define $W_{1}, W_{2}, \dots, W_{n}$ by
+\begin{align*}
+  \begin{pmatrix}
+    W_{1} \\ W_{2} \\ \vdots \\ W_{n}
+  \end{pmatrix}
+  = A \begin{pmatrix}
+        Z_{1} \\ Z_{2} \\ \vdots \\ Z_{n}
+      \end{pmatrix}
+  + \begin{pmatrix}
+      \mu_{1} \\ \mu_{2} \\ \vdots \\ \mu_{n}
+    \end{pmatrix}.
+\end{align*}
+For $A$ invertible then we can apply change of variables to get a joint distribution $f_{\bm{W}}$, giving
+\begin{align*}
+f_{\bm{W}}(\bm{w}) = \frac{1}{(2\pi)^{n/2}|\det A|} \exp\left(-\frac{1}{2} (\bm{w}-\bm{\mu})^{\top}(AA^{\top})^{-1}(\bm{w}-\bm{\mu})\right)
+\end{align*}
+}
+
+\block{Stationary distributions}{
+  Let $X$ be a markov chain with transition matrix $P$. A distribution over $X_{0}$, $\pi$, is a stationary distribution if
+  \begin{align*}
+    \pi P = \pi
+  \end{align*}
+  so we have that if $X_{0}$ is distributed by $\pi$, then so will $X_{n}$ be for all $n \ge 0$. \\
+
+  \begin{theorem}[Ergodic theorem]
+  \ Let $P$ be irreducible. Let $V_{i}(n)$ be the number of visits to state $i$ before time $n$, that is
+    \begin{align*}
+      V_{i}(n) = \sum_{r=0}^{n-1} \mathds{1}(X_{r} = i).
+    \end{align*}
+    Then for any initial distribution, and for all $i \in I$,
+    \begin{align*}
+      \frac{V_{i}(n)}{n} \to \frac{1}{m_{i}} \quad \text{almost surely as } n \to \infty
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  The result is immediate for transient chains, as with probability $1$, $V_{i}(n)$ is bounded. If instead the chain is recurrent, take $R_{k}$ as the time between the $k$th and $(k+1)$th visits to $i$, which are i.i.d. with mean $m_{i}$, and by the strong law of large numbers their sample mean tends to $m_{i}$ almost surely, indicating that where $T_{k}$ is the time of the $k$th visit to $i$, as $T_{1}$ is finite thus $T_{k} / k \to m_{i}$ almost surely. We get that $V_{i}(T_{k}) = k$, so $V_{i}(T_{k})/T_{k} = k / T_{k} \to 1/m_{i}$ almost surely as $k \to \infty$, and $T_{k} \to \infty$ as $k \to \infty$ almost surely. $V_{i}(n)/n$ is a bounded increasing sequence, so it is known to converge and by the previous statement it must converge to $m_{i}$. \\
+
+  \begin{theorem}
+  \ Let $P$ be an irreducible transition matrix. Then $P$ has a stationary distribution if and only if $P$ is positive recurrent, and the stationary distribution $\pi$ is unique, given by $\pi_{i} = 1/m_{i}$.
+  \end{theorem}
+  \hphantom{}
+
+  If $P$ is positive recurrent we get that $\pi_{i} = 1/m_{i}$ is an eigenvector immediately for finite state spaces, and for infinite we get an upper bound on $\pi_{j}$ in terms of $\pi_{i}$ which gives the same result. The converse is determined by taking the expected rate of visits $\mathbb{E} V_{n}(i)/n$ for $X_{0}$ distributed by $\pi$, noting that this is $\pi_{i}$, and that by probabilistic convergence we can get $\mathbb{E}V_{n}(i)/n \to 1/m_{i}$. \\
+
+  \begin{theorem}
+  \ If $P$ is irreducible and aperiodic with stationary distribution $\pi$, then for any initial distribution, for all $i \in I$, $\mathbb{P}(X_{n} = i) \to \pi_{i}$ as $n \to \infty$, and in particular for all $i, j \in I$, $p_{ij}^{(n)} \to \pi_{j}$.
+  \end{theorem}
+  \hphantom{}
+
+  Let $(X_{n})$ be Markov distributed with initial distribution $\lambda$, transition matrix $P$, and $(Y_{n})$ initially distributed by $\pi$ with transition matrix also $P$. With $T = \inf \{ n \ge 0 \,|\, X_{n} = Y_{n}\}$, we can consider $W_{n} = (X_{n}, Y_{n})$ as a markov chain, which is irreducible with a stationary distribution, so is positive recurrent and $\mathbb{P}(T < \infty) = 1$. Thus we can define the chain $Z_{n}$ as $X_{n}$ for $n < T$ and $Y_{n}$ for $n \ge T$, and it turns out that this is Markov. Thus the result follows from here (\textbf{check}). \\
+
+\innerblock{Time reversal}{
+  \begin{theorem}
+    \ For $P$ an irreducible transition matrix with stationary distribution $\pi$, and $(X_{0},\dots, X_{N}) \sim \Markov(\pi, P)$. Then for $0 \le n \le N$, with $Y_{n} = X_{N-n}$, $(Y_{0},\dots, Y_{N}) \sim \Markov(\pi, Q)$ with $Q = (q_{ij})$ for
+    \begin{align*}
+      q_{ij} = \frac{\pi_{j}}{\pi_{i}}p_{ji}
+    \end{align*}
+    and $Q$ also has stationary distribution $\pi$.
+  \end{theorem}
+  \hphantom{}
+
+  First we take the matrix $Q$, and observe that it is stochastic by taking the sum of each row.
+  \begin{align*}
+    \mathbb{P}(Y_{0} = i_{0}, \dots, Y_{N} = i_{N}) &= \mathbb{P}(X_{0} = i_{N}, \dots, X_{N} = i_{0}) \\
+                                          &= \mathbb{P}(X_{N} = i_{0} \,|\, X_{N-1} = i_{1}, \dots, X_{0} = i_{N}) \\ & \hphantom{=}\,\mathbb{P}(X_{0} = i_{N}, \dots, X_{N-1} = i_{1}) \\
+                                          &= p_{i_{1} i_{0}} \mathbb{P}(X_{0} = i_{N}, \dots, X_{N-1} = i_{1}) \\
+                                          &= \pi_{i_{N}} \prod_{k=1}^{N} p_{i_{k}i_{k-1}} \\
+                                          &= \pi_{i_{N}} \prod_{k=1}^{N} \frac{\pi_{i_{k-1}}}{\pi_{i_{k}}} q_{i_{k-1} i_{k}} \\
+    &= \pi_{i_{0}} \prod_{k=1}^{N} q_{i_{k-1} i_{k}}
+  \end{align*}
+  and consequently we immediately get that $\mathbb{P}(Y_{0} = i) = \pi_{i}$, as well as that $\mathbb{P}(Y_{n} = j \,|\, Y_{n-1} = i_{n-1}, \dots, Y_{0} = i_{0}) = q_{i_{n-1} j}$, so independent of $i_{0}, \dots, i_{n-2}$ and thus $Y \sim \Markov(\pi, Q)$. \\
+
+  We say that a transition matrix $P$ is reversible if $P = Q$. \\
+
+  \begin{theorem}
+    \ Let $P$ be an irreducible transition matrix with stationary distribution $\pi$. $P$ is reversible iff for all $i, j \in I$
+    \begin{align*}
+      \pi_{i} p_{ij} = \pi_{j}p_{ji}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  This follows immediately from the definitions. These equations are sometimes referred to as the detailed balance equations.\\
+
+  \begin{theorem}
+  \ If the matrix $P$ and the distribution $\pi$ are in detailed balance, then $\pi$ is stationary for $P$.
+  \end{theorem}
+  \hphantom{}
+
+  This follows as $\pi_{j} = \sum_{i} \pi_{j}p_{ji} = \sum_{i} \pi_{i} p_{ij}$ for any $j$. It is this characterisation of stationary distributions which makes time reversal so useful.
+}
+}
+\end{columns}
+
+\end{document}
