@@ -1,0 +1,320 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=1800mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\res}{res}
+\DeclareMathOperator{\true}{true}
+\DeclareMathOperator{\false}{false}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+    \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+      #1 % the function
+      \vphantom{\big|} % pretend it's a little taller at normal size
+    \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Logic and Proof}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.33}
+\block{Propositional Logic}{
+  \begin{definition}
+    \ Let $X = \{x_{1},x_{2},\dots\}$ be a countably infinite set of propositional variables. Formulae of propositional logic are inductively defined as follows:
+    \begin{itemize}
+      \item \ $\true$ and $\false$ are formulae.
+      \item \ Every propositional variable $x_{i}$ is a formula.
+      \item \ For every formula $F$, $\neg F$ is a formula.
+      \item \ For all formulae $F$ and $G$, $F \land G$ and $F \lor G$ are formulae.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  We derive the further connectives of implication, bi-implication, xor, etc. in precisely the expected way. Further, we note the set of formulae on variables $X$ is $\mathcal{F}(X)$. \\
+
+  \begin{definition}
+    \ An assignment is a function $\mathcal{A} : X \to \{0,1\}$ that induces an assignment $\mathcal{A} : \mathcal{F}(X) \to \{0,1\}$ as follows:
+    \begin{itemize}
+      \item \ $\mathcal{A}(\false) = 0$, $\mathcal{A}(true) = 1$.
+      \item \ For every $x \in X$, $\mathcal{A}(x) := \mathcal{A}(x)$.
+      \item \ $\mathcal{A}(\neg F) := 1-\mathcal{A}(F)$.
+      \item \ ...
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ Let $F \in \mathcal{F}(X)$ and $\mathcal{A} : X \to \{0,1\}$ be an assignment. If $\mathcal{A}(F) = 1$ then we write $\mathcal{A} \vDash F$. If $F$ has at least one model then it is satisfiable, otherwise it is unsatisfiable.
+  \end{definition}
+  \hphantom{}
+
+  A formula $G$ is entailed by a set of formulae $\mathcal{S}$ if every assignment that satisfies each formula in $\mathcal{F}$ also satisfies $G$. We write this $\mathcal{S} \vDash G$. Further we say that two formulae are logically equivalent if $\mathcal{A}(F) = \mathcal{A}(G)$ for every assignment $\mathcal{A}$. We write this $F \equiv G$. \\
+
+  A formula is in conjunctive normal form if it is the conjunction of disjunctions of literals. It is in disjunctive normal form if it is a disjunction of conjunctions of literals. Every formula is equivalent to one in CNF or DNF. \\
+
+  By convention we say that $\true$ is CNF without any clauses, and $\false$ is DNF with no clauses. \\
+
+  We can use an algorithm known as a SAT solver to determine the set of variable assignments for which a formula is assigned truth. As an example of the use of this, take a graph $G = (V,E)$, and we want to find a hamiltonian path (that is, one which goes through every vertex without intersecting). Where $x_{ij}$ represents whether the vertex from $i$ to $j$ is included in the path, we can represent this problem by the below formula:
+
+  \begin{align*}
+    F_{G} :=& \bigwedge_{i=1}^{n} \bigvee_{j=1}^{n} x_{ij} \\
+             &\land \bigwedge_{j=1}^{n} \bigvee_{i=1}^{n} x_{ij} \\
+    &\land \bigwedge_{(i,i') \notin E} \bigwedge_{j=1}^{n-1} \neg(x_{ij} \land x_{i'(j+1)})
+  \end{align*}
+  \textbf{Check this again - this formula isn't quite complete.} \\
+
+  Where $n$ is the length of the formula, we can solve SAT in $O(2^{n})$, but no sub-exponential algorithm is known. We can do better for special formula classes however. \\
+
+  \begin{definition}
+  \ A CNF forula is a Horn formula if each clause contains at most one positive literal.
+  \end{definition}
+  \hphantom{}
+
+  This form allows them to be written as conjunctions of implications. Consequently, we can use an algorithm that begins by setting every variable to $0$, then while the assignment doesn't satisfy the formula we look through the unsatisfied clauses. If the consequent is a variable then assign it true, and if it is false then return that the formula is unsatisfiable. The argument here is that for $P \rightarrow \false$ to be unsatisfied then an element of $P$ has been made true. Provided we only make things true once we're sure they have to be, we know we have unsatisfiability. In a similar way, if $P \to p$ is unsatisfied, then $p$ is false and an element of $P$ is true, so provided that element had to be made true, $p$ must also be true. Thus we have that each step is logically valid. \\
+
+  \begin{definition}
+  \ A 2-CNF formula, or Krom formula is a CNF formula $F$ such that every clause has at most two literals.
+  \end{definition}
+  \hphantom{}
+
+  We write an implication graph $G = (V,E)$ where $V := \{x_{1}, x_{2}, \dots\} \cup \{\neg x_{1}, \neg x_{2}, \dots\}$, and $E$ is defined using $a \lor b \equiv \neg a \rightarrow b$ to allow us to assign an edge between two variables where there is such an implication. Consequently we can say that a 2-CNF formula is satisfiable iff its implication graph has no $p \in X$ such that there is a path from $p$ to $\neg p$ and $\neg p$ to $p$ \\
+
+  In the forwards direction this is obvious, because if there was such a path then we get a contradiction. In the reverse, suppose the graph is consistent. We can get an assignment by looping over the graph vertices. Pick an unassigned variable with no path from itself to its complement, set it to $1$, \textbf{finish proof}. \\
+
+  \begin{theorem}
+  \ Given an arbitrary formula $F$, we can compute an equisatisfiable 3-CNF formula $G$ in polynomial time.
+  \end{theorem}
+  \hphantom{}
+
+  The proof of this is via taking subformulas $F_{i} = p_{i}$, for $i \in \{1,\dots,m\}$, and the rest of the subformulas $F_{m+1}$, $\dots$, $F_{n}$. Introduce new variables $p_{m+1}$, $\dots$, $p_{n}$, and if $F_{i} = F_{j} \lor F_{k}$, then $G_{i} := p_{i} \leftrightarrow (p_{} \lor p_{k})$. Then take $G = G_{m+1} \land \cdots \land G_{n} \land p_{n}$. \\
+
+  Walk-SAT is a SAT algorithm which works randomly on CNF formulae. We input a CNF formula with $n$ variables and a repetition parameter $r$. Pick a random assignment of the $n$ variables, and $r$ times we pick an unsatisfied clause, flip a randomly selected literal, and at each point check if $F$ is now satisfied. \\
+
+  We find that we have a bound that the probability of failure is $\le 2^{-m}$ where $r = 2mn^{2}$, so setting $m$ reasonably high gives a good bound on the rate of error.
+  }
+  \column{0.33}
+  \block{Resolution}{
+    Resolution is a proof calculus for propositional logic. It is sound and complete, so anything proved is valid, and anything valid can be proved. \\
+
+    \begin{definition}
+      \ Let $C_{1}$ and $C_{2}$ be clauses. A clause $R$ is called a resolvent of $C_{1}$ and $C_{2}$ if there are complementary literals $L \in C_{1}$ and $\overline{L} \in C_{2}$ such that
+      \[R = (C_{1} \setminus \{L\}) \cup (C_{2} \setminus \{\overline{L}\}).\]
+    \end{definition}
+    \hphantom{}
+
+    The main point of this is that $C_{1} \land C_{2} \vDash R$. Consequently this allows us to reduce CNF formulae, and either refute (if this reduces them to the empty clause) or find a satisfaction.\\
+
+    A derivation of a clause $C$ from a set of clauses $F$ is a sequence $C_{1},C_{2}, \dots, C_{m}$ of clauses where $C_{m} = C$ and for each $i \in \{1, 2, \dots, m\}$ either $C_{i} \in F$ or $C_{i}$ is a resolvent of $C_{j}, C_{k}$ for some $j, k < i$. A derivation of the empty clause $\square$ from a formula $F$ is called a refutation of $F$. \\
+
+    \begin{lemma}
+    \ Let $F$ be a CNF formula represented as a set of clauses. If $R$ is a resolvent of clauses $C_{1}$ and $C_{2}$ of $F$ then $F \equiv F \cup \{R\}$.
+    \end{lemma}
+    \hphantom{}
+
+    Let $F$ be a CNF formula represented as a set of clauses. If $R$ is a resolvent of clauses $C_{1}$ and $C_{2}$ of $F$, then $F \equiv F \cup \{R\}$. Either $\mathcal{A} \vDash L$ or $\mathcal{A} \vDash $. In the former case $\mathcal{A} \vDash C_{2}$ so $\mathcal{A} \vDash C_{2} \setminus \{\overline{L}\}$, in the latter case $\mathcal{A} \vDash C_{1}$ so $\mathcal{A} \vDash C_{2} \setminus \{L\}$ and thus in both cases $\mathcal{A} \vDash R$. \\
+
+    Thus we get both soundness, that if there is a derivation of $\square$ from $F$ then $F$ is unsatisfiable, and completeness, that if $F$ is unsatisfiable there is a derivation of $\square$ from $F$. The former proof is from repeatedly applying the resolution lemma, and the latter via induction. \\
+
+    \innerblock{The DPLL algorithm}{
+      The DPLL algorithm combines search and deduction to decide satisfiability of CNF-formulae. The idea is to use a depth-first search -- at every unsuccessful leaf of the search tree (called a conflict), use resolution to compute a conflict clause. Add this clause to the formula we're deciding about. \\
+
+      We initiaise $\mathcal{A}$ as the empty assignment. While there is a unit clause $\{L\}$ in $\restr{F}{\mathcal{A}}$, update $\mathcal{A} \mapsto \mathcal{A}_{[L \mapsto 1]}$. If $\restr{F}{\mathcal{A}}$ contains no clauses, stop and output $\mathcal{A}$. If this contains empty, determine a new clause $C$ to add to $F$ by a learning procedure. If this is the empty clause, then $F$ is unsatisfiable -- otherwise backtrack to the highest level where $C$ is the unit clause and loop.
+    }
+    \hphantom{}
+
+    \innerblock{Lower Bounds for Resolution}{
+      Proof of the pigeonhole principle: \\
+
+      Fix $n \in \mathbb{N}$ and for $i, j \in \{1,\dots, n\}$ let $x_{ij}$ denote that pigeon $i$ is in box $j$. Constructing formulas as follows:
+      \begin{align*}
+        P_{i} &:= \bigvee_{i=1}^{n-1} x_{ij} \\
+        F_{1} &= \bigwedge_{j=1}^{n-1} \bigwedge_{1\le i < i' \le n} (\neg x_{ij} \lor \neg x_{i'j}) \\
+        F_{2} &:= \bigwedge_{j=1}^{n-1} \bigvee_{i=1}^{n} x_{ij} \\
+        F_{3} &= \bigwedge_{1 \le j < j' \le n-1} (\neg x_{ij} \lor \neg x_{ij'})
+      \end{align*}
+      These combined state that each pigeon is in a single box, every box has a pigeon, and no box contains two different pigeons. Note that there are $n$ pigeons for $n-1$ boxes. \\
+
+      Define $\mathrm{CRIT}_{n} = F_{1} \land F_{2} \land F_{3}$. A valuation satisfying $\mathrm{CRIT}_{n}$ is said to be critical. The pigeonhole principle is equivalent to the assertion that $F_{1} \land \bigwedge_{i=1}^{n} P_{i}$ is unsatisfiable. \\
+
+      A pseudo refutation of $\mathrm{PHP}_{n} := \mathrm{CRIT}_{n} \land \bigwedge_{i=1}^{n} P_{i}$ is a sequence of monotone clauses (clauses with only positive literals) $C_{1}, \dots, C_{m} = \square$ such that for all $1 \le i \le m$ either $\mathrm{CRIT}_{n} \land P_{j} \vDash C_{i}$ for some $j \in \{1, \dots, n\}$, or $\mathrm{CRIT}_{n} \land C_{j} \land C_{k} \vDash C_{i}$ for some $j, k < i$. \\
+
+      \textbf{Proof incomplete}
+    }
+    \hphantom{}
+    \innerblock{Compactness}{
+      \begin{theorem}
+      \ A set of formulas $\mathcal{S}$ is satisfiable if and only if every finite subset of $\mathcal{S}$ is satisfiable.
+      \end{theorem}
+      \hphantom{}
+
+      A partial assignment is a function $\mathcal{A} : D \to \{0,1\}$, whose domain $D \subseteq \{p_{1}, p_{2}, \dots\}$ is a set of variables $\mathrm{dom}(\mathcal{A})$. The central idea of this proof is to construct a sequence of good partial assignments $\mathcal{A}_{0}, \mathcal{A}_{1}, \mathcal{A}_{2}, \dots$ such that $\mathrm{dom}(\mathcal{A}_{n}) = \{p_{1}, \dots, p_{n}\}$ and $\mathcal{A}_{n+1}$ extends $\mathcal{A}_{n}$ for each $n$. We maintain the induction hypothesis that there are infinitely many good partial assignments that extend $\mathcal{A}_{n}$. \\
+
+      Suppose we have $\mathcal{A}_{0}, \dots, \mathcal{A}_{n}$ such that $\mathcal{A}_{n}$ has infinitely many good extensions. We only have two extensions which include $p_{n+1}$, and so one of them must have infinitely many good extensions, and we can just choose that one.
+    }
+  }
+  \block{First-Order Predicate Logic}{
+    First-Order logic introduces the notion of quantifiers, as well as both predicate symbols, and constant symbols. \\
+
+    Syntactically, we have a signature $\sigma$ consisting of constant symbols $c_{0}, c_{1}, c_{2}, \dots$, function symbols $f_{1}, f_{2}, \dots$, and predicate symbols $p_{1}, p_{2}, \dots$. Every variable $x$ or constant symbol is a $\sigma$-term, and further if $t_{1}, \dots, t_{k}$ are $\sigma$-terms and $f$ is a $k$-ary function symbol then $f(t_{1}, \dots, t_{k})$ is a $\sigma$-term. \\
+
+    Next, if $P$ is a $k$-ary predicate symbol and $t_{1}, \dots, t_{k}$ are $\sigma$-terms, then $P(t_{1}, \dots, t_{k})$ is a formula. For each formula $F$, $\neg F$, and for another formula $G$, $(F \lor G)$ and $(F \land G)$ are both formulas. Further, if $x$ is a variable and $F$ is a formula then $\exists x \, F$ and $\forall x \, F$ are both formulas. \\
+
+    A $\sigma$-structure $\mathcal{A}$ consists of a non-empty universe $U_{\mathcal{A}}$, where for each constant $c$, variable $x$ there are elements $c_{\mathcal{A}} \in U_{\mathcal{A}}$, $x_{\mathcal{A}} \in U_{\mathcal{A}}$. Additionally for every $k$-ary predicate symbol $P$ in $\sigma$, there is a $k$-ary relation $P_{\mathcal{A}} \subseteq U_{\mathcal{A}}^{k}$, and for every $k$-ary function symbol $f$ in $\sigma$, there is a $k$-ary function $f_{\mathcal{A}} : U_{\mathcal{A}}^{k} \to U_{\mathcal{A}}$. \\
+
+    We can then define $\mathcal{A}[t]$ inductively where $\mathcal{A}[c] = c_{\mathcal{A}}$, $\mathcal{A}[x] = x_{\mathcal{A}}$, $\mathcal{A}[f(t_{1}, \dots, t_{k})] = f_{\mathcal{A}}(\mathcal{A}[t_{1}], \dots, \mathcal{A}[t_{k}])$. \\
+
+    A formula $F$ is satisfiable if there is some structure $\mathcal{A}$ such that $\mathcal{A} \vDash F$. It is valid if for every $\mathcal{A}$, $\mathcal{A} \vDash F$. \\
+
+    \begin{theorem}
+    \ Satisfiability and validity are undecidable, but validity is semi-decidable (RE).
+    \end{theorem}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Suppose that $\mathcal{A}$ and $\mathcal{A}'$ are $\sigma$-assignments with the same universe and identical interpretations of the predicate, function, and constant symbols in $\sigma$. If $\mathcal{A}$ and $\mathcal{A}'$ give the same interpretation to each variable occurring free in some $\sigma$-formula $F$ then $\mathcal{A} \vDash F$ if and only if $\mathcal{A}' \vDash F$.
+    \end{lemma}
+    \hphantom{}
+
+    This follows by two inductions.
+    }
+    \column{0.33}
+
+    \block{First-Order normal forms}{
+      A formula is rectified if no variable occurs both bound and free. We have that every formula is equivalent to a rectified formula in prenex form, and we say that a formula in RPF is in Skolem form if it doesn't contain any occurrences of $\exists$. \\
+
+      We say that a $\sigma$-structure $\mathcal{H}$ is called a Herbrand structure if the universe $U_{\mathcal{H}}$ is the set of ground terms (terms without a variable) over $\sigma$, for every constant symbol $c$ we have $c_{\mathcal{H}} = c$, and for every $k$-ary function symbol $f$ in $\sigma$ and for all ground terms $t_{1},t_{2},\dots,t_{n} \in U_{\mathcal{H}}$ we have $f_{\mathcal{H}}(t_{1},\dots,t_{k}) = f(t_{1},\dots,t_{k})$. \\
+
+      The intuition for what this changes is that whereas normally we have a $\sigma$-structure $\mathcal{A}$ which maps variables and constants to elements of $U_{\mathcal{A}}$, function symbols to functions, and predicate symbols to predicates, a Herbrand structure is a specific structure wherein the universe is every possible sequence of applications of function symbols to constants. \\
+
+      \begin{theorem}[Herbrand's theorem]
+      \ Let $F = \forall x_{1} \dots \forall x_{n} F^{*}$ be a closed formula in skolem form. Then $F$ is satisfiable iff it has a Herbrand model.
+      \end{theorem}
+      \hphantom{}
+
+      If $F$ has a Herbrand model, immediately $F$ is satisfiable by definition, as $\mathcal{H}$ models $F$. In reverse, if $F$ is satisfied by some $\mathcal{A}$, we construct $\mathcal{H}$ to mimic $\mathcal{A}$. Given a $k$-ary $P$ we defined $(t_{1},\dots,t_{k}) \in P_{\mathcal{H}}$ iff $\mathcal{A} \vDash P(t_{1},\dots,t_{k})$. By inducting on the number of quantifiers we can then show that for any closed formula $G = \forall y_{1} \dots \forall y_{n} G^{*}$, if $\mathcal{A} \vDash G$ then $\mathcal{H} \vDash G$. \\
+
+      In general, a satisfiable formula may not have a finite model. We would like to prove that if $F$ is unsatisfiable, then there is always a ground resolution proof of $\square$ from $F$. Fix a signature $\sigma$, and let $F = \forall x_{1} \dots \forall x_{n} F^{*}$ be a closed formula in Skolem form with matrix $F^{*}$. The Herbrand expansion is defined as
+      \[
+        E(F) := \{F^{*}[t_{1}/x_{1}]\dots [t_{n}/x_{n}] \,:\, t_{1},\dots,t_{n} \text{ ground $\sigma$-terms }\}
+      \]
+      which is the set of ways to substitute ground terms into the matrix $F^{*}$. $E(F)$ has a Herbrand model iff it is satisfiable as a propositional formula, allowing us to say that $F$ is satisfiable iff $E(F)$ is satisfiable propositionally. \\
+
+      Thus we can apply resolution and compactness to get that a closed formula $F$ is unsatisfiable iff there is a resolution refutation of $E(F)$. \\
+
+      Ground resolution is where we replace each variable by a ground symbol in order to apply normal resolution to infer statements. This requires that one has an intuition for the ground substitution that you use (e.g. we prove $1 + 1 \in \mathbb{N}$ by knowing beforehand that it is $2$), and so the predicate version of resolution is slightly different. \\
+
+      A substitution \emph{unifies} or solves a system of term equations $\{s_{1} \overset{?}{=} t_{1}, \dots, s_{n} \overset{?}{=} t_{n}\}$ if $s_{1} \theta = t_{1} \theta, \dots, s_{n} \theta = t_{n} \theta$. We say that $\theta$ is a most general unifier if for any other unifier $\theta_{1}$ there exists $\theta_{2}$ such that $\theta_{1} = \theta \theta_{2}$. A system is solved if it has the form $\{x_{1} \overset{?}{=} t_{1}, \dots, x_{n} \overset{?}{=} t_{n}\}$ such that the $x_{i}$ are distinct variables that do not appear in any term $t_{j}$. In this case the substitution $[t_{1} / x_{1}]\dots [t_{n} / x_{n}]$ is an mgu. \\
+
+      The unification rewriting rule is as follows: we can simplify $\{t \overset{?}{=} t\}$, decompose $\{f(s_{1},\dots,s_{n}) \overset{?}{=} g(t_{1},\dots,t_{n})\}$ to $\{s_{1} \overset{?}{=} t_{1},\dots, s_{n} \overset{?}{=} t_{n}\}$ if $f = g$, to $\bot$ otherwise, $\{x \overset{?}{=} t\} \cup S$ to $\{x \overset{?}{=} t\} \cup S[t/x]$ if $x$ occurs in $S$ but not $t$, and $\{x \overset{?}{=} t\} \cup S$ to $\bot$ if $x$ is a proper subterm of $t$. \\
+
+      As an example of the application of unification, take the following statements:
+      \begin{enumerate}
+        \item \ $\forall x \,.\, A(x,0,x)$
+        \item \ $\forall x \,.\, \forall y \,.\, \forall z \,.\, (A(x,y,z) \rightarrow A(x,s(y),s(z)))$
+        \item \ $\forall x \,.\, \neg A(s(0), s(0), x)$
+      \end{enumerate}
+      intending to use the first two to prove the contradiction of the third. We are then motivated to have, for $A(x_{1},0,x_{1})$, $\neg A(x_{2}, y_{2}, z_{2}) \lor A(x_{2}, s(y_{2}), s(z_{2}))$...
+    }
+    \block{Expressiveness}{
+      \begin{definition}[Eherenfeucht-Fra\"{\i}ss\'{e} game]
+        \ Let $k, m \in \mathbb{N}$, $\sigma$ be a finite relational signature, $\mathcal{A}, \mathcal{B}$ $\sigma$-structures, $a \in A^{m}$, $b \in B^{m}$, with the game $G_{k}((\mathcal{A}, a), (\mathcal{B}, b))$ a $k$-round game. In each round the spoiler chooses either $a \in A$ or $b \in B$, and the duplicator chooses an element of the other structure. \\
+
+        After $k$-rounds, we have tuples $a' \in A^{m+k}$, $b' \in B^{m+k}$, and the duplicator wins iff for all atomic formulas $\varphi$ in $m+k$ variables, $\mathcal{A} \vDash \varphi(a')$ iff $\mathcal{B} \vDash \varphi(b')$ (i.e. the structures are the same).
+      \end{definition}
+    }
+\end{columns}
+
+\end{document}

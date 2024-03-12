@@ -1,0 +1,251 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=850mm, paperheight=1500mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{complexity}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\dtime}{DTIME}
+\DeclareMathOperator{\dspace}{DSPACE}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\res}{res}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+    \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+      #1 % the function
+      \vphantom{\big|} % pretend it's a little taller at normal size
+    \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Computational Complexity}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{Time and Space}{
+  \begin{definition}
+  \ Let $M$ be a TM and $x \in \Sigma^{*}$ be an input. We say that $M$ uses time $T$ on input $x$ if $M$ halts within $T$ steps on $x$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ Let $M$ be a TM with a read-only input tape, and $x \in \Sigma^{*}$. We say that $M$ uses space $S$ on an input $x$ if $M$ halts on input $x$ and accesses at most $S$ work-tape cells.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ Let $T : \mathbb{N} \to \mathbb{N}$ be a function. We say that a TM $M$ runs in time $T$ (or space $S$) if for all $x \in \Sigma^{*}$, $M$ uses time $T(|X|)$ (or space $S(|X|)$).
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ Let $L \subseteq \Sigma^{*}$, $T : \mathbb{N} \to \mathbb{N}$ ($S : \mathbb{N} \to \mathbb{N}$). $L \in \dtime(T)$ ($L \in \dspace(S)$) if there exists a TM $M$ deciding $L$ running in time $O(T)$ (space $O(S)$).
+  \end{definition}
+  \hphantom{}
+
+  This is a worst case notion, however in certain cases it is more useful to consider a notion of average case complexity. This requires that we have the notion of a distribution over inputs, and while of important practical use, has limited theoretical use due to not entailing any strict bound. \\
+
+  We define the following complexity classes:
+  \begin{align*}
+    \mathrm{P} &= \bigcup_{k = 0}^{\infty} \dtime(n^{k}) \\
+    \mathrm{E} &= \bigcup_{k=0}^{\infty} \dtime\left(2^{nk}\right) \\
+    \mathrm{EXP} &= \bigcup_{k=0}^{\infty} \dtime\left(2^{n^{k}}\right)
+  \end{align*}
+
+  The extended Church-Turing thesis claims that if a problem can be solved in time $T$ on a ``reasonable'' model, then it is in $\bigcup _{k} \dtime(T^{k})$. \\
+
+  Note that we don't particularly care about $\dtime(1)$, because we will always need $n$ steps to read the input. We \emph{do} care about low bounds like $\dspace(1)$, because it's possible to in certain cases construct TMs which don't require much storage (e.g. for regular languages). \\
+
+  \begin{theorem}[Speed-up theorem]
+  \ Let $T : \mathbb{N} \to \mathbb{N}$ be a time function. Let $n \in \mathbb{N}$ be a positive integer. If there is a TM $M$ deciding $L \subseteq \Sigma^{*}$ in $T$ steps, then there is a TM $M'$ deciding $L$ in $T/n + n + 3$ steps.
+  \end{theorem}
+  \hphantom{}
+
+  To do this, we write each 3 symbols in the input as a single one, expanding $\Gamma$ to do so. We then expand $\delta$ to work with $\Gamma'$, and with a larger state set we can process and determine $6n$ steps in $6$ transitions. (\textbf{Consider looking over this again.}) \\
+
+  \begin{theorem}[Gap theorem]
+  \ Let $f : \mathbb{N} \to \mathbb{N}$ be a computable function. Then there exists a time bound $T$, space bound $S$ such that $\dtime(T) = \dtime(f(T))$ and $\dspace(S) = \dspace(f(S))$.
+  \end{theorem}
+  \hphantom{}
+
+  \begin{definition}
+  \ A time bound $T : \mathbb{N} \to \mathbb{N}$ is time-constructible if there is a TM $M$ that computes $T(n)$ given $1^{n}$ as input in time $O(T)$.
+  \end{definition}
+  \hphantom{}
+
+  The analogous definition works the same for space-constructibility -- we just require that there is a TM computing $S(n)$ from $1^{n}$ in space $O(S)$. \\
+
+  \begin{theorem}[Time hierarchy]
+  \ Let $T, T' : \mathbb{N} \to \mathbb{N}$ such that $T'$ is time-constructible and $T \log T = o(T')$. Then $\dtime(T) \subset \dtime(T')$.
+  \end{theorem}
+  \hphantom{}
+
+  \begin{theorem}
+  \ Let $S, S' : \mathbb{N} \to \mathbb{N}$ such that $S'$ is space-constructible and $S \log S = o(S')$. Then $\dspace(S) \subset \dspace(T')$.
+  \end{theorem}
+  \hphantom{}
+}
+\column{0.5}
+\block{Polynomial Hierarchies}{
+  Note that $\NP$ is the set of languages $L$ such that for some polynomial $p$ there is a language $R$ such that
+  \[
+    L = \left\{ x \in \Sigma^{*} : \exists w \in \Sigma^{*}\,.\,|w| \le p(|x|) \land \langle x, w \rangle \in R \right\}.
+  \]
+  We can in fact extend this to a more general notion of a hierarchy, that with a class $\mathcal{C}$, we define the classes $\exists^{\P} \mathcal{C}$ and $\forall^{\P} \mathcal{C}$ as follows:
+  \begin{align*}
+    \exists^{\P}\mathcal{C} &:= \{\{x \in \Sigma^{*} : \exists w \in \Sigma^{*} \,.\, |w| \le p(x) \land \langle x, w \rangle \in R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\} \\
+    \forall^{\P}\mathcal{C} &:= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \in R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\}.
+  \end{align*}
+  Further, we have that
+  \begin{align*}
+    \co(\exists^{\P} \mathcal{C}) &= \{L^{c} : L \in \exists^{\P}\mathcal{C}\} \\
+                                   &= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \notin R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\} \\
+                                   &= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \in R'\} : p \in \mathbb{R}[x], R' \in \co\mathcal{C}\} \\
+                                   &= \forall^{\mathrm{P}}\co{\mathcal{C}}
+  \end{align*}
+  allowing us to write, for example, $\coNP = \forall^{\P}\co\P = \forall^{\P} \P$.
+}
+\block{Randomness}{
+  Randomness can often be useful when writing programs, for a few reasons. Firstly, it is useful to break symmetries, because in certain instances it can become impossible to make a choice if all is equal between two objects. Secondly, it can be useful for hiding or obfuscating information. Thirdly, it can be useful for making computation more efficient. \\
+
+  As an example, while it takes deterministically superquadratic time to verify that $AB = C$, one way to randomly verify this is to select a random vector $x \in \{0,1\}^{n}$, then compute $ABx = A(Bx)$ in quadratic time, and $Cx$ in quadratic time, then if the results are equal we have that $AB = C$ with probability $1/2$. Iterate this $k$ times and we get probability $1- 1/2^{k}$. \\
+
+  Alternatively we might want to solve the connectivity problem in an undirected graph. To do this given trying to check if $s$ and $t$ are in the same connected component, take a random walk from $s$ and terminate either after a fixed number of steps to reject, or after the walk reaches $t$. \\
+
+  A probabilistic turing machine (PTM) is an NTM where there are at most two choices at any stage in the computation. Given a computation $C_{0},C_{1},\dots,C_{t}$ where for all $i \in \{1,\dots,t-1\}$, $C_{i} \vdash C_{i+1}$, we say that $C_{t}$ has probability $1/2^{k}$ in the computation if there are exactly $k$ probabilistic transitions. We say that a PTM accepts $x$ with probability $p$ in the expected way (sum of probabilities of accepting over possible computations). \\
+
+  \begin{definition}
+  \ Given PTM $M$, time function $t : \mathbb{N} \to \mathbb{N}$, error bound $e : \mathbb{N} \to [0,1]$, we say that $M$ decides $L$ in time $t$ with bounded error $\varepsilon$ if $M$ always halts in time $t(|x|)$ and $x \in L$ implies that $M$ accepts $x$ with probability $\ge 1-\varepsilon(|x|)$, and if $x \notin L$ then $M$ accepts $x$ with probability $\le \varepsilon(|x|)$.
+  \end{definition}
+  \hphantom{}
+
+  We say that an algorithm has one-sided error where $x \in L$ means that $M$ accepts with probability $\ge 1-\varepsilon(|x|)$, and if $x \notin L$ means $M$ accepts with probability $0$, and it has zero error if it always outputs the correct answer when it halts, but halts in time $t(|x|)$ with probability $\ge 1-\varepsilon(|x|)$. \\
+
+  \begin{definition}
+  \ \begin{align*}
+      \BPP &= \{L : \text{$\exists k$ s.t. $L$ is decided by some PTM with error $1/3$ in $O(n^k)$}\} \\
+      \RP &= \{L : \text{$\exists k$ s.t. $L$ is decided by some PTM with one-sided error $1/3$ in $O(n^{k})$}\} \\
+      \ZPP &= \{L : \text{$\exists k$ s.t. $L$ is decided by some PTM with zero error $1/3$ in $O(n^{k})$}\}
+    \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  One of the major open questions regarding the ordering is whether $\BPP = \P$, as well as whether $\BPP \subseteq \SUBEXP$ (the set of languages in $O(2^{n^{\varepsilon}})$ for all $\varepsilon >0$). \\
+
+  \begin{theorem}
+  \ Let $p : \Sigma^{*} \to [0,1]$ be a function. $M$ is a PTM running in polynomial time iff there is a polynomial time bounded deterministic TM $N$ and a constant $k$ such that for any $x \in \Sigma^{*}$, if $M$ accepts $x$ with probability $p(x)$ then the probability that $N(x,\pi)$ accepts with $\pi \sim U(\{0,1\}^{n^{k}})$ is $p(x)$.
+  \end{theorem}
+  \hphantom{}
+
+  The proof by means of constructing $N$ is relatively straightforward. $\pi$ just decides the entire sequence of transitions, and it is clear how to construct $N$ polynomial to do this. \\
+
+  \begin{theorem}
+  \ Suppose $E$ does not have circuits of size $2^{\varepsilon n}$ for almost all $n$ with $\varepsilon > 0$. Then $\BPP = \P$.
+  \end{theorem}
+
+  \begin{theorem}
+    \ The following are equivalent:
+    \begin{itemize}
+    \item $L \in \RP$
+    \item For all $k \ge 0$ there is a PTM with one-sided error $\le 1/2^{n^{k}}$ deciding $L$.
+    \item There is a $k \ge 0$ such that there is a PTM with one-sided error $\le 1-1/n^{k}$ deciding $L$.
+    \end{itemize}
+  \end{theorem}
+  \hphantom{}
+
+  \begin{lemma}
+  \ Let $x_{1},\dots,x_{m}$ be IID random variables in $[0,1]$. Suppose $\mu = \mathbb{E}[\sum x_{i}]$. Then $\mathbb{P}(\sum x_{i} > \mu + \varepsilon) \le 2e^{-\frac{t^{2}}{2m}}$.
+  \end{lemma}
+}
+\end{columns}
+
+\end{document}

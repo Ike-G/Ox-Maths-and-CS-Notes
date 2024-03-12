@@ -211,7 +211,7 @@
   \hphantom{}
 
   \begin{theorem}
-    Let $U \subseteq \mathbb{C}$ be open and let $f : U \to \mathbb{C}$ be a continuous function. If $F : U \to \mathbb{C}$ is a primitive for $f$ ($F'(z) = f(z)$ on some open set $U \subseteq \mathbb{C}$) and $\gamma : [a,b] \to U$ is a piecewise $C^{1}$ path in $U$ then we have
+  \ Let $U \subseteq \mathbb{C}$ be open and let $f : U \to \mathbb{C}$ be a continuous function. If $F : U \to \mathbb{C}$ is a primitive for $f$ ($F'(z) = f(z)$ on some open set $U \subseteq \mathbb{C}$) and $\gamma : [a,b] \to U$ is a piecewise $C^{1}$ path in $U$ then we have
     \begin{align*}
       \int_{\gamma} f(z) \, \mathrm{d} z = F(\gamma(b)) - F(\gamma(a)).
     \end{align*}
@@ -221,12 +221,12 @@
   This follows immediately from the real FTC, and indeed we will later see that $F$ being holomorphic on $U$ implies that $f$ is continuous, so that condition becomes unnecessary. \\
 
   \begin{theorem}
-    If $U$ is a domain and $f : U \to \mathbb{C}$ is a continuous function such that for any closed piecewise $C^{1}$ path in $U$ we have $\int_{\gamma} f(z) \, \mathrm{d}z = 0$, then $f$ has a primitive.
+  \ If $U$ is a domain and $f : U \to \mathbb{C}$ is a continuous function such that for any closed piecewise $C^{1}$ path in $U$ we have $\int_{\gamma} f(z) \, \mathrm{d}z = 0$, then $f$ has a primitive.
   \end{theorem}
   \hphantom{}
 
   \begin{lemma}
-    Suppose $f_{n} \overset{u}{\to} f$ on $\gamma$. Then
+  \ Suppose $f_{n} \overset{u}{\to} f$ on $\gamma$. Then
     \begin{align*}
       \lim_{n \to \infty} \int_{\gamma} f_{n}(z) \, \mathrm{d}z &= \int_{\gamma} f(z) \, \mathrm{d}z
     \end{align*}
@@ -234,11 +234,12 @@
   \hphantom{}
 
   \begin{definition}
-    Let $\gamma_{1}, \gamma_{2} : [0,1] \to U$ be two closed paths in a domain $U$. We say that $\gamma_{1}$ and $\gamma_{2}$ are homotopic if there is a continuous function $H : [0,1]^{2} \to \mathbb{C}$ such that for each $u \in [0,1]$, then $H(\cdot, u) : [0,1] \to U$ is a closed path in $U$ with $H(\cdot, 0) = \gamma_{1}$, $H(\cdot, 1) = \gamma_{2}$.
+  \ Let $\gamma_{1}, \gamma_{2} : [0,1] \to U$ be two closed paths in a domain $U$. We say that $\gamma_{1}$ and $\gamma_{2}$ are homotopic if there is a continuous function $H : [0,1]^{2} \to \mathbb{C}$ such that for each $u \in [0,1]$, then $H(\cdot, u) : [0,1] \to U$ is a closed path in $U$ with $H(\cdot, 0) = \gamma_{1}$, $H(\cdot, 1) = \gamma_{2}$.
   \end{definition}
+  \hphantom{}
 
   \begin{theorem}[Deformation theorem]
-    Let $f$ be holomorphic on a domain $U$ and let $\gamma_{1}$ and $\gamma_{2}$ be homotopic closed paths in $U$. Then
+  \ Let $f$ be holomorphic on a domain $U$ and let $\gamma_{1}$ and $\gamma_{2}$ be homotopic closed paths in $U$. Then
     \begin{align*}
       \int_{\gamma_{1}} f(z) \, \mathrm{d}z = \int_{\gamma_{2}} f(z) \, \mathrm{d}z
     \end{align*}

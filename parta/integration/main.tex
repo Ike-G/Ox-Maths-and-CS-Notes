@@ -1,0 +1,484 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=1700mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\res}{res}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+    \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+      #1 % the function
+      \vphantom{\big|} % pretend it's a little taller at normal size
+    \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Integration}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.33}
+\block{Motivation}{
+  Our goal in this course is to introduce Lebesgue's theory of integration (mainly working on $\mathbb{R}$, although the theory is far more general than this). In prelims analysis Riemann integration was already seen, however there are several advantages to Lebesgue integration:
+
+  \begin{itemize}
+          \item \ We have far better convergence theorems for Lebesgue integration, with far stronger results to demonstrate integrability.
+          \item \ Lebesgue integration handles unbounded functions and domains, unlike in Riemann integration where we essentially have to redesign the definition of the integral depending on where the function is non-integrable.
+          \item \ It generalises beyond $\mathbb{R}$, whereas we require that any domain is reduced to $\mathbb{R}$ if we would like to integrate it with Riemann integration.
+          \item \ Lebesgue integrable functions on $[a,b]$ are completions of R-integrable functions on $[a,b]$ in $\mathcal{L}^{p}$-norms.
+  \end{itemize}
+}
+
+\block{Construction}{
+  To begin with, we start by using the extended real numbers $[-\infty, \infty] = \mathbb{R} \cup \{-\infty, \infty\}$. We define addition and subtraction as expected (note: not defining $\infty-\infty$), with the only controversial definition being that $0 \cdot \infty = 0$. The logic here is that in our context $x \cdot \infty$ is the area under a function constantly $x$. \\
+
+  The immediate consequence of extending the real numbers is that we can now more formally state that every subset of $[-\infty,\infty]$ will have a supremum and infimum, and for any increasing sequence we immediately get convergence in terms of suprema. \\
+
+  As a bit of a recap, observe the following results of $\liminf$ and $\limsup$ for $(a_{n}) \in [-\infty,\infty]$:
+  \begin{itemize}
+    \item \ $\liminf a_{n} = -\limsup (-a_{n})$;
+    \item \ $\liminf a_{n} \le \limsup a_{n}$;
+    \item \ $a_{n} \to L$ as $n \to \infty$ iff $\limsup a_{n} = \liminf a_{n} = L$;
+    \item \ $a_{n} \le b_{n}$ for all $n \ge 0$ implies $\limsup a_{n} \le \limsup b_{n}$;
+    \item \ $\limsup (a_{n} + b_{n}) \le \limsup a_{n} + \limsup b_{n}$.
+  \end{itemize}
+  \hphantom{}
+
+  \innerblock{Lebesgue Measure}{
+    Whereas Riemann's method was to divide the $x$-axis in order to calculate the area under a curve, Lebesgue's method was to divide the $y$-axis. To do this, we want a method of measuring the size of our domain: \\
+
+    A measure on $\mathbb{R}$ is a function $m : \mathcal{P}(\mathbb{R}) \to [0,\infty]$ such that
+    \begin{itemize}
+    \item \ $m(\varnothing) = 0$, $m(\{x\}) = 0$;
+    \item \ $m([a,b]) = b - a$ where $a < b$;
+    \item \ $m(A + x) = m(A)$;
+    \item \ $m(\alpha A) = |\alpha|m(A)$;
+    \item \ $A \subseteq B \Rightarrow m(A) \le m(B)$;
+    \item \ $m(\bigcup_{k=1}^{\infty} A_{k}) = \sum_{k=1}^{\infty}m(A_{k})$ if for all $n \neq m$, $A_{n} \cap A_{m} = \varnothing$;
+    \item \ $m(\bigcup_{k=1}^{\infty} A_{k}) = \lim m(A_{k})$ if $(A_{n})$ is an increasing sequence of sets.
+    \end{itemize}
+    \hphantom{}
+
+    The order and choice of these properties isn't massively consequential - there is notable redundancy here, and we could remove certain statements and have the set of measures unchanged. Importantly however, it turns out that we in fact \textbf{cannot} satisfy all of these properties for a well defined function on $\mathcal{P}(\mathbb{R})$. \\
+
+    We define the outer measure to satisfy all but countable additivity (rather we get countable subadditivity): \\
+
+    \begin{definition}
+      \ For $A \subseteq \mathbb{R}$, the outer measure is defined by
+      \begin{align*}
+        m^{*}(A) = \inf \left\{\sum_{n=1}^{\infty}|I_{n}| \,:\, I_{n} \textrm{ intervals, } A \subseteq \bigcup_{n=1}^{\infty} I_{n}\right\}
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \textbf{To prove: subadditivity. Use heine-borel for this.} \\
+
+    We say that $E \subseteq \mathbb{R}$ is null if $m^{*}(E) = 0$. If a property of real numbers is dissatisfied only for a null set, we say that the property holds \emph{almost everywhere}. \\
+
+    Note that we can have null sets which are uncountable - a typical example of this is the Cantor set, which is the intersection of sets with measure tending to $0$, and the set of numbers in $[0,1]$ with a ternary expansion involving just $0$s and $2$s (viewing this as $2^{\mathbb{N}}$ gives a more obvious indication that the set is uncountable). \\
+
+    Consider $\mathbb{R}$ partitioned into its $\mathbb{Q}$-cosets. Let $A \subseteq [0,1]$ consist of exactly one element of each coset, so $x, y \in A$, $x \neq y$, $x-y \notin \mathbb{Q}$, and for any $x \in [0,1]$ there is a $q \in \mathbb{Q}$ such that $x + q \in A$. This provides a counterexample to countable additivity because we get $1 \le \infty \cdot m^{*}(A) \le 3$ which is impossible. Note however that this requires the axiom of choice to describe such a set, and in fact we have that we cannot contradict countable additivity with any set which can be explicitly written down. \\
+
+    \begin{definition}
+      \ $E \subseteq \mathbb{R}$ is Lebesgue measurable if
+      \[
+        m^{*}(A) = m^{*}(A \cap E) + m^{*}(A \setminus E)
+      \]
+      for all $A \subseteq \mathbb{R}$. Write $\mathcal{M}_{\mathrm{LEB}}$ for the collection of Lebesgue measurable sets.
+    \end{definition}
+    \hphantom{}
+
+    Note that to prove that a set is Lebesgue measurable, it suffices to show that $m^{*}(A \cap E) + m^{*}(A \setminus E) \leq m^{*}(A)$ for any $A \subseteq \mathbb{R}$. \\
+
+    We get some immediate consequences of this definition: null sets and intervals are both immediately measurable, and $\mathcal{M}_{\mathrm{LEB}}$ is closed under complements and countable unions (and where disjoint can be countably summed). Any open subset of $\mathbb{R}$ is thus Lebesgue measurable as the countable union of intervals, giving the same for closed subsets.\\
+
+    \begin{corollary}
+    \ If $E \in \mathcal{M}_{\mathrm{LEB}}$ then for $\varepsilon > 0$, there is an open set $U \subseteq \mathbb{R}$ such that $E \subseteq U$ and $m^{*}(U \setminus E) < \varepsilon$.
+    \end{corollary}
+    \hphantom{}
+
+    \textbf{Prove.} \\
+
+    \begin{lemma}
+      \ For $E \subseteq \mathbb{R}$ the following are equivalent:
+      \begin{itemize}
+        \item \ $E \in \mathcal{M}_{\mathrm{LEB}}$.
+        \item \ For all $\varepsilon > 0$, there is $U \supseteq E$ open such that $m^{*}(U \setminus E) < \varepsilon$.
+        \item \ There is a sequence of open sets $(U_{n})$ such that $\bigcap_{n=1}^{\infty} U_{n} \supseteq E$ and $\left(\bigcap_{n=1}^{\infty} U\right) \setminus E$ is null.
+      \end{itemize}
+    \end{lemma}
+    \hphantom{}
+
+    For dealing with $\mathbb{R}^{d}$, we generalise $m^{*}$ to, instead of each interval, use cartesian products of $d$ intervals, with volume defined as the product of their lengths. Everything here works similarly to $\mathbb{R}$. If $E, F \subseteq \mathbb{R}$ are measurable, then $E \times F \subseteq \mathbb{R}^{2}$ is measurable. Note that this doesn't hold in reverse.
+  }
+}
+\column{0.33}
+
+\block{Measure spaces}{
+  \begin{definition}
+    \ Let $\Omega$ be any set, and $\mathcal{F} \subseteq \mathcal{P}(\Omega)$. $\mathcal{F}$ is a $\sigma$-algebra (or $\sigma$-field) on $\Omega$ if
+    \begin{itemize}
+      \item \ $\varnothing \in \mathcal{F}$;
+      \item \ If $E \in \mathcal{F}$ then $\Omega \setminus E \in \mathcal{F} $;
+      \item \ If $E_{n} \in \mathcal{F}$ for $n \ge 1$, then $\bigcup_{n=1}^{\infty} E_{n} \in \mathcal{F}$.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  `$\sigma$' as a description is in general used to indicate that a property has much to do with countability. \\
+
+  \begin{definition}
+  \ A measurable space is a pair $(\Omega, \mathcal{F})$ where $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$. A measure on a measurable space $(\Omega, \mathcal{F})$ is $\mu : \mathcal{F} \to [0,\infty]$ such that
+  \begin{itemize}
+    \item \ $\mu(\varnothing) = 0$;
+    \item \ $\mu(\bigcup_{n=1}^{\infty} E_{n}) = \sum_{n=1}^{\infty} \mu(E_{n})$ whenever $E_{n}$ are disjoint sets in $\mathcal{F}$.
+  \end{itemize}
+  Consequently we label $(\Omega, \mathcal{F}, \mu)$ a measure space.
+  \end{definition}
+  \hphantom{}
+
+  Note that one will have already seen this notion in probability, because a probability space is just a measure space with $\mu(\Omega) = 1$. \\
+
+  A measure space more generally is finite where $\mu(\Omega) < \infty$, and $\sigma$-finite if $\Omega = \bigcup_{n=1}^{\infty} E_{n}$ with $E_{n} \in \mathcal{F}$ and $\mu(E_{n}) < \infty$ (i.e. covered by a countable number of sets with finite measure). $(\mathbb{R}, \mathcal{M}_{\mathrm{LEB}}, m)$ is a $\sigma$-finite measure space.\\
+
+  \begin{lemma}
+    \ Let $\Omega$ be a set, and $\mathcal{B} \subseteq \mathcal{P}(\Omega)$. Then there is a unique $\sigma$-algebra $\mathcal{F}_{\mathcal{B}}$ satisfying:
+    \begin{itemize}
+      \item \ $\mathcal{F}_{\mathcal{B}}$ is a $\sigma$-algebra and $\mathcal{B} \subseteq \mathcal{F}_{\mathcal{B}}$,
+      \item \ If $\mathcal{F}$ is $\sigma$-algebra on $\Omega$ and $\mathcal{B} \subseteq \mathcal{F}$ then $\mathcal{F}_{\mathcal{B}} \subseteq \mathcal{F}$.
+    \end{itemize}
+  \end{lemma}
+  \hphantom{}
+
+  The $\sigma$-algebra $\mathcal{M}_{\mathrm{BOR}}$ generated by the intervals is the Borel $\sigma$-algebra on $\mathbb{R}$. It can be otherwise described as the class of all subsets of $\mathbb{R}$ which can be obtained from intervals in a countable number of steps. It has a slightly interesting density property, in that we can always get for $E \in \mathcal{M}_{\mathrm{LEB}}$, $A, B \in \mathcal{M}_{\mathrm{BOR}}$ such that $B \setminus A$ is null and $A \subseteq E \subseteq B$. Note $\mathcal{M}_{\mathrm{BOR}} \neq \mathcal{B}_{\mathrm{LEB}}$ however. \\
+
+  \begin{definition}
+  \ Let $(\Omega, \mathcal{F})$ be a measurable space. A function $f : \Omega \to \mathbb{R}$ is $\mathcal{F}$ measurable if $f^{-1}(I) \in \mathcal{F}$ for all intervals $I \subseteq \mathbb{R}$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{lemma}
+  \ Let $\mathcal{B}$ be a collection of sets in $\mathbb{R}$ generating $\mathcal{M}_{\mathrm{BOR}}$. Then $f : \Omega \to \mathbb{R}$ is mesurable iff $f^{-1}(G) \in \mathcal{F}$ for all $G \in \mathcal{B}$.
+  \end{lemma}
+  \hphantom{}
+
+  It's probably good to note that in practice every function we write down will be measurable, because otherwise we can describe a non-measurable set explicitly. \\
+
+  For the sake of theory we rarely work entirely with such functions though, so we have various standard results as to which functions are measurable. As groundwork, indicator functions of measurable sets are measurable, continuous functions are measurable (as are functions continuous almost everywhere), monotonic functions are measurable, and if $f = g$ almost everywhere and $g$ is measurable, then $f$ is measurable. \\
+
+  Further, $f + g$, $\lambda f$, $fg$, $\max(f,g)$, $\min(f,g)$ are all measurable if $f, g : \Omega \to \mathbb{R}$ are measurable. If $h : \mathbb{R} \to \mathbb{R}$ is continuous, then $h \circ f$ is measurable.
+  }
+
+  \block{Integration}{
+    \begin{definition}
+      \ $\varphi : \mathbb{R} \to \mathbb{R}$ is simple if $\varphi$ is measurable and $\varphi$ takes finitely many values.
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Let $f : \mathbb{R} \to [0,\infty]$ be measurable. Then there is an increasing sequence $\varphi_{1} \le \varphi_{2} \le \dots$ of simple functions such that for all $x \in \mathbb{R}$, $f(x) = \lim_{n \to \infty} \varphi(x)$.
+    \end{lemma}
+    \hphantom{}
+
+    For each $n \in \mathbb{N}$, for $k \in \{0, \dots, 4^{n}-1\}$, let
+    \begin{align*}
+      B_{k,n} &= \left\{x \,\Big|\, \frac{k}{2^{n}} \le f(x) < \frac{k+1}{2^{n}}\right\} \in \mathcal{M}_{\mathrm{LEB}}
+    \end{align*}
+    and then let
+    \begin{align*}
+      \varphi_{n}(x) &= \begin{cases}
+                    k2^{-n} & x \in B_{k,n} \\
+                    2^{n} & f(x) \ge 2^{n} \\
+                    0 & \mathrm{otherwise}
+                  \end{cases}
+    \end{align*}
+
+    In particular, we get the following theorem:
+    \begin{theorem}
+    \ A function $f : \mathbb{R} \to \mathbb{R}$ is measurable iff there is a sequence of step functions $(\psi_{n})$ such that $f = \lim \psi_{n}$ almost everywhere.
+    \end{theorem}
+    \hphantom{}
+
+    We get one direction immediately, because if $\lim \psi_{n} = f$ almost everywhere, by the measurability of each step function thus $f$ is measurable. The reverse direction is found on p32 of Stein and Shakarchi. \\
+
+    \begin{definition}
+    \ If $\varphi : \mathbb{R} \to [0,\infty]$ is a non-negative simple function with standard form
+    \begin{align*}
+      \varphi(x) = \sum_{i=1}^{n} \alpha_{i}\chi_{B_{i}} (x)
+    \end{align*}
+    (with $\alpha_{i} > 0$), then
+    \begin{align*}
+      \int_{\mathbb{R}} \varphi \, \mathrm{d}m &= \int_{-\infty}^{\infty} \varphi(x) \, \mathrm{d}m(x) = \int \varphi
+    \end{align*}
+    is defined by
+    \begin{align*}
+      \int \varphi &= \sum_{i=1}^{n} \alpha_{i} m(B_{i})
+    \end{align*}
+    Note that $\int \varphi < \infty$ if and only if both $m(B_{i}) < \infty$ for all $i$, and if $\alpha_{i} = \infty$ then $m(B_{i}) = 0$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}
+      \ For $f : \mathbb{R} \to [0,\infty]$ measurable, define
+      \begin{align*}
+        \int f = \int_{\mathbb{R}} f &= \int_{\mathbb{R}} f \, \mathrm{d}m \\
+        &= \int_{-\infty}^{\infty} f(x) \, \mathrm{d}m(x) \\
+        &= \sup \left\{\int \varphi \,\Big|\, 0 \le \varphi \le f, \varphi \,\,\mathrm{ simple}\right\}
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}
+    \ $f : \mathbb{R} \to [0,\infty]$ is integrable if $f$ is measurable and $\int_{\mathbb{R}} f < \infty$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}[Monotone convergence theorem]
+    \ If $(f_{n})$ is an increasing sequence of non-negative measurable functions and $f = \lim f_{n}$, then $\int f = \lim \int f_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    Since $f_{n} \le f$, it is immediate that $\sup_{n} \int f_{n} \le f$. For the reverse inequality, take $\varphi$ such that $0 \le \varphi \le f$. Take $\alpha \in (0,1)$, and with $B_{n} = \{x \,|\, f_{n}(x) \ge \alpha \varphi(x)\}$, $B_{n}$ is measurable and an increasing sequence. Since $\alpha \varphi \chi_{B_{n}} \le f_{n} \chi_{B_{n}} \le f_{n}$, then
+    \begin{align*}
+      \alpha \int_{B_{n}} \varphi \le \int_{\mathbb{R}} f_{n}
+    \end{align*}
+    and we get from evaluation that $\int_{B_{n}} \varphi \to \int_{\mathbb{R}} \varphi$ as $n \to \infty$. Applying this to series gives us that the Riemann integral and Lebesgue integral are equal for continuous functions on bounded intervals. \\
+  }
+  \column{0.33}
+  \block{Convergence Theorems}{
+    \begin{theorem}[Monotone convergence theorem]
+    \ If $(f_{n})$ is an increasing sequence of non-negative measurable functions and $f = \lim f_{n}$, then $\int f = \lim \int f_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    Since $f_{n} \le f$, it is immediate that $\sup_{n} \int f_{n} \le \int f$. For the reverse inequality, take $\varphi$ such that $0 \le \varphi \le f$. Take $\alpha \in (0,1)$, and with $B_{n} = \{x \,|\, f_{n}(x) \ge \alpha \varphi(x)\}$, $B_{n}$ is measurable and an increasing sequence. Since $\alpha \varphi \chi_{B_{n}} \le f_{n} \chi_{B_{n}} \le f_{n}$, then
+    \begin{align*}
+      \alpha \int_{B_{n}} \varphi \le \int_{\mathbb{R}} f_{n}
+    \end{align*}
+    and we get from evaluation that $\int_{B_{n}} \varphi \to \int_{\mathbb{R}} \varphi$ as $n \to \infty$. Note that we need the $\alpha < 1$ so to ensure we can find a $\varphi$, and then we can take $\alpha \to 1$ to get the desired result.  \\
+
+    By application to $f_{n} = f \chi_{E_{n}}$ with $(E_{n})$ a sequence of measurable sets, $f$ non-negative and measurable, $\int_{\bigcup E_{n}} f = \lim \int_{E_{n}} f$. \\
+    By application to $f_{n} = \sum_{k=1}^{n} g_{k}$, $\int \sum g_{k} = \sum \int g_{k}$. Note we get this initially only for non-negative functions. \\
+
+    We can use Riemann sums with MCT to show that for continuous functions on bounded intervals, the Lebesgue and Riemann intervals are equivalent. \\
+
+    \begin{theorem}[General MCT]
+    \ Let $(f_{n})$ be integrable such that $f_{n}(x) \le f_{n+1}(x)$ almost everywhere, and $\sup \int f_{n} < \infty$. Then $f_{n}(x)$ converges almost everywhere to $f(x)$ and $\int f = \lim \int f_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    $f(x) \in \mathbb{R}$ almost everywhere, so we can redefine $f_{N}$ on the union of countably many null sets without changing any integrals, allowing us to assume $f_{n}(x) \le f_{n+1}(x)$ and $f_{n}(x) \in \mathbb{R}$ for all $x, n$. Apply MCT on $f_{n} - f_{1}$ and we get $\int f = \lim \int f_{n}$. \\
+
+    \begin{lemma}[Fatou's lemma]
+      \ Let $(f_{n})$ be a sequence of non-negative measurable functions. Then
+      \[
+        \int \underset{n \to \infty}{\lim \inf} f_{n} \le \underset{n \to \infty}{\lim \inf} \int f_{n}
+      \]
+    \end{lemma}
+    \hphantom{}
+
+    Let $g_{r} := \inf_{n \ge r} f_{n}$. Then $(g_{r})$ increases to $\lim\inf f_{n}$ and $g_{r} \le f_{r}$ and $\int g_{r} \le \int f_{r}$. Apply MCT and we get the result. \\
+
+    \begin{theorem}[Dominated convergence theorem]
+      \ Let $f_{n} : \mathbb{R} \to [-\infty, \infty]$ be measurable, with $f_{n} \to f$ pointwise almost everywhere, and there is an integrable $g : \mathbb{R} \to [-\infty, \infty]$ such that $|f_{n}(x)| \le g(x)$ almost everywhere. Then $f$ is integrable and
+      \[
+        \lim \int f_{n} = \int f = \int \lim f_{n}
+      \]
+    \end{theorem}
+    \hphantom{}
+
+    Proof by applying Fatou's lemma to $g + f_{n}$ and $g - f_{n}$ to obtain $\int (g+f) \le \int g + \lim \inf \int f_{n}$ and $\int (g - f) \le \int g - \lim\sup \int f_{n}$. \\
+
+    \begin{theorem}[Bounded convergence theorem]
+      \ Let $I$ be a bounded interval, $(f_{n})$ a sequence in $\mathcal{L}^{1}(I)$ converging almost everywhere to $f$, and suppose that there is a constant $c$ such that $|f_{n}(x)| \le c$ almost everywhere for all $n$. Then $f \in \mathcal{L}^{1}(I)$, and $\int_{I} f = \lim \int_{I} f_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    This is a corollary of the DCT. \\
+
+    \begin{theorem}
+    \ For $(g_{n})$ a sequence of integrable functions with $\sum \int g_{n} < \infty$. Then $\sum g_{n}$ converges almost everywhere to an integrable function, and $\int \sum g_{n} = \sum \int g_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    To prove, apply MCT to $g_{n}^{+}$ and $g_{n}^{-}$. \\
+
+    \begin{theorem}
+    \ Let $(g_{n})$ be a sequence of integrable functions s.t. $\sum |g_{n}|$ is integrable. Then $\sum g_{n}$ converges a.e. to an integrable function, and $\int \sum g_{n} = \sum \int g_{n}$.
+    \end{theorem}
+    \hphantom{}
+    }
+    \block{Integrals depending on a parameter}{
+      With $f : \mathbb{R}^{2} \to \mathbb{R}$, there is both the notion of a double integral, integrating over both variables, as well as the partial integral, integrating with respect to just one, and thus producing an integral depending on a parameter. \\
+
+      \begin{theorem}
+        \ Let $I$ and $J$ be intervals in $\mathbb{R}$, and $f : I \times J \to \mathbb{R}$ a function where $x \mapsto f(x,y)$ is integrable over $I$ for all $y$, $f$ is continuous in $y$ for $x$ almost everywhere, and there is an integrable function $g$ on $I$ such that for every $y \in J$, $|f(x,y)| \le g(x)$ almost everywhere. \\
+
+        With $F(y) = \int_{I} f(x,y) \, \mathrm{d}x$, $F$ is continuous on $J$.
+      \end{theorem}
+      \hphantom{}
+
+      The above should follow fairly immediately from the DCT. \\
+
+      \begin{theorem}
+        \ With $I, J$ intervals in $\mathbb{R}$, $f : I \times J \to \mathbb{R}$ a function such that
+        \begin{itemize}
+                \item \ for each $y \in J$, $x \mapsto f(x,y)$ is integrable over $I$,
+                \item \ for almost all $x \in I$, $\displaystyle \frac{\partial f}{\partial y} (x,y)$ exists for all $y \in J$,
+          \item \ there is an integrable $g : I \to \mathbb{R}$ such that for almost all $x \in I$, for all $y \in J$,  $\displaystyle \left|\frac{\partial f}{\partial y} (x,y)\right| \le g(x)$.
+        \end{itemize}
+        then with $F(y) = \int_{I} f(x,y) \, \mathrm{d}x$, $F$ is differentiable on $J$ and
+        \begin{align*}
+          F'(y) = \int_{I} \frac{\partial f}{\partial y} (x,y) \mathrm{d}x.
+        \end{align*}
+      \end{theorem}
+      }
+      \block{Double Integrals}{
+        \textbf{Fill in with theorems of Fubini and Tonelli} \\
+
+        \begin{theorem}[Tonelli]
+          \ Let $f : \mathbb{R}^{2} \to [0,\infty]$ be measurable. Then
+          \begin{itemize}
+            \item \ $x \mapsto f(x,y)$ is measurable for almost all $y$;
+            \item \ $y \mapsto \int_{\mathbb{R}} f(x,y) \,\mathrm{d}x$ is measurable;
+            \item \[ \int_{\mathbb{R}^{2}} f(x,y) \,\mathrm{d}(x,y) = \int_{\mathbb{R}} \left( \int_{\mathbb{R}} f(x,y) \,\mathrm{d}x\right)\, \mathrm{d}y. \]
+          \end{itemize}
+        \end{theorem}
+        \hphantom{}
+
+        \begin{theorem}[Fubini's theorem]
+          \ Let $f : \mathbb{R}^{2} \to \mathbb{R}$ be integrable. Then, for almost all $y$, the function $x \mapsto f(x,y)$ is integrable. Additionally with $F(y) = \int f(x,y) \, \mathrm{d}x$, $F$ is integrable and
+          \[\int_{\mathbb{R}^{2}} f(x,y) \, \mathrm{d}(x,y) = \int_{\mathbb{R}} \left(\int_{\mathbb{R}} f(x,y)\,\mathrm{d}x\right) \,\mathrm{d}y.\]
+          Similarly,
+          \[\int_{\mathbb{R}} \left(\int_{\mathbb{R}} f(x,y) \, \mathrm{d}x\right)\mathrm{d}y = \int_{\mathbb{R}^{2}} f(x,y) \,\mathrm{d}(x,y) = \int_{\mathbb{R}}\left(\int_{\mathbb{R}} f(x,y)\,\mathrm{d}y\right)\mathrm{d}x,\]
+          where either side exist.
+        \end{theorem}
+        \hphantom{}
+
+        Apply Tonelli to $f^{+}$ and $f^{-}$. \\
+
+        \begin{theorem}[Tonelli's theorem]
+        \ Let $f : \mathbb{R}^{2} \to \mathbb{R}$ be a measurable function, and suppose that either
+        \[
+          \int_{\mathbb{R}}\left(\int_{\mathbb{R}} |f(x,y)| \,\mathrm{d}x\right)\mathrm{d}y
+        \]
+        or
+        \[
+          \int_{\mathbb{R}}\left(\int_{\mathbb{R}} |f(x,y)| \,\mathrm{d}y\right)\mathrm{d}x
+        \]
+        are finite. Then $f$ is integrable.
+        \end{theorem}
+        \hphantom{}
+
+        \begin{theorem}
+          \ With $E'$ an open subset of $\mathbb{R}^{2}$, $T : E' \to \mathbb{R}^{2}$ be an injective differentiable function of $E'$ onto a subset $E$ of $\mathbb{R}^{2}$, and $f : E \to \mathbb{R}$ a function. Then $f$ is integrable over $E$ iff $(f \circ T)|\det J_{T} |$ is integrable over $E'$, in which case
+          \begin{align*}
+            \int_{E} f = \int_{E'} (f \circ T) |\det J_{T}|.
+          \end{align*}
+          Without being itself mathematically insightful, it can help intuition to write $\displaystyle \frac{\partial (x, y)}{\partial (u, v)}$ for $\det J_{T}$, giving the equivalent statement:
+          \begin{align*}
+            \int_{E} f(x,y) \, \mathrm{d}(x,y) = \int_{E'} f(u,v) \left|\frac{\partial (x,y)}{\partial (u,v)}\right| \, \mathrm{d}(u,v).
+          \end{align*}
+        \end{theorem}
+      }
+      \block{$L^{p}$-spaces}{
+        We can define a useful set of (almost) norms for each $p$, \[||f||_{p} = \left(\int |f|^{p}\right)^{1/p}.\]
+
+        Note however that these are only almost norms when dealing with the set of integrable functions, because there are non-zero functions for which $||f||_{1} = 0$, so to make it a norm we need to establish an equivalence relation $\sim$ where $f \sim g$ iff $f = g$ almost everywhere. \\
+
+        Thus we can write $L^{1}(E) = \mathcal{L}^{1}(E) / [0]$.
+      }
+
+\end{columns}
+
+\end{document}

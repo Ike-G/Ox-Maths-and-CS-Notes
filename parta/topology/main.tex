@@ -1,0 +1,256 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=850mm, paperheight=1500mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\res}{res}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+    \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+      #1 % the function
+      \vphantom{\big|} % pretend it's a little taller at normal size
+    \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Topology}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{Topological spaces}{
+  Topology is motivated both by analysis and geometry. From an analytical standpoint we would like to generalise from $f : \mathbb{R} \to \mathbb{R}$ to $f : X \to X$, where our concerns are to characterise the continuous functions $f$. Certain spaces do not admit a metric, but admit a topology. Further, by abstracting on previous results we can get a better intuition for those results already found. \\
+
+  From a geometric perspective one studies manifolds, which are locally continuous, and topology allows us to get a simpler definition. \\
+
+  \begin{definition}
+    \ A topological space $(X, \mathcal{T})$ consists of a non-empty set $X$ together with a family $\mathcal{T}$ of subsets of $X$ satisfying:
+    \begin{itemize}
+            \item \ $X, \varnothing \in \mathcal{T}$;
+      \item \ $U, V \in \mathcal{T} \Rightarrow U \cap V \in \mathcal{T}$;
+            \item \ For a family $\{U_{i} : i \in I\}$ for $I$ some indexing set, $\displaystyle\bigcup_{i \in I} U_{i} \in \mathcal{T}$.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}
+  \ Given two topologies $\mathcal{T}_{1}$, $\mathcal{T}_{2}$ on the same set, we say $\mathcal{T}_{1}$ is coarser than $\mathcal{T}_{2}$ if $\mathcal{T}_{1} \subseteq \mathcal{T}_{2}$.
+  \end{definition}
+  \hphantom{}
+
+
+  \begin{definition}
+  \ $(x_{n})$ converges to $x \in X$ if for any open $U$ containing $x$ there is $N \ge 0$ such that for $n \ge N$, $x_{n} \in U$.
+  \end{definition}
+  \hphantom{}
+
+  Note that where a space is metrizable this is immediately equivalent to the metric definition of convergence. If it is not metrizable however we can get `weird' results, such as that a sequence can have multiple limits (e.g. consider $(\{1, 2, 3\}, \{\varnothing, \{1\}, \{1, 2\}, \{1, 2, 3\}\})$ and the constant sequence $(1)$ converges to $1$, $2$, and $3$). \\
+
+  \begin{definition}
+  \ $F \subseteq X$ is closed if $X \setminus F$ is open in $X$.
+  \end{definition}
+  \hphantom{}
+
+  This is precisely the same as already introduced in metric spaces, and all the normal results follow. \\
+
+
+  \begin{lemma}
+  \ For $(X, \mathcal{T})$ a topological space, $U \subseteq X$ is open iff for all $x \in U$ there is $U_{x}$ open such that $x \in U_{x} \subseteq U$.
+  \end{lemma}
+  \hphantom{}
+
+  The proof of this is a definition chase. \\
+
+  \begin{lemma}
+  \ If $F \subseteq X$ is closed then for any sequence $(x_{n}) \in F$, any limit of $(x_{n})$ lies in $F$.
+  \end{lemma}
+  \hphantom{}
+
+  For any limit of $(x_{n})$, $x$, for any open set containing it, there is a tail of $(x_{n})$ lying entirely within it. Thus if $x \in X \setminus F$, then we have an open set containing it which lies in $X \setminus F$, and yet elements of $(x_{n})$ are in this set, which is a contradiction. Thus $x \in F$. \\
+
+  \begin{definition}
+  \ A function $f : X \to Y$ is continuous if for all open $U \subseteq Y$, $f^{-1}(U)$ is open in $X$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{lemma}
+  \ If $f : X \to Y$ is continuous and $x_{n} \to x \in X$ then $f(x_{n}) \to f(x)$ as $n \to \infty$.
+  \end{lemma}
+  \hphantom{}
+
+  \begin{definition}
+  \ A homeomorphism between topological spaces $X, Y$ is a bijection $f : X \to Y$ such that both $f$ and $f^{-1}$ are continuous.
+  \end{definition}
+  \hphantom{}
+
+  Equivalently, for $(X, \mathcal{T}_{1})$, $(Y, \mathcal{T}_{2})$ topological spaces, $f : X \to Y$ is a homeomorphism if $f : X \to Y$ is a bijection and the map over $\mathcal{T}_{1} \to \mathcal{T}_{2}$ given by $U \mapsto f(U)$ is a bijection. \\
+
+  As normal we also define the closure of $A$ as the intersection of closed sets containing $A$. This gives the normal results which satisfy that the closure of $A$ is the smallest closed set containing $A$. \\
+
+  Additionally, as normal we define the interior of $A$ as the union of all open sets contained by $A$, and get the standard results. \\
+
+  \begin{lemma}
+  \ Let $A \subseteq X$ a topological space. Then $x \in \overline{A}$ iff for all $U$ open in $X$ containing $x$, $U \cap A \neq \varnothing$.
+  \end{lemma}
+  \hphantom{}
+
+  \begin{lemma}
+  \ $f : X \to Y$ is continuous iff $f(\overline{A}) \subseteq \overline{f(A)}$ for all $A \subseteq X$.
+  \end{lemma}
+  \hphantom{}
+
+  Assume $f$ is continuous. Then $\overline{f(A)}$ is closed, so $f^{-1}(\overline{f(A)})$ is closed, and $A \subseteq f^{-1}(\overline{f(A)})$ but by closure being the smallest closed set, $\overline{A} \subseteq f^{-1}(\overline{f(A)})$ so $f(\overline{A}) \subseteq \overline{f(A)}$. In the reverse direction if $f(\overline{A}) \subseteq \overline{f(A)}$ then set $A = f^{-1}(K)$ for some closed $K$, so $f(\overline{A}) \subseteq \overline{f(A)} = \overline{K} = K$, $\overline{A} \subseteq f^{-1}(K) = A$ so $A$ is closed and thus $f$ is continuous. \\
+
+  Note while this doesn't rely on anything not present for metric spaces, it is the first equivalent characterisation of continuity which was not given as standard in the metric spaces course. \\
+
+  As expected, we say that $A \subseteq X$ is dense in $X$ if $\overline{A} = X$. \\
+
+  \begin{definition}
+  \ $x \in X$ is an accumulation point of $A$ if for all $U$ open containing $x$, $(U \setminus \{x\}) \cap A$ is nonempty. The set of accumulation points is denoted $A'$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{lemma}
+  \ Let $(X, d)$ be a metric space and $A \subseteq X$. $\overline{A}$ is the set of limits of convergent sequences in $A$, whereas $A'$ is the set of limits of convergent sequences $(x_{n})$ such that all terms of $(x_{n})$ are distinct.
+  \end{lemma}
+  \hphantom{}
+
+  \begin{lemma}
+  \ Let $A \subseteq X$, $X$ a topological space. Then $\overline{X \setminus A} = X \setminus A^{\circ}$.
+  \end{lemma}
+  \hphantom{}
+
+  We get various additional algebraic results about interiors and closures. Most of these are hopefully obvious from definitions. The only thing of note is that we can't determine the interior of a set in a subspace immediately from its interior in the original space. \\
+
+  \innerblock{Separation Axioms}{
+    \begin{definition}
+    \ A topological space satisfies the first separation axiom if for any two points $a, b \in X$ with $a \neq b$, there is an open set such that $a \in U$ but $b \notin U$.
+    \end{definition}
+    \hphantom{}
+
+    This is equivalent to stating that all the singletons of $X$ are closed. \\
+
+    \begin{definition}
+    \ A topological space satisfies the second separation axiom if for any two points $a, b \in X$ with $a \neq b$ there are open disjoint sets $U, V$ such that $a \in U$ and $b \in V$.
+    \end{definition}
+    \hphantom{}
+
+    We say that a topological space which satisfies the second separation axiom is Hausdorff. This gives the additional result that any convergent sequence in $X$ must have a unique limit. \\
+
+    If $X$ and $Y$ are homeomorphic then if one satisfies either axiom, the other satisfies the same axiom.
+  }
+}
+\column{0.5}
+\block{Basis}{
+  In a similar manner to a basis in linear algebra, it is useful to consider the notion of a topological basis from which $\mathcal{T}$ can be generated. \\
+
+  \begin{definition}
+  \ Given a topological space $(X, \mathcal{T})$, a collection $\mathfrak{B} \subseteq X$ is a basis for $\mathcal{T}$ if $\mathfrak{B} \subseteq \mathcal{T}$ and for any $U \in \mathcal{T}$, $U$ is the union of elements of $\mathfrak{B}$.
+  \end{definition}
+  \hphantom{}
+
+  Given this definition, we can begin to recharacterise many previous definitions, such as when sets are open, in terms of the topological basis. It should be clear that $U$ is open iff for any $x \in U$ there is an element of the topological basis which is a subset of $U$ and contains $x$. \\
+
+  A collection $\mathfrak{B}$ of subsets of $X$ is a basis if the collection is a cover of $X$, and if any finite intersection of sets in $\mathfrak{B}$ is a countable union of sets in $\mathfrak{B}$. \\
+
+  Using bases, we can get a notion of a product topology for spaces $X, Y$ as $X \times Y$ equipped with the basis $\{U \times V \,|\, U \in \mathcal{T}_{X}, V \in \mathcal{T}_{Y}\}$. \\
+
+  \begin{lemma}
+  \ Let $X, Y$ be topological spaces and $\mathfrak{B}$ a basis for the topology of $Y$. Then $f : X \to Y$ is continuous iff for all $B \in \mathfrak{B}$, $f^{-1}(B)$ is open.
+  \end{lemma}
+  \hphantom{}
+}
+
+\end{columns}
+
+\end{document}
