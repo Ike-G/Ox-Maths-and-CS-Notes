@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=850mm, paperheight=2500mm}
+\geometry{paperwidth=850mm, paperheight=2900mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -110,74 +110,122 @@
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
   \column{0.5}
-\block{Data Structures}{
-  Data structures are fundamental in maintaining dynamic sets. In order to analyse and evaluate their construction we generally either use worst case or amortised analysis. Where for a sequence of operations we have costs $c_{1}, \dots, c_{n}, \dots$, and we want to put an upper bound on their sum, we can take the most expensive of all the operations between $1$ and $n$, label this $C$ and thus our bound on the cost is $Cn$. Alternatively, we say that the sequence has amortised cost $\le C$ if for every $i \in \{1, 2, \dots, n\}$ we have that $\sum_{k=1}^{i} c_{k} \le Ci$. \\
+  \block{Amortised Analysis}{
+    In order to analyse data structures, it's insufficient to characterise their corresponding algorithms in terms of their worst case performance without context. While this is fine to do when analysing an algorithm over variables that can be arbitrarily valued, algorithms for data structures can be analysed with more context (i.e. some knowledge of the previous operations that were performed on the data structure). To do this, we perform amortised analysis, where instead of determining the worst case performance for each data structure operation, we get an upper bound on the average cost of an arbitrary sequence of operations. \\
 
-  For example, take the data structure of a $k$-bit integer for which we have the operation increment. If we consider the cost of incrementing it from $0$ to $2^{k}-1$ in its lifetime, the worst case analysis notes that at worst we have to flip $k$ bits in an operation, so the amortised analysis has it as $O(nk)$. The amortised analysis notes that while the first bit is always flipped, the second bit is flipped only have the time, the third bit a quarter of the time, etc. Thus the aggregate cost is $O(n)$, giving amortised cost $O(1)$. \\
+    Note that although this is an average over operations, this is distinct from average-case analysis, where one finds the expected performance given a probability distribution over inputs, as the upper bound is over all possible sequences. \\
 
-  Another way to consider this is using the banker's method, where we note that certain states of the data structure have a certain degree of entropy which needs to be resolved. For each change from a $0$ to a $1$ we should note that this will end up being changed back after further increments, so we bank not just a cost for the change, but additionally a cost for the entropy it introduces. Meanwhile, a change from $1$ to $0$ necessitates no extraneous changes (indeed, it restores the structure to a less complex state), so no cost is incurred here. \\
+    There are three methods of performing amortised analysis:
+    \begin{itemize}
+            \item \ Aggregate analysis, where we get an upper bound on the total cost of a sequence of $n$ operations, then divide by $n$.
+            \item \ The accounting method, where we amortise the cost of each operation by modifying it, such that for any sequence of operations the sum of modified costs is no lower than the sum of real costs. If chosen deliberately this should simplify analysis.
+            \item \ The potential method, where we define a non-negative potential function $\varphi$ on the states of the data structure, measuring the `entropy' of the structure at each point, allowing us to amortise the cost of operations by how they alter the entropy (do they make other operations easier or more complex to perform?). \\
+    \end{itemize}
 
-  A more abstract version of this is the potential method:
-  \begin{definition}
-  \ Let $\mathcal{C}$ be the set of all possible configurations of the data structure. The potential function $\varphi : \mathcal{C} \to [0,\infty)$ is the potential value assigned to each state.
-  \end{definition}
-  \hphantom{}
+    Arguably, the accounting method is a more general means of performing aggregate analysis, by simplifying the problem to one that can be dealt with through aggregate methods, and the potential method is itself a general version of the accounting method. \\
 
- For a potential function $\varphi$ we set the charge $x_{i} = c_{i} + \varphi(i) - \varphi(i-1)$. Telescoping then gives us that $\sum_{i=1}^{n} c_{i} \le \varphi(0) + \sum_{i=1}^{n} x_{i}$. Usually we set $\varphi(0) = 0$ so the amortised cost is less than the maximum charge, so our goal is to determine the asymptotic behaviour of $x_{n}$. \\
+    More precisely, we want a $C$ such that for any $n$, sequence $c_{1},\dots,c_{n}$, we have
+    \begin{align*}
+      C \ge \frac{1}{n}\sum_{k=1}^{n} c_{k}.
+    \end{align*}
+    In certain cases we can immediately do aggregate analysis, and just observe a bound algebraically. This is especially easy when we only need to consider one or two operations with a straightforward or no algebraic relationship with one another. In other situations when we have more operations that have the possibility of interacting differently with one another it can be far more difficult to do this and still get a reasonable bound. \\
 
- The potential function captures the total credit of the data structure at one time. Expensive operations are compensated for by decreasing potential. \\
+    In more difficult cases, we might want to transform the sequence to $\widehat{c}_{1}, \dots, \widehat{c}_{n}$ such that
+    \begin{align*}
+      \sum_{k=1}^{n} \widehat{c}_{k} \ge \sum_{k=1}^{n} c_{k}.
+    \end{align*}
+    In order for this to work for an arbitrary sequence of operations, we redefine the cost of each operation by subtracting from high cost operations some degree of credit, which we pass on as additional charges to more frequent low cost operations. To do this one needs to make an argument that the charges account for the credit, but once this argument is made usually the amortised cost is $O(\max \widehat{c}_{k})$. \\
 
- \innerblock{The Disjoint-Set Problem}{
-   To maintain a dynamic collection of disjoint sets $\mathcal{F} = \{S_{1}, \dots, S_{n}\}$, we identify each set by its representative $\rep(S)$. This ought to be consistent (if we request $\rep(S)$ multiple times without modifying the set, the answer should be the same). \\
+    As an example, take a stack with the operations $\proc{Push}(S,x)$, $\proc{Pop}(S)$, and $\proc{Multipop}(S,m)$ (to pop up to $m$ elements at once). $\proc{Push}$ and $\proc{Pop}$ are both of cost $1$, while $\proc{Multipop}$ has cost $\min(n,m)$ where $S$ is of size $n$. For each $\proc{Push}$ we can add an additional charge of $2$, in exchange for a credit of $1$ for each $\proc{Pop}$, and a credit of $\min(n,m)$ for each $\proc{Multipop}$. This makes $\proc{Push}$ the only operation for which a cost is actually assigned, giving $O(1)$ amortised cost. \\
 
-   We hold 3 different operations on this set: $\proc{Make-Set}(x)$, $\proc{Find-Set}(x)$, and $\proc{Union}(x,y)$. We motivate this by its use in Kruskal's algorithm. \\
+    In other cases, it's easier to conceptualise the amortisation not as credit for prepaid charges, but as the cost of each operation in addition to the degree by which it `complicates' the state of the data structure. Strictly, with the set of configurations of the data structure being $\mathcal{C}$, we have $\varphi : \mathcal{C} \to [0,\infty)$, and then define the modified costs for a sequence of costs $c_{1},\dots,c_{n}$, states $s_{0},\dots,s_{n}$ by
+    \begin{align*}
+      \widehat{c}_{k} &= c_{k} + \varphi(s_{k}) - \varphi(s_{k-1}),
+    \end{align*}
+    which gives
+    \begin{align*}
+      \sum_{k=1}^{n} \widehat{c}_{k} &= \varphi(s_{n}) - \varphi(s_{0}) + \sum_{k=1}^{n} c_{k}.
+    \end{align*}
+    Thus as we take $\varphi(s_{0}) = 0$ by default, this gives an upper bound on the aggregate cost, and for any appropriate measure of the entropy of the data structure, we only need to understand how the entropy is changed by a new operation. Without working through details, an example of a $\varphi$ for an $m$-bit number might be the number of digits equal to $1$.
+  }
 
-   There are several ways of going about this. A naive method would work by just identifying $\rep$ with an array, although this gives $\Theta(n)$ time for $\proc{Union}(x)$. Another method works using singly linked lists, for which union becomes relatively straightforward, although still $\Omega(n)$ in the worst case. A better method works by storing each set as a tree, which makes $\proc{Find-Set}(x)$ slightly worse (roughly $\Theta(\log n)$) while improving $\proc{Union}(x,y)$ to $O(\log n)$. \\
+  \block{Disjoint sets}{
+    A commonly required data structure is one that represents a collection of disjoint sets, used for various applications such as Kruskal's algorithm for finding the minimum spanning tree of a graph, and the unification algorithm (\textbf{confirm how this is used?}). \\
 
-   As heuristic we can try to use link by height. This allows us to improve our asymptotic complexity to $O(\log n)$. Further, we can then use path compression by introducing additional operations to every use of $\proc{Find}$, pulling up every element scanned to the first level and ensuring that the trees end up of minimum possible depth. This gives us total complexity $O(m \log^{*} n)$ for $m$ operations on a tree of size $n$.
- }
- \hphantom{}
+    Strictly, we want to store and update $\mathcal{F} = \{S_{1}, \dots, S_{n}\}$ where for $i \neq j$, $S_{i} \cap S_{j} = \varnothing$. To do this we identify each set by its representative $\mathrm{rep}(S)$, which ought to be consistent (if we request $\mathrm{rep}(S)$ multiple times without modifying the set, we would expect the same answer). By default we hold 3 different operations: $\proc{Make-Set}(x)$, $\proc{Find-Set}(x)$, and $\proc{Union}(x,y)$. \\
 
- \innerblock{Binary Search Trees}{
+    There are a wealth of different options for implementing this data structure. One immediate approach is to store each set as a linked list of elements. To speed up $\proc{Find-Set}$, we need each object to point to the list head, making the operation constant. To perform $\proc{Union}$, we will always need to iterate through all elements of one of the sets to update their head pointer, but we can prevent the need to do both by storing a pointer to the tail of each list. Either way $\proc{Union}$ is $\Theta(n)$, and our amortised cost is $\Theta(n)$. \\
+
+    An improvement to this can be made by always preferring that the new representative after the union is the one of the larger set, and thus we only need to iterate over the smaller set. To do this we need an additional store of the size of each set, which has no effect on performance. This allows us to get $O(\log n)$ amortised cost, by observing that each object's pointer is updated $O(\log n)$ times across $n$ union operations. \\
+
+    An alternative to the linked list approach is to use trees to represent each set instead. This simplifies $\proc{Union}$ to two $\proc{Find-Set}$ operations from which you have one root inserted as the child of another, although this only improves performance if $\proc{Find-Set}$ is reasonably fast, which it isn't without improvements (currently worst-case $\Omega(n)$). We apply two heuristics which give our desired improvements:
+    \begin{itemize}
+    \item \ \emph{Union by rank}, where we store the rank of each set (or an upper bound on it, at least), and ensure that the tree with a lower rank becomes the child of the other one.
+    \item \ \emph{Path compression}, where $\proc{Find-Set}$ involves updating the pointer of each element traversed to the root. \\
+    \end{itemize}
+
+    On its own, union by rank guarantees that rank will only be increased if both sets have equal rank, meaning for $n$ elements the rank is at most $\log n$, so $\proc{Find-Set}$ and $\proc{Union}$ take $O(\log n)$ time. \\
+
+    Combining union by rank with path compression gives an extremely good bound of $O(\log^{*} n)$ amortised performance. The proof of this follows from a potential function defined by the sum of the potentials of each set element, noting that $\proc{Union}$ and $\proc{Find}$ operations will only decrease the entropy of the structure, and if they do it will be by a significant amount. This bound is so good that in practice it's constant. \\
+  }
+
+
+ \block{Binary Search Trees}{
    Binary search trees are used to maintain a dynamic set of orderable elements. Note they are similar but distinct from max heaps, as an inorder search returns their ordering, while for a max heap we only have a partial ordering from each parent to each child. \\
 
-   Typically we endow a BST with the operations $\proc{Search}(x)$, $\proc{Insert}(x)$, $\proc{Delete}(x)$, $\proc{Successor}(x)$. These all behave as expected - note that $\proc{Successor}$ returns the next largest value in the entire tree. All of these have running time $O(h)$ where $h$ is the height of the tree. \\
+   Typically we endow a BST with the operations $\proc{Search}(x)$, $\proc{Insert}(x)$, $\proc{Delete}(x)$, $\proc{Successor}(x)$. These all behave as expected -- note that $\proc{Successor}$ returns the next largest value in the entire tree. All of these have running time $O(h)$ where $h$ is the height of the tree. \\
 
-   Ideally we should just have that the tree is balanced, giving $O(\log n)$ amortised complexity. This of course isn't necessary in all implementations, so we could theoretically get $O(n)$ complexity in a worst case. The key problem to deal with is one where we insert elements in order, which has the potential to create a tree with a single long branch. \\
+   Ideally we should just have that the tree is balanced, giving $O(\log n)$ amortised complexity. This of course isn't guaranteed in all implementations, so without extra work we get $O(n)$ complexity in a worst case. The key problem to deal with is one where we insert elements in order, which has the potential to create a tree with a single long branch. \\
 
-   One way of ensuring that trees are balanced is using Red-Black trees. These are BSTs which identify each node as either red or black. Every leaf is black, and whenever a node is red, this implies that both of its children are black. Furthermore, for any node $x$, all paths from $x$ to a descendant pass through the same number of black nodes (excluding $x$). As convention we say that every valued node has 2 children. \\
+   \innerblock{Red-Black Trees}{
+     One way of ensuring that trees are balanced is using Red-Black trees. These are BSTs which identify each node as either red or black, with the following conditions:
+     \begin{itemize}
+             \item \ The root is black;
+             \item \ Every leaf ($\const{NIL}$) is black;
+             \item \ If a node $x$ is red, $\mathrm{left}[x]$ and $\mathrm{right}[x]$ are both black;
+             \item \ For each node $x$, all paths from $x$ to any descendant pass through the same number of black nodes.
+     \end{itemize}
+     As convention we say that every valued node has 2 children. The above allows us to write without loss of generality the \emph{black-height} for $x$, $\mathrm{bh}(x)$, as the number of black nodes on a path from $x$ to a leaf (not including $x$).\\
 
    \begin{theorem}
-   \ A red-black tree $T$ with $n$ items has height $\le 2 \log (n+1)$
+   \ A red-black tree $T$ with $n$ items has height $\le 2 \log n$
    \end{theorem}
    \hphantom{}
 
-   To see this, first note that the $\mathrm{height}(T) \le 2\mathrm{bh}(T)$ where $\mathrm{bh}(x)$ is the number of black nodes found on any path from $x$ to a descendant. This is because we cannot have more than 1 consecutive red node on the path, so for every black node there can be at most 1 red node. Further, if we collapse every red node to its black parent, then each node has $\ge 2$ children, the number of null elements in the tree is $n+1$, and so the height is $\log(n+1)$. \\
+   Firstly, any subtree rooted at node $x$ has at least $2^{\mathrm{bh}(x)}$ nodes, as collapsing each red node into its parent guarantees a tree of height $\mathrm{bh}(x)$ for which every node has $\ge 2$ children. Further, at least half of the nodes on any path must be black, so $\mathrm{height}(x) \le 2 \mathrm{bh}(x)$, and thus with $n$ nodes we have $\mathrm{height}(x) \le 2 \log n$.
 
-   To implement a tree obeying these properties, we need the additional operations of restructuring the tree, and recolouring the tree. Rotations transform one BST to another - in a right-rotation the specified element is taken and moved to the right, while its left child becomes its parent, and any of its own children are moved around appropriately. \\
+   To implement a tree obeying these properties, we need to use rotations to restructure the tree while maintaining the BST properties. Given a subtree with root $y$, $\mathrm{left}[y] = x$, with $\alpha$, $\beta$ the descendent trees of $x$ and $\gamma$ the right descendent tree of $y$, a right rotation about $y$ moves $x$ to the root, $\mathrm{right}[x] = y$, and $\beta$ the left subtree of $y$. A left rotation behaves identically in the symmetric way. \\
 
    In order to insert into a RB tree, we insert the element as normal, then colour it red so as to initially preserve the black height. This gives a few cases where there is a red-red violation:
    \begin{itemize}
            \item \ We could have that the uncle element is red, in which case we just recolour the parent and uncle, then recolour their parent. Then we've moved the problem from $p[x]$ to $p[p[x]]$, and can repeat.
-           \item \ We could have that the uncle element is black and the triple $x$, $p[x]$, $p[p[x]]$ occur in a zig-zag. Then we rotate $x$ with $p[x]$.
-           \item \ We could have that the triple occurs in a straight line, in which case we rotate $p[x]$ with $p[p[x]]$ and recolour.
+           \item \ We could have that the uncle element is black and the triple $x$, $p[x]$, $p[p[x]]$ occur in a zig-zag. Then we rotate $x$ with $p[x]$ to bring us to the next case.
+           \item \ We could have that the triple occurs in a straight line, in which case we rotate $p[x]$ with $p[p[x]]$ and recolour. \\
    \end{itemize}
 
-   In total this gives us $O(\log n)$ time (as case 2 and 3 occur at most once), allowing us to get everything in $O(\log n)$. \\
+   In total this gives us $O(\log n)$ time (as case 2 and 3 occur at most once, because case 2 leads to case 3 which leads to termination), allowing us to get everything in $O(\log n)$. Deletions are more complicated, although also $O(\log n)$, but not directly considered in this course.
+   }
+   \hphantom{}
 
-   In certain cases, we can do better by considering the likelihood of particular elements being accessed. Given a distribution over the frequency of elements being accessed, determine $T^{*}$ the statically optimal BST which gives the minimum aggregate look-up cost. \\
+   In certain cases, we can do better by considering the likelihood of particular elements being accessed. Given a distribution over the frequency of elements being accessed, we write $T^{*}$ as the statically optimal BST which gives the minimum aggregate look-up cost. \\
 
    We have from Knuth that there is an $O(n^{2})$ DP algorithm to solve this, and from Mehlhorn that there is an $O(n \log n)$ algorithm which achieves at most a factor of $3/2$ over the optimal. Both require knowing the distribution beforehand however. \\
 
+   \innerblock{Splay trees}{
    We introduce Splay trees as self-adjusting BSTs. The key idea is that when accessing an item $x$, move it to the root via a sequence of rotations. Thereby a tree develops for which the most accessed items stay near the root, and the least access items are the furthest away. \\
 
    Until $x$ is the root of $T$, if $x$ has a parent $y$ but no grandparent, then we rotate $x$ with $y$. Otherwise if the triple $x$, $p[x]$, $p[p[x]]$ is aligned, rotate $p[x]$ with $p[p[x]]$ and then $x$ with $p[x]$, and if it is not aligned rotate $x$ with $p[x]$ then $x$ with $p[p[x]]$. \\
 
-   The main point to notice here is that in the zig-zig procedure (where $x$, $p[x]$, and $p[p[x]]$ are aligned) ensures that surrounding vertices are brought up at the same time as the vertex being searched for. If a double rotation was used instead, there would be no improvement made to the tree, meaning certain sequences of searches would be $\Omega(n)$ amortised rather than $O(\log n)$. \\
+   The main point to notice here is that in the zig-zig procedure (where $x$, $p[x]$, and $p[p[x]]$ are aligned) ensures that surrounding vertices are brought up at the same time as the vertex being searched for. If a double rotation was used instead, there would be no wider improvement made to the tree, meaning certain sequences of searches would be $\Omega(n)$ amortised rather than $O(\log n)$. \\
 
-   We need to make some modifications to the other BST operations - in $\proc{Insert}(T, x)$ we insert as normal, then $\proc{Splay}(T, x)$. In $\proc{Delete}(T, x)$ we $\proc{Splay}(T, x)$, remove $x$, then take the furthest right element $w = \max(T_{<x})$, $\proc{Splay}(T_{<x}, w)$, and join $T_{<x}$ and $T_{>x}$. Via $\varphi(T) = \sum_{x \in T} \log |T_{x}|$, we track the potential of a state as the sum of element ranks. This eventually, after far more technical detail than I want to write, gives that an empty Splay tree has $O((m+n) \log n)$ cost after $n$ $\proc{Insert}$ and $m$ $\proc{Delete}/\proc{Search}$ operations.
+   We need to make some modifications to the other BST operations -- in $\proc{Insert}(T, x)$ we insert as normal, then $\proc{Splay}(T, x)$. In $\proc{Delete}(T, x)$ we $\proc{Splay}(T, x)$, remove $x$, then take the furthest right element on the left $w = \max(T_{<x})$, $\proc{Splay}(T_{<x}, w)$, and join $T_{<x}$ and $T_{>x}$. \\
+
+   Via $\varphi(T) = \sum_{x \in T} \log |T_{x}|$, we track the potential of a state as the sum of element ranks. This eventually, after far more technical detail than I want to write, gives that an empty Splay tree has $O((m+n) \log n)$ cost after $n$ $\proc{Insert}$ and $m$ $\proc{Delete}/\proc{Search}$ operations. To replicate the proof, note that $\log |T_{x}|$ is the rank of $x$, and then determined the amortised cost in terms of $r(x)$ and $r'(x)$ for $\proc{Splay}(T,x)$. \\
+
+   In fact, the same proof method can be used with each element's contribution to the rank weighted by its access frequency to show that the cost of Splay trees is within a constant factor of the cost of an optimal static tree for any distribution. Note that whether the same is true for an optimal dynamic tree (one where the tree is permitted to change during operations) is open.
+   }
   }
-}
+
 
 \column{0.5}
 \block{Flow Networks}{
