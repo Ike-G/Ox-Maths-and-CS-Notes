@@ -192,7 +192,7 @@
    \end{theorem}
    \hphantom{}
 
-   Firstly, any subtree rooted at node $x$ has at least $2^{\mathrm{bh}(x)}$ nodes, as collapsing each red node into its parent guarantees a tree of height $\mathrm{bh}(x)$ for which every node has $\ge 2$ children. Further, at least half of the nodes on any path must be black, so $\mathrm{height}(x) \le 2 \mathrm{bh}(x)$, and thus with $n$ nodes we have $\mathrm{height}(x) \le 2 \log n$.
+   Firstly, any subtree rooted at node $x$ has at least $2^{\mathrm{bh}(x)}$ nodes, as collapsing each red node into its parent guarantees a tree of height $\mathrm{bh}(x)$ for which every node has $\ge 2$ children. Further, at least half of the nodes on any path must be black, so $\mathrm{height}(x) \le 2 \mathrm{bh}(x)$, and thus with $n$ nodes we have $\mathrm{height}(x) \le 2 \log n$. \\
 
    To implement a tree obeying these properties, we need to use rotations to restructure the tree while maintaining the BST properties. Given a subtree with root $y$, $\mathrm{left}[y] = x$, with $\alpha$, $\beta$ the descendent trees of $x$ and $\gamma$ the right descendent tree of $y$, a right rotation about $y$ moves $x$ to the root, $\mathrm{right}[x] = y$, and $\beta$ the left subtree of $y$. A left rotation behaves identically in the symmetric way. \\
 
