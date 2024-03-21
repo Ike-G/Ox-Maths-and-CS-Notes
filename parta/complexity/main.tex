@@ -12,6 +12,7 @@
 \usepackage{nicefrac}
 \usepackage{mathtools}
 \usepackage{complexity}
+\usepackage{clrscode3e}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 \DeclareMathOperator{\dtime}{DTIME}
@@ -173,6 +174,25 @@
   \ Let $S, S' : \mathbb{N} \to \mathbb{N}$ such that $S'$ is space-constructible and $S \log S = o(S')$. Then $\dspace(S) \subset \dspace(T')$.
   \end{theorem}
   \hphantom{}
+}
+
+\block{Something something reductions}{
+  \begin{theorem}[Cook-Levin]
+  \ Both $\proc{SAT}$ and $\proc{3SAT}$ and $\NP$-complete.
+  \end{theorem}
+  \hphantom{}
+
+  Immediately we can construct an NDTM for $\proc{SAT}$ by guessing a variable assignment, which will be of length polynomial in the input, and then validating whether it satisfies the formula which can also be done in polynomial time. \\
+
+  Given an arbitrary $L \in \NP$, we have a corresponding $M$ deciding some $L' \in \P$ where there is a $u \in \{0,1\}^{p(|x|)}$ such that $M(x,u) = 1$ iff $x \in L$. We want to construct $\varphi_{x}$ with $\varphi_{x}(u) = M(x,u)$ for all $u$, so $\varphi_{x}$ is satisfiable iff $x \in L$. Note that this only works if we can get $|\varphi_{x}|$ polynomial. \\
+
+  To do this, the goal is to be able to specify each stage of the execution of $M$ by a snapshot that can be encoded in a binary string, then construct a formula which verifies whether a sequence of snapshots is a valid accepting computation. \\
+
+  To do this we need to assume that $M$ is a 2-tape oblivious TM (i.e. the head position at step $i$ is dependent only on the input size and $i$), which is fine as this only corresponds to a quadratic increase in complexity, and then specify each stage by $(a,b,q) \in \Gamma \times \Gamma \times Q$. To determine if a snapshot $z_{i}$ is valid, for $y$ the input, at each $i$ we only need to consider snapshots $z_{i-1}$, $y_{\mathrm{inputpos}(i)}$, and $z_{\mathrm{prev}(i)}$, where $\mathrm{prev}(i)$ is the last time the current cell was accessed. This tells us what state we were in, as well as the current cell values, allowing us to verify the computation. \\
+
+  From here we then just need to verify that the inputs are valid, the first step is valid, and the sequences are valid, which produces a CNF polynomial in $|x|$, as the computation is polynomial in $|x|$. \\
+
+  From here reduction to $\proc{3SAT}$ is relatively straightforward.
 }
 \column{0.5}
 \block{Polynomial Hierarchies}{

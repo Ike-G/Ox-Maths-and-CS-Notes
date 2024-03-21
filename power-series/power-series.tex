@@ -1,0 +1,184 @@
+\documentclass{tikzposter} %Options for format can be included here
+\usepackage{amsmath}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{proposition}{Proposition}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Power Series}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+\block{Radius of Convergence}{
+  \begin{proposition}
+  \ For some complex sequence $(a_{n})$ and the following sets:
+    \begin{align*}
+      S_{1} &= \left\{z \in \mathbb{C} \,:\, \sum a_{n}z^{n} \text{ converges absolutely }\right\} \\
+      S_{2} &= \left\{z \in \mathbb{C} \,:\, \sum a_{n} z^{n} \text{ converges }\right\} \\
+      S_{3} &= \left\{z \in \mathbb{C} \,:\, \lim_{n \to \infty} a_{n} z^{n} = 0\right\} \\
+      S_{4} &= \left\{z \in \mathbb{C} \,:\, (a_{n}z^{n}) \text{ is bounded }\right\}
+    \end{align*}
+    we have that $S_{1} \subseteq S_{2} \subseteq S_{3} \subseteq S_{4}$, and yet that with $|S| = \{|z| : z \in S\}$, $\sup |S_{1}| = \sup |S_{2}| = \sup |S_{3}| = \sup |S_{4}|$.
+  \end{proposition}
+  \hphantom{}
+
+  We can show the containment in stages:
+  \begin{itemize}
+          \item \ If the series converges absolutely for $z$, it converges, so $S_{1} \subseteq S_{2}$.
+          \item \ If the series converges for $z$, we immediately get $a_{n}z^{n} \to 0$ as $n \to \infty$.
+          \item \ If $a_{n}z^{n} \to 0$ then $(a_{n}z^{n})$ is bounded.
+  \end{itemize}
+  \hphantom{}
+
+  Then going the other way, note that if we have for some $\rho > 0$ that $|a_{n}|\rho^{n} \le M$ for some $M$, then for any $z \in \mathbb{C}$ with $|z| < \rho$,
+  \begin{align*}
+    \sum |a_{n}z^{n}| &= \sum |a_{n}|\rho^{n} \left(\frac{|z|}{\rho}\right)^{n} \\
+                   &\le M \sum \left(\frac{|z|}{\rho}\right)^{n} \\
+    &= \frac{M \rho}{\rho - |z|} \quad\quad \text{as $|z| < \rho$}
+  \end{align*}
+  and a bounded series of positive terms converges, so thus if $\rho \in |S_{4}|$, then $B(0,\rho) \subseteq S_{1}$. Thus $\sup |S_{1}| \ge \sup |S_{4}|$, and by the inclusion chain thus every supremum is sandwiched to give $\sup |S_{1}| = \sup |S_{2}| = \sup |S_{3}| = \sup |S_{4}|$. \\
+
+  Consequently we get this very precise characterisation of the sets, up to the boundaries of each set. Furthermore, as only $S_{2}$ is defined by a property affected by the argument of $z$, it is the only one of the four for which $B(0,R) \subset S \subset \overline{B}(0,R)$ may hold. Thus we have $S_{3} = S_{4}$, and possible inequalities between $S_{1}$, $S_{2}$, and $S_{3}$ (for example with $a_{n} = 1/n$). \\
+
+  The above hopefully helps satisfy one's intuition that while the four properties above are certainly not the same, the range of counterexamples for them occurs within an infinitely thin strip. Taking the equivalence relation on sequences defined by the radius of convergence, we get equivalent behaviour within and outside of the ROC. As demonstrated by the next proposition, equivalence classes are also closed under polynomial multiplication.\\
+
+  \begin{proposition}
+  \ For any non-zero polynomial $p(n)$, the radius of convergence of the power series with coefficients $(p(n)a_{n})$ is the same as the series with coefficients $(a_{n})$.
+  \end{proposition}
+  \hphantom{}
+
+  To do this, note that if we have $0 < |u| < |w|$ and $|a_{n}w^{n}| < M$ for some $M > 0$, then we get
+  \begin{align*}
+    |p(n)a_{n}u^{n}| &= |p(n)||a_{n}w^{n}|\left|\frac{u}{w}\right|^{n} \\
+                    &\le M |p(n)| \left|\frac{u}{w}\right|^{n}
+  \end{align*}
+  and exponents beat powers so this converges to $0$ and thus is bounded. If on the other hand we have $|u| > R$ then $|a_{n}u^{n}|$ is unbounded so $|p(n)a_{n}u^{n}|$ is too. \\
+
+  This generalises to non-zero rational functions fairly quickly -- everything follows again by exponents beating powers. Amongst other things this allows us to see that antiderivatives and derivatives of analytic functions (those defined by power series) preserve the radius of convergence. \\
+
+  \begin{theorem}[Cauchy-Hadamard]
+    \ The ROC $R$ of a power series with coefficients $(a_{n})$ is given by
+    \begin{align*}
+      R = \frac{1}{\limsup_{n \to \infty} |a_{n}|^{1/n}}
+    \end{align*}
+    using the extended reals in which $1/0 = \infty$, $1/\infty = 0$.
+  \end{theorem}
+  \hphantom{}
+
+  For $R = 0$ the claim is immediate: for any $\rho > 0$, $|a_{n}|\rho^{n}$ is unbounded, so $|a_{n}|^{1/n} > 1/\rho$ for infinite $n$, meaning $\limsup |a_{n}|^{1/n} = \infty$. For $R = \infty$ similarly we get for any $\rho < \infty$, $|a_{n}|\rho^{n} \to 0$ so $|a_{n}|^{1/n} < 1 / \rho$ and thus $\limsup |a_{n}|^{1/n} \to 0$ (indeed here $\lim |a_{n}|^{1/n} = 0$). \\
+
+  From these two we can kind of infer how the more general statement is proved. With $\rho < R$ we get that
+  $|a_{n}|\rho^{n} \to 0$, so for $n > N$ we get $|a_{n}|^{1/n} < 1/\rho$, and by continuity we can gather that $|a_{n}|^{1/n} \le 1/R$. With $\rho > R$ we get that $|a_{n}|\rho^{n}$ is unbounded, so for infinite $n$ we have $|a_{n}|^{1/n} > 1/\rho$, and consequently $\limsup |a_{n}|^{1/n} \ge 1/R$. This gives the statement. \\
+
+  Do note that this is, if anything, more of a theoretical quirk than something to be used in practice. In reality we're only ever going to encounter two situations: either we want to prove a general statement about power series, in which case we have to consider general sequences $(a_{n})$ and it becomes nigh impossible to find or even determine suitable properties of $\limsup |a_{n}|^{1/n}$; or we want to find the ROC for a concrete example of a power series, in which case we are far more likely to be better served by something like the ratio test, or any other of the wealth of methods available for determining the ROC. \\
+
+  Having said that, it \emph{is} possible to reprove proposition 2 with this, without too much difficulty.
+  }
+  \column{0.5}
+
+  \block{Absolutely Convergent Series}{
+    \begin{theorem}
+    \ If $\sum |a_{n}|$ converges then for any bijection $\sigma : \mathbb{N} \to \mathbb{N}$, $\sum |a_{\sigma(n)}|$ converges to the same value, as does $\sum a_{\sigma(n)}$ to the same value as $\sum a_{n}$.
+    \end{theorem}
+    \hphantom{}
+
+    To begin with, take $(a_{n})$ a non-negative sequence, with $f : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ an injection allowing us to write $(a_{n})$ spread over two dimensions, with $a_{f(k,n)} = b_{n}^{(k)}$. Assuming first that $\sum a_{n}$ converges. Thus for each $k$ if we would like to get $\sum_{i=n}^{m} b_{i}^{(k)} < \varepsilon$ we just take $n$ such that $f(k, m) \ge N_{\varepsilon}$ for all $m \ge n$ (which is possible by injectivity). This indicates that the sum over each column in this new matrix converges. We denote $\sum_{n} b_{n}^{(k)} = l_{k}$, creating a new sequence. \\
+
+    We now want to consider $\sum_{k} l_{k}$. Observing that
+    \begin{align*}
+      \sum_{k=1}^{K} l_{k} &= \sum_{k=1}^{K} \sum_{n=1}^{\infty} b_{n}^{(k)} \\
+                        &= \sum_{n=1}^{\infty} \sum_{k=1}^{K} b_{n}^{(k)} \quad \quad \text{as each $b_{n}^{(k)} \ge 0$} \\
+                        &\le \sum_{n=1}^{\infty} a_{n} \quad \quad \text{by preservation of weak inequalities}
+    \end{align*}
+    we get that the sum is bounded (and non-decreasing by non-negativity) so convergent. If $f$ is bijective then we can get $\sum l_{k} \ge \sum a_{k}$ again by preservation of weak inequalities.
+    }
+\end{columns}
+
+\end{document}

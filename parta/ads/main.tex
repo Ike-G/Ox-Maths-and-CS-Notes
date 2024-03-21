@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=850mm, paperheight=2900mm}
+\geometry{paperwidth=1300mm, paperheight=3700mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -12,6 +12,9 @@
 \usepackage{nicefrac}
 \usepackage{mathtools}
 \usepackage{clrscode3e}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{complexity}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 \DeclareMathOperator{\Log}{Log}
@@ -109,7 +112,7 @@
 % Title block with title, author, logo, etc.
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
-  \column{0.5}
+  \column{0.33}
   \block{Amortised Analysis}{
     In order to analyse data structures, it's insufficient to characterise their corresponding algorithms in terms of their worst case performance without context. While this is fine to do when analysing an algorithm over variables that can be arbitrarily valued, algorithms for data structures can be analysed with more context (i.e. some knowledge of the previous operations that were performed on the data structure). To do this, we perform amortised analysis, where instead of determining the worst case performance for each data structure operation, we get an upper bound on the average cost of an arbitrary sequence of operations. \\
 
@@ -225,9 +228,261 @@
    In fact, the same proof method can be used with each element's contribution to the rank weighted by its access frequency to show that the cost of Splay trees is within a constant factor of the cost of an optimal static tree for any distribution. Note that whether the same is true for an optimal dynamic tree (one where the tree is permitted to change during operations) is open.
    }
   }
+  \block{Fixed Parameter Algorithms}{
+    While it is generally very difficult to get solutions for $\NP$-hard problems, and usually we would prefer to just find approximate solutions, in certain instances we can make problems far easier by solving them for fixed parameters. For example, we might notice that for certain exponential time algorithms, they behave quite well for certain parameters bounded to a reasonable size. \\
+
+    \begin{definition}
+    \ A parametrisation of a decision problem $\mathcal{P}$ is a computable function $p$ that maps each input instance $x$ to an integer value $k$.
+    \end{definition}
+
+    In general a parameter can be either explicit or implicit, it need not be computable in reasonable time (or at all). For example, we can take for $\proc{VertexCover}$ the parameter $k$, which is explicit, or for $\proc{HamCycle}$ the parameter which is the size of the minimum vertex cover. \\
+
+    A decision problem $\mathcal{P}$ if fixed-parameter tractable with respect to parameter $p$ if there is an algorithm $\mathcal{A}$ which decides an instance $x$ in polynomial time in $|x|$ holding $k$ constant (provided the constant $k$ contributes is computable). \\
+
+    With this framework, consider an algorithm for $\proc{VertexCover}$ where we take an edge $(u,v)$ in $G$, then recurse on both $G' = G \setminus \{u\}$, and $G' = G \setminus \{v\}$, $k' = k-1$. This gives time complexity $O(2^{k}|E|)$, so for small $k$ this is very viable. \\
+
+    Kernelisation is a method to obtain FPT algorithms whereby the size of the instance is iteratively reduced, until the final instance is of size dependent on the parameter, and we can brute force it. \\
+
+    For $\proc{VertexCover}$ we can reduce by saying if a vertex is isolated we remove it from the graph, and if it has $> k$ neighbours we recurse on $(G \setminus \{v\}, k-1)$. Once neither rule applies, if $G'$ has $> k^{2}$ edges, then reject, and otherwise $(G', k')$ is a kernel which can be brute forced, yielding a $O(k^{2k}|E|)$ algorithm.
+  }
 
 
-\column{0.5}
+\column{0.33}
+\block{Linear Programming}{
+  \begin{definition}[Linear Programs]
+  \ A linear program is a problem that can be expressed of the form:
+  \begin{align}
+    \begin{split}
+    \max\,\, & \bm{c}^{\top} \bm{x} \\
+    \text{subject to } &A\bm{x} \le \bm{b}, \\
+    &\bm{x} \ge \bm{0}.
+    \end{split}\label{lp:1}
+  \end{align}
+  For some $\bm{c} \in \mathbb{R}^{n}$, $\bm{b} \in \mathbb{R}^{m}$, $A \in \mathbb{R}^{m \times n}$.
+  \end{definition}
+  \hphantom{}
+
+  LPs are a special case of optimisation problems, and are both generally easier to solve, but also occasionally useful for more general problems. At the same time, often problems cannot be formulated precisely in terms of an LP (which would put the problem in $\P$, as will be demonstrated shortly), but rather require the additional restriction that $\bm{x}$ is integer-valued (and solving integer LPs is $\NP$-hard). \\
+
+    \begin{definition}[The Dual]
+    \ The dual to LP (\ref{lp:1}) is
+    \begin{align}
+      \begin{split}
+      \min\,\,&\bm{b}^{\top} \bm{y} \\
+      \text{subject to } &A^{\top}\bm{y} \ge \bm{c}, \\
+      &\bm{y} \ge \bm{0}.
+      \end{split}\label{lp:2}
+    \end{align}
+    \end{definition}
+    \hphantom{}
+
+    It's worth noting that through negation of $A$, $\bm{b}$, and $\bm{c}$ we get an equivalent maximisation LP, and consequently everything said about duals is essentially symmetric in either direction. \\
+
+    \begin{lemma}[Weak LP duality]
+      \ Let $\bm{x}$ be any feasible solution to the primal LP (\ref{lp:1}), and $\bm{y}$ any feasible solution to the dual LP (\ref{lp:2}). Then
+      \begin{align*}
+        \bm{c}^{\top}\bm{x} \le \bm{b}^{\top}\bm{y}
+      \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    To see this, note that $A\bm{x} \le \bm{b}$, so for any $\bm{y} \ge 0$, $\bm{y}^{\top}A\bm{x} \le \bm{b}^{\top}\bm{y}$. Further, $\bm{y}^{\top}A\bm{x} = \bm{x}^{\top}A^{\top}\bm{y}$, so as $\bm{y}$ is feasible and $\bm{x} \ge 0$, $\bm{y}^{\top}A\bm{x} \ge \bm{c}^{\top}\bm{x}$. This gives the desired inequality. \\
+
+    \begin{theorem}[LP duality]
+      \ For the primal-pair of LPs (\ref{lp:1}) and (\ref{lp:2}), exactly one of the four cases occurs:
+      \begin{itemize}
+              \item \ Both (\ref{lp:1}) and (\ref{lp:2}) are infeasible.
+              \item \ (\ref{lp:1}) is unbounded and (\ref{lp:2}) is infeasible.
+              \item \ (\ref{lp:2}) is unbounded and (\ref{lp:1}) is infeasible.
+              \item \ There exist solutions $\bm{x}$ and $\bm{y}$ to (\ref{lp:1}) and (\ref{lp:2}) respectively, and $\bm{c}^{\top}\bm{x} = \bm{b}^{\top}\bm{y}$.
+      \end{itemize}
+    \end{theorem}
+    \hphantom{}
+
+    To show this, we introduce the simplex method of solving LPs, and then construct from the termination of the simplex method a dual solution equal to the primal. \\
+
+    Firstly, we convert $(\ref{lp:1})$ into slack form, by introducing the non-negative variables $\bm{\varepsilon} \in \mathbb{R}^{n}$ and augmenting each $\bm{a}^{\top}_{i}\bm{x} \le b_{i}$ to $\bm{a}^{\top}_{i}\bm{x} + \varepsilon_{i} = b_{i}$. We then rewrite the LP as
+    \begin{align*}
+      z &= \bm{c}^{\top}\bm{x} \\
+      \bm{\varepsilon} &= \bm{b} - A\bm{x},
+    \end{align*}
+    labelling variables on the LHS `basic', and variables on the RHS `non-basic'. Beginning by setting all non-basic variables to $0$, at each iteration we take a non-basic variable $u$ which occurs with positive coefficient in the first equation, and increase it until a basic variable $v$ is made negative. \\
+
+    Thus provided the solution is bounded, the iteration concludes with $v = 0$, and we rewrite the system of equations by setting $u$ to be basic and $v$ non-basic (push $u$ to the LHS of $v$'s equation, then substitute wherever $u$ occurs elsewhere). This gives an equivalent linear system, with all variables non-negative and thus feasible. This operation is known as a \emph{pivot}.\\
+
+    We repeat this process until either the solution is determined to be unbounded, or all coefficients of the first equation are negative (so the objective is trivially maximised). Note that provided we break ties in a sensible manner (e.g. select the variable with the lower index) this will always terminate. \\
+
+    To briefly remark on initialisation: we can determine from the start if a problem is feasible by constructing an LP with an additional variable with its negation maximised, tracking the distance of the LP from the feasible region. This will always be feasible with some small manipulations, and so we can run the main simplex logic, returning feasibility if the optimal value is $0$, infeasible otherwise. \\
+
+    Ultimately, if the solution is feasible and bounded we terminate with $A'$, $\bm{b}'$, $\bm{c}'$, and the sets $B$ and $N$ specifying which variables are basic and non-basic. We can then construct a dual solution as follows:
+    \begin{align*}
+      y_{i} &= \begin{cases}
+        -c'_{n+i} & \text{if $(n+i) \in N$} \\
+        0 & \text{otherwise}.
+     \end{cases}
+    \end{align*}
+    This can then be shown to be both feasible and equal to the optimal primal solution via algebra, and weak duality gives that this must then be an optimal dual solution. \\
+
+    The simplex method as given above is in $\EXP$, although both useful for the above proof, and generally more practical than other methods. At the same time, we do have a couple different algorithms to solve LPs in polynomial time. The Ellipsoid method does this by noting that using duality allows us to reduce LPs to feasibility checks, and while we've used the Simplex method above to do feasibility checks, it is in fact possible to do so with minimisation methods for convex functions, such as the ellipsoid method, which approximates a solution with accuracy of any $\varepsilon > 0$ in polynomial time. Thus we get that solving LPs are in $\P$. \\
+
+    \innerblock{Zero-sum games}{
+      \begin{definition}[Zero-sum game]
+        \ A zero-sum strategic form game is defined by an $m\times n$ matrix $A = (a_{ij})$, where given a row-column choice $i, j$ by the row and column players respectively, the row player receives payoff $a_{ij}$, and the column player $-a_{ij}$. A mixed strategy is a probability distribution over a player's choices.
+      \end{definition}
+      \hphantom{}
+
+      Given mixed strategies $\bm{p}$, $\bm{q}$ over rows and columns respectively, the expected payoff of the row player is $\bm{p}^{\top}A\bm{q}$, which is the negation of the payoff for the column player. \\
+
+      \begin{definition}[Nash equilibrium]
+        \ For a zero-sum strategic form game defined by $A = (a_{ij})$, a pair of mixed strategies $(\bm{p}, \bm{q})$ is a Nash equilibrium if for every mixed strategy $\bm{r}$ on rows, $\bm{s}$ on columns,
+        \begin{align*}
+          \bm{p}^{\top}A\bm{q} &\ge \bm{r}^{\top}A\bm{q} \\
+          \bm{p}^{\top}A\bm{q} &\le \bm{p}^{\top}A\bm{s}.
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      Nash equilibria are stable in the sense that even knowing the other player's strategy beforehand, neither player would gain from changing their strategy. \\
+
+      Given that the row player chooses $\bm{p}$, the column player will choose $\bm{q}$ minimising $\bm{p}^{\top}A\bm{q}$, so the row player should always choose $\bm{p}$ maximising $\displaystyle\min_{\bm{q}} \bm{p}^{\top}A\bm{q}$. In the opposite way, the column player should always choose $\bm{q}$ minimising $\displaystyle \max_{\bm{p}} \bm{p}^{\top}A\bm{q}$. \\
+
+      \begin{theorem}[Von Neumann's theorem]
+        \ Given a zero-sum game defined by $A = (a_{ij})$,
+        \begin{align*}
+          \max_{\bm{p}} \min_{\bm{q}} \bm{p}^{\top}A\bm{q} = \min_{\bm{q}} \max_{\bm{p}}\bm{p}^{\top}A\bm{q}.
+        \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      Firstly, note that $\displaystyle\min_{\bm{q}} \bm{p}^{\top}A\bm{q} = \min_{j} \bm{p}^{\top}\bm{a}_{(\cdot)j}$, so we can write the maximisation problem $\displaystyle \max_{\bm{p}} \min_{\bm{q}} \bm{p}^{\top}A\bm{q}$ as
+      \begin{align*}
+        \max\,\,&z \\
+        \text{s.t. }&\bm{1}_{n}z - A^{\top}\bm{p} \le \bm{0}_{n} \\
+                & \bm{1}^{\top}_{m}\bm{p} \le 1 \\
+        & z \ge 0,\, \bm{p} \ge 0,
+      \end{align*}
+      which has dual
+      \begin{align*}
+        \min\,\,& w \\
+        \text{s.t. } &\bm{1}_{n}w - A\bm{q} \ge \bm{0}_{n} \\
+                &\bm{1}^{\top}_{n}\bm{q} \ge 1 \\
+                  &w \ge 0, \, \bm{q} \ge 0.
+      \end{align*}
+      Noting that this corresponds to the minimisation problem $\displaystyle \min_{\bm{q}} \max_{\bm{p}} \bm{p}^{\top}A\bm{q}$, by LP duality we get Von Neumann's equality.
+    }
+    \hphantom{}
+
+    \innerblock{Minimum Cost Perfect Matchings}{
+      \begin{definition}[Perfect Matchings]
+        \ Given a bipartite graph $(L \cup R, E)$ with $E \subseteq L \times R$ and a cost function $c : E \to [0,\infty)$, a perfect matching is a subset $M \subseteq E$ such that for each $v \in L \cup R$ there is exactly one $e \in M$ incident to $v$. \\
+
+        Further, the cost of a perfect matching is defined as
+        \begin{align*}
+          \mathrm{cost}(M) &= \sum_{e \in M} c(e)
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      We can formulate this as an LP:
+      \begin{align*}
+        \min\,\,& \sum_{e \in E} c(e)y_{e} \\
+        \text{subject to }& \sum_{e \sim u} y_{e} \le 1 && \text{for $u \in L$} \\
+                & \sum_{e \sim v} y_{e} \ge 1 && \text{for $v \in R$} \\
+        &\bm{y} \ge \bm{0}
+      \end{align*}
+      Note that this is only equivalent when we restrict $\bm{y}$ to be integer valued, in which case as $|L| = |R|$ both inequalities turn into equalities. Considering the relaxed LP we get the following dual:
+      \begin{align*}
+        \max\,\,&\sum_{v \in R} x_{v} - \sum_{u \in L} x_{u} \\
+        \text{subject to } &x_{v} - x_{u} \le c(u,v) && \text{for $(u,v) \in E$} \\
+        &\bm{x} \ge \bm{0}
+      \end{align*}
+      Our goal is then to write an algorithm which maintains a solution to the dual on a subgraph $S$ while constructing a feasible solution to the primal. Once the solution to the dual is extended to the entire graph we then have a solution. \\
+
+      We begin with $M = \varnothing$, $S = \varnothing$, corresponding to $\bm{y} = \bm{0}$, $\bm{x} = \bm{0}$ a solution for the empty graph. While $M$ is not a perfect matching: \\
+
+      \begin{enumerate}
+              \item \ We compute $c_{\bm{x}}(u,v) = c(u,v)+ x_{u} - x_{v}$, then construct the graph $G_{M} = (X \cup Y, E \setminus M \cup \mathrm{rev}(M))$ with additional edges from $s$ to unmatched vertices in $L$ and from unmatched vertices in $R$ to $t$.
+              \item \ We run Dijkstra on $G_{M}$ to find a min-cost path from with respect to $d(e) = c_{\bm{x}}(e)$ if $e \notin M$, $d(\mathrm{rev}(e)) = -c_{\bm{x}}(e)$ if $e \in M$, and calculate the distance to each vertex $\delta(v)$ for $v \in L \cup R$. Thus $\min_{v \in R} \delta(v)$ gives a shortest path, beginning and ending with unmatched vertices labelled $u_{\mathrm{start}}$ and $v_{\mathrm{end}}$ respectively.
+              \item \ $\bm{x}$ is updated via $\bm{x'} = \bm{x} + \bm{\delta}$. This preserves feasibility while maintaining that it maximises the objective function on $S'$.
+              \item \ $M' = (P \setminus M) \cup (M \setminus P)$, $S' = S \cup \{u_{\mathrm{start}}, v_{\mathrm{end}}\}$ increasing the set of incident vertices by $2$, thus increasing the set cardinality by $1$. \\
+      \end{enumerate}
+
+      To see that we preserve feasibility, note that for each $(u,v) \notin M$, we have
+      \begin{align*}
+        x'_{v} - x'_{u} &= x_{v} - x_{u} + \delta(v) - \delta(u) \\
+                        &\le x_{v} - x_{u} + d(u,v) \\
+        &= c(u,v),
+      \end{align*}
+      with equality if $(u,v) \in P$, as then the path to $v$ via $(u,v)$ is minimal, so $\delta(v) = \delta(u) + d(u,v)$. For each $(u,v) \notin M$, we first note that as $M$ is a matching there is at most one backwards edge in $G_{M}$ incident to any $u \in L$, and this is $(v,u)$, so $\delta(u) = \delta(v)+d(v,u) = \delta(v)$ as $c(u,v) = x_{v}-x_u$ for $(u,v) \in M$. Thus
+      \begin{align*}
+        x'_{v} - x'_{u} &= x_{v} - x_{u} + \delta(v) - \delta(u) \\
+                        &= x_{v} - x_{u} \\
+        &= c(u,v).
+      \end{align*}
+      Furthermore we preserve optimality as follows, noting that $\delta(u_{\mathrm{start}}) = 0$ and $\delta(v_{\mathrm{end}})$ is the cost of the shortest path.
+      \begin{align*}
+        \sum_{v \in R \cap S'} x'_{v} - \sum_{u \in L \cap S'} x'_{u} &= \sum_{v \in R \cap S'} x_{v} + \delta(v) - \sum_{u \in L \cap S'} x_{u} + \delta(u) \\
+                                                      &= \sum_{v \in R \cap S} x_{v} - \sum_{u \in L \cap S} x_{u} + \sum_{(u,v) \in M} \left(\delta(v)-\delta(u)\right) + \delta(v_{\mathrm{end}}) - \delta(u_{\mathrm{start}}) \\
+                                                      &= \mathrm{OPT}_{S} + \delta(v_{\mathrm{end}}) \\
+                                                      &= \sum_{e \in M} c(e) + \Bigg(\sum_{(u,v) \in P \setminus M} (c(u,v) +x_{u} - x_{v}) \\
+                                                      & \quad \quad \quad \quad \quad \quad \quad - \sum_{(u,v) \in \mathrm{rev}(P) \cap M} (c(u,v)+x_{u}-x_{v})\Bigg) \\
+                                                      &= \sum_{e \in M'} c(e) + x_{u_{\mathrm{start}}} - x_{v_{\mathrm{end}}} \\
+        &= \sum_{e \in M'} c(e)
+      \end{align*}
+      As $M$ is a min-cost perfect matching on $S$, thus any augmenting path corresponds to a perfect matching on $S'$. \textbf{Not sure how to continue proving here}.\\
+
+      Consequently we have shown that the algorithm terminates with an optimal solution to the dual, and thus an optimal solution to the primal, which is a relaxed form of the initial problem. Note that our solution is in fact integral however, so we have proven that there is an integral optimal solution equivalent to the relaxed solution, and this is the one we return.
+    }
+}
+\block{Approximation Algorithms}{
+  We say that algorithm $\mathcal{A}$ is a $\rho$-approximation algorithm for a minimisation problem $\mathcal{P}$ if for every instance $x$ of $\mathcal{P}$, $\mathcal{A}(x) \le \rho \cdot \mathrm{OPT}(x)$. In the opposite way, algorithm $\mathcal{A}$ is a $\rho$-approximation algorithm for a maximisation problem $\mathcal{P}$ if for every instance $x$ of $\mathcal{P}$ we have $\mathcal{A}(x) \ge \rho \cdot \mathrm{OPT}(x)$. \\
+
+  There are 3 main approximation techniques:
+  \begin{itemize}
+    \item \ Combinatorial algorithms, which use counting methods to find a separate bound.
+    \item \ LP rounding, wherein we express the problem using an integer linear program, then relax the integrality constraints and solve the standard LP, then round and argue that the integral solution is not far from the optimal.
+    \item \ Randomisation, wherein we use probabilistic arguments to allow us to make more general choices and argue from probability that they give good results. \\
+  \end{itemize}
+
+  In particular we can use approximation algorithms to focus on the optimisation form of several $\NP$-complete problems considered in the block to the right. For example, while we might have difficulty finding if there is a vertex cover of size $\le k$, we can approximate the minimum vertex cover by some reasonable factor to help with this. Elsewhere, while $\proc{SAT}$ is difficult to perform, we can approximate the maximum number of clauses that can be satisfied at any one time for a given formula.\\
+
+  \begin{codebox}
+    \li \ProcName{$\proc{MinVertexCover}(G)$}
+    \li $C = \varnothing$
+    \li $M = \varnothing$
+    \li \While there is $(u,v) \in E$ with $u, v \notin C$ \Do
+    \li   $C := C \cup \{u,v\}$
+    \li   $M := M \cup \{(u,v)\}$
+        \End
+    \li \Return $C$
+  \end{codebox}
+  \hphantom{}
+
+  The above provides a vertex cover of size $C$. With $M$ the set of edges that trigger the while loop (noting no edge can trigger it twice), we have $|C| = 2|M|$, and as no vertex occurs twice in $M$, for each edge in $M$ a vertex must be added to the cover, so $|M| \le |C^{*}|$ and thus $|C| \le 2|C^{*}|$. \\
+
+  Another method of constructing the above algorithm is using LP rounding. We get the following relaxed LP for the problem, from removing the specification that $\bm{x}$ is integer-valued.
+
+  \begin{align*}
+    \min \,\,&\sum_{v \in V} x_{v} \\
+    \text{s.t. }&x_{u} + x_{v} \ge 1 && \text{for $(u,v) \in E$} \\
+    &\bm{x} \ge \bm{0}
+  \end{align*}
+
+  If we construct a vertex cover such that $v \in C$ iff $x_{v} \ge 1/2$, then we are never more than doubling, and so we get a $|C| \le 2|C^{*}|$, and LPs are solvable in polynomial time so this is a relatively fast procedure. \\
+
+  \coloredbox{In more complex scenarios we may need to work on constructing a solution where we round according to a random $T \sim U(0,1)$, and then use the behaviour of the random construction to demonstrate either that any optimal solution is integer-valued in the first place, or argue otherwise that the solution is approximate.}
+  \hphantom{}
+
+  Using the third method of randomisation, we can get an approximation to $\proc{MaxSat}$ by taking a random assignment and outputting the number of satisfied clauses under the assignment. The expected number of clauses satisfied is $\ge |C|/2$, so $\mathbb{P}(|C|-X \ge (|C|+1)/2) \le |C|/(|C|+1)$, meaning running repeatedly should relatively quickly give a $1/2$ approximation with very high probability (tending to $1$).\\
+
+  Another means of getting an approximation is to reformulate $\proc{MaxSat}$ as an integer LP, then relax it and use the optimal solution to form a random distribution over assignments. \\
+
+  \textbf{NOTE: Have currently missed off details regarding TSP approximations -- consider looking at this further.}
+  }
+
+
+
+\column{0.33}
 \block{Flow Networks}{
   Flow networks are an abstraction to capture networks where edges capture some sort of traffic, and nodes act as switches passing traffic. Formally, it is a tuple $(G, s, t, c)$ where $G = (V,E)$ is a directed graph, we have a source $s \in V$, a sink $t \in V$, and a capacity function $c : E \to \mathbb{Z}_{\ge 0}$. \\
 
@@ -245,17 +500,39 @@
         &= \sum_{\text{$e$ out of $A$}} f(e) - \sum_{\text{$e$ into $A$}} f(e) \\
   \end{align*}
 
-  Hence $|f| \le c(A,B)$ (the capacity of the $(A,B)$ cut). Thus we get weak duality, that if $|f| = c(A,B)$, then $f$ is maximum flow. \\
+  Hence $|f| \le c(A,B)$ (the capacity of the $(A,B)$ cut). Thus we get weak duality, that if $|f| = c(A,B)$, then $f$ is maximum flow. Note we also get this from identifying that max flow and min cut are each integer LPs, and together a primal dual pair. \\
 
   We have the idea of a residual graph for a greedy method of maximising flow. With respect to a specific flow, we construct $G_{f} = (V, E_{f})$, where for each $e \in E$, if $f(e) < c(e)$ we have a forwards edge $e$ to $E_{f}$ with $c_{f}(e) = c(e) - f(e)$, and if $0 < f(e)$, then we had a backwards edge $e' = \mathrm{rev}(e)$ with $c_{f}(e') = f(e)$. Thus we can trace from $t$ the flow back to $s$, and the forward edges represent lost flow which could move through that edge. \\
 
-  Take a path from $s$ to $t$ in the residual graph - this uses the edges along which flow was lost, ensuring we can make an improvement to $|f|$. Thus with $b_{P}$ the minimum $c_{f}(e)$ for $e \in P$, if $e \in P$ set $f'(e) = f(e) + b_{P}$, and if $\mathrm{rev}(e) \in P$ set $f'(e) = f(e) - b_{P}$. This constructs a new valid flow. \\
+  Constructed as such, we have that each path from $s$ to $t$ in the residual graph represents unused flow, and indeed we can pump $b_{P} = \min_{e \in P} c_{f}(e)$ units of flow along this path to create $f'$. Note that in certain instances this involves requisitioning flow along some edge to provide it elsewhere, so if for $e \in E$, $\mathrm{rev}(e) \in P$, we need to reduce the flow along $e$ by $b_{P}$. \\
 
-  The $\proc{Ford-Fulkerson}$ algorithm does precisely this. It sets $f = 0$ initially, constructs the residual graph $G_{f}$, then applies the above augmentation to $f$, updates $G_{f}$, then repeats until there is no $s$-$t$ path in $G_{f}$. For each iteration, we increase $|f|$ by the bottleneck capacity of $P$, which is at least $1$, so it takes at most $|f^{*}|$ iterations to complete the while loop. Further, the execution of the loop takes $O(m)$ time. Note that this only terminates necessarily because the capacities are integers (\textbf{why?}).  \\
+  The Ford-Fulkerson method is developed along these lines:
+  \begin{codebox}
+  \Procname{$\proc{Ford-Fulkerson-Method}(G,s,t,c)$}
+  \li \For $e \in E$ \Do
+  \li   $f(e) = 0$
+      \End
+  \li $G_{f} = G$
+  \li \While there exists a path $P$ from $s$ to $t$ in $G_{f}$ \Do
+  \li   Select $P$
+  \li   $\displaystyle b_{P} = \min_{e \in E} c_{f}(e)$
+  \li   Augment $f$ along $P$ by $b_{P}$
+  \li   Update $G_{f}$
+      \End
+  \li \Return $f$
+  \end{codebox}
 
-  Upon termination, $G_{f}$ has no $s$-$t$ path, so disconnected. The corresponding cut $(A,B)$ has $c(A, B) = |f|$, so the algorithm returns the max flow. This is true because for any forward edge crossing $(A,B)$, $f(e) = c(e)$ (as otherwise we would have a forward edge across the cut), and for any backwards edge crossing $(A,B)$ we have $f(e) = 0$ (as otherwise, again, we get a forward edge across the cut). Thus $|f| = c(A,B)$.\\
+  For each iteration, we increase $|f|$ by the bottleneck capacity of $P$, which for integer capacities is at least $1$, so it takes at most $|f^{*}|$ iterations to complete the while loop. Further, the execution of the loop takes $O(|E|)$ time, as either breadth-first or depth-first search are $O(|V|+|E_{f}|) = O(|E|)$. If capacities are irrational, without more precise choice of paths it's possible to reach a cycle where the bottleneck capacity approaches $0$ asymptotically. Thus we get initially a bound of $O(|E|\cdot|f^{*}|)$ (and as we don't know $|f^{*}|$ in most cases, perhaps the more helpful bound is $O(|E|C)$ with $C = \max_{e} c(e)$).\\
 
-  In order to choose the $s$-$t$ path $P$ to reduce the time complexity, we want to use the $P$ with maximum bottleneck capacity, so to increase $|f|$ by as much as we can at each iteration. One option would be to adapt Dijkstra's algorithm, and the other would be to do a binary search on the value of $b_{P}$. With $\Delta \ge 1$, let $G_{f}(\Delta)$ be the subgraph of $G_{f}$ with edge capacities $\ge \Delta$. We use the following algorithm:
+  \coloredbox{Augmentation of $f$ in this way is actually a special case of a more general notion. In general we write for $f$ a flow on $G$, $f'$ a flow on $G_{f}$, $f \uparrow f' = (f+f'-(f' \circ \mathrm{rev})) \cdot \mathds{1}_{E}$, which is a flow on $G$ satisfying $|f \uparrow f'| = |f| + |f'|$. The special case here is of taking $f_{P} = b_{P} \cdot \mathds{1}_{P}$.}
+  \hphantom{}
+
+  Upon termination, $G_{f}$ has no $s$-$t$ path, so it is disconnected. The corresponding cut $(A,B)$ has $c(A, B) = |f|$, so by weak duality the algorithm returns the max flow. This is true because for any forward edge crossing $(A,B)$, $f(e) = c(e)$ (as otherwise we would have a forward edge across the cut), and for any backwards edge crossing $(A,B)$ we have $f(e) = 0$ (as otherwise, again, we get a forward edge across the cut). Thus $|f| = c(A,B)$.\\
+
+  \innerblock{Refinements to the Ford-Fulkerson method}{
+    The bulk of time lost in the Ford-Fulkerson method is with respect to the choice of path at each stage. If we can find an improvement on this, while it may increase the time taken to find a path, we can guarantee termination within a shorter time. \\
+
+    One method of doing this is to modify the residual graph so as to guarantee that we select a path with bottleneck of the same order as the maximum path. To do this we add an additional parameter for constructing the residual graph, $\Delta$, where $G_{f}(\Delta)$ is the subgraph of $G_{f}$ with edge capacities $\ge \Delta$. Thus any path $P$ in $G_{f}(\Delta)$ has $b_{P} \ge \Delta$, and so at the end of each $\Delta$-scaling phase we have $|f^{*}| < |f|+m\Delta$, and thus $O(m)$ path searches (each $O(m)$) per phase, of which there are $\log C$, so $O(m^{2}\log C)$ complexity. \\
 
   \begin{codebox}
   \Procname{$\proc{Capacity-Scaling}(G, s, t, c)$}
@@ -273,50 +550,115 @@
   \li \Return $f$
   \end{codebox}
 
-  It turns out that we can actually remove runtime dependence on $C$ entirely however, by the $\proc{Edmonds-Karp}$ algorithm which just selects the path with the fewest edges at each point of the iteration.  \\
+  It turns out however that, provided we always select the shortest path returned by BFS, we can remove runtime dependence on $C$ entirely in our analysis. Assume that there is some flow augmentation on $G_{f}$, and $v \in V \setminus \{s, t\}$ is the vertex minimising $\delta_{f'}(s,v)$ such that $\delta_{f'}(s,v) < \delta_{f}(s,v)$. Then with $p = s \rightsquigarrow u \to v$ a shortest path, we have $\delta_{f}(s,u) \le \delta_{f'}(s,u) = \delta_{f'}(s,v) - 1$, and so if $(u,v) \in E_{f}$ then
+  \begin{align*}
+    \delta_{f}(s,v) &\le \delta_{f}(s,u)+1 \\
+              &\le \delta_{f'}(s,v).
+  \end{align*}
+  Thus the augmentation introduces $(u,v)$, meaning flow must have just been increased on a path from $s$ to $u$ via $v$, and further this must be a shortest path, creating a contradiction. \\
 
-  \textbf{Make sure to analyse the runtime of all the above} \\
+  From here, we then describe each edge $e \in E$ as critical in an augmentation if $b_{P}= c_{f}(e)$. Once an edge is critical it is removed from the graph, and only returned if $\mathrm{rev}(e)$ is on an augmenting path, which requires the augmenting path distance to have increased by $\ge 2$. Thus $e$ appears in at most $|V|/2$ paths (one for every two distances), so we get that there are $O(|V||E|)$ augmentations, each taking $O(|E|)$ time, so $O(|V||E|^{2})$ time. \\
 
   In summary, we get
   \begin{itemize}
-          \item \ $\proc{Ford-Fulkerson}$ runs in time $O(mnC)$.
+          \item \ $\proc{Ford-Fulkerson}$ runs in time $O(mC)$ by default.
           \item \ $\proc{Capacity-Scaling}$ runs in time $O(m^{2}\log C)$.
           \item \ $\proc{Edmonds-Karp}$ runs in time $O(m^{2}n)$.
           \item \ State of the art algorithms are $O(mn)$.
   \end{itemize}
+  }
+  \hphantom{}
 
-  Given an undirected bipartite graph $(X \cup Y, E)$, $(X, Y)$ denotes the bipartition of the vertex set of $G$. Note any edge is of the form $(x, y)$ for some $x \in X$, $y \in Y$. With a cost function $c : E \to [0,\infty)$, for a set $S \subseteq E$ we write $c(S)$ as the sum cost of $S$, and we want to find the minimum cost perfect matching (a matching where every vertex appears exactly once).
-}
+  \innerblock{Applications}{
+  Max-flow solutions to flow networks are quite flexible, and many other problems can be reduced to $\proc{Max-Flow}$. An alternative problem mentioned in the course is that of circulation with demands, where we have a directed graph to which capacity bounds are assigned to each edge, and capacity bounds to each vertex. The goal is to determine if there is a circulation for which the flow going through each vertex is equal to the demand, and each edge is within capacity. We can reduce this to a flow network by introducing $s$ with an edge to every vertex with negative demand, and $t$ with an edge from each vertex with a positive demand. We have a circulation iff all edges from $s$ and to $t$ are at capacity. \\
 
-\block{Linear Programming}{
-  A linear programming problem is one involving maximisation or minimisation of a cost function subject to constraints formed of weak inequalities and equality. The maximum flow problem is itself a linear programming problem. \\
+  Another problem is that of bipartite matchings, which has a similarly straightfoward reduction from $\proc{Max-Flow}$. Given an undirected bipartite graph $(L \cup R, E)$ with $E \subseteq L \times R$, we say that an $M \subseteq E$ is a matching iff no two edges in $M$ share an endpoint. The maximum cardinality matching can be found by introducing $s$ with edges to $L$, $t$ with edges from $R$, then setting every edge to have capacity $1$. The max-flow is equal to the maximum cardinality matching. \\
 
-  We say that a linear program is feasible if there is a solution, infeasible otherwise. The fundamental theorem of linear programming states that for each LP, either the LP is infeasible, it is feasible but unbounded, or it is bounded, feasible, and there is a solution. \\
+  A further problem is more specifically that of perfect matchings, where we want to determine if there is a matching of cardinality $|L| = |R|$, and further provide a proof if not. The first part of this is straightforward via $\proc{Max-Flow}$, although the second part requires some work. \\
 
-  To solve LPs naively we initially draw out the feasible set, then calculate the cost manually at each intersection point. To do this more systematically, we can try to pick multipliers for each equality to solve a different LP. This ends up being the dual LP. \\
+  Writing for any set of vertices $S$, $N(S) = \{e \in E : \exists v \in S \,.\, v \sim e\}$, we have the following theorem. \\
 
-  Written precisely: a general LP consists of $n$ real variables $x_{1},\dots,x_{n}$, a linear objective function to be maximised or minimised, a set of $\le $ constraints upper bounded by some $b_{i}$ for $i \in \{1,\dots,m\}$, a set of $= $ constraints equal to $b_{i}$ for $i \in \{m+1,\dots,p\}$, and a set of $\ge$ constraints lower bounded by some $b_{i}$ for $i \in \{p+1,\dots,q\}$. \\
+  \begin{theorem}[Hall's theorem]
+  \ A bipartite graph $G = (L \cup R, E)$ has a perfect matching iff for every $S \subseteq L$, $|N(S)| \ge |S|$.
+  \end{theorem}
+  \hphantom{}
 
-  We convert initially to maximum standard form by multiplying the objective function by $-1$, replacing equality constraints by two inequality constraints, convert each inequality constraint to a $\le $ inequality, and make all variables non-negative by writing each $x$ as $x^{+}-x^{-}$ for both positive. \\
-
-  Having got the maximum standard form, we multiply each constraint by $y_{i} \ge 0$, sum the inequalities to obtain
+  The forward direction is immediate. For the backwards direction we construct a flow network, and note that if for every $S \subseteq L$, $|N(S)| \ge |S|$, then for any min cut $(A,B)$ we write $A_{L} = A \cap L$, $A_{R} = A \cap R$, and get the following
   \begin{align*}
-    \sum_{i=1}^{m} y_{i}\left(\sum_{j=1}^{n} a_{ij}x_{j}\right) \le \sum_{i=1}^{m} b_{i}y_{i}
+    \mathrm{cap}(A,B) &= |\{e \in E : \exists u \in A,\,v \in B\,.\, e = (u,v)\}| \\
+                      &= |L\setminus A_{L}| + |N(A_{L}) \setminus A_{R}| +  |A_{R}| \\
+                      &= |L| - |A_{L}| + |N(A_{L})| \\
+    &\ge |L|
   \end{align*}
-  and we ensure that the objective function $\sum_{i=1}^{n} c_{i}x_{i} \le L$ by having $c_{j} \le \sum_{i=1}^{m} a_{ij}y_{i}$, and then our goal is just to minimise the upper bound in the $y_{i}$s
-}
-\block{Approximation Algorithms}{
-  We say that algorithm $\mathcal{A}$ is a $\rho$-approximation algorithm for a minimisation problem $\mathcal{P}$ if for every instance $x$ of $\mathcal{P}$, $\mathcal{A}(x) \le \rho \cdot \mathrm{OPT}(x)$. In the opposite way, algorithm $\mathcal{A}$ is a $\rho$-approximation algorithm for a maximisation problem $\mathcal{P}$ if for every instance $x$ of $\mathcal{P}$ we have $\mathcal{A}(x) \ge \rho \cdot \mathrm{OPT}(x)$. \\
+  so by weak duality we get that the flow is a perfect matching. \\
 
-  There are 3 main approximation techniques:
+  Thus it's sufficient to show a certificate $S \subseteq L$ such that $|N(S)| < |S|$ to demonstrate that there is no perfect matching, and this can be found by constructing a flow network where all edges from $L$ to $R$ have infinite capacity, meaning the min cut produces this certificate. \\
+
+  There is an additional, more difficult problem of performing the same with the goal of minimising the cost of the perfect matching (each edge assigned its own cost). This is more easily dealt with using LPs than directly through flows.
+  }
+}
+
+
+\block{Intractability}{
+  \begin{definition}
+    \ For a decision problem $L$, $L \in \NP$ if there exists a non-deterministic Turing machine computing $L$ in time polynomial in its input size.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}[Reducibility]
+    \ For languages $L_{1}, L_{2} \subseteq \{0,1\}^{*}$, we say that $L_{1}$ is polynomial-time Karp reducible to $L_{2}$, $L_{1} \le_{p} L_{2}$ if there is some computable function $f : \{0,1\}^{*} \to \{0,1\}^{*}$ such that $x \in L_{1}$ iff $f(x) \in L_{2}$ (alternatively written, $L_{1} = f^{-1}(L_{2})$).
+  \end{definition}
+  \hphantom{}
+
+  While this is the most common notion of reducibility, there are other notions:
   \begin{itemize}
-    \item Combinatorial algorithms, which use counting methods to find a separate bound.
-    \item LP rounding, wherein we express the problem using an integer linear program, then relax the integrality constraints and solve the standard LP, then round and argue that the integral solution is not far from the optimal.
-    \item Randomisation, wherein we use probabilistic arguments to allow us to make more general choices and argue from probability that they give good results.
+    \item \ Truth-table reducibility, allowing us to call the TM for $L_{2}$ a constant number of times, so we have computable $\bm{f} : \{0,1\}^{*} \to \left(\{0,1\}^{*}\right)^{k}$, and pass the resultant $\mathds{1}_{L_{2}} \circ \bm{f}$ into the fixed $k$-ary formula $\varphi$.
+    \item \ Cook / Turing reducibility, allowing us to call the TM for $L_2$ a polynomial number of times during execution.
+    \item \ Log-space reducibility, where $f(x)$ must have length polynomially bounded in $|x|$, and one can compute both whether index $i$ is in $f(x)$ and whether $f(x)_{i} = 1$ in logarithmic time. \\
   \end{itemize}
 
-}
+  \begin{definition}[$\NP$-hardness]
+  \ A language $L \subseteq \{0,1\}^{*}$ is $\NP$-hard if for all $L' \in \NP$, $L' \le_{p} L$.
+  \end{definition}
+  \hphantom{}
 
+  Further, we say that $L$ is $\NP$-complete if $L \in \NP$. Note that if any $\NP$-hard $L$ were to have a polynomial-time algorithm, then $\NP = \P$. \\
+
+  We introduce the following $\NP$-complete decision problems:
+  \begin{itemize}
+          \item \ $\proc{Clique}(G, k)$, determining whether there is a clique of size $\ge k$ (a clique is a set $S \subseteq V$ where every pair is connected by an edge).
+          \item \ $\proc{IndSet}(G,k)$, determining whether there is an independent set of size $\ge k$ (an independent set $S \subseteq V$ has no pairs connected by an edge).
+          \item \ $\proc{VertexCover}(G,k)$, determining whether there is a vertex cover of size $\le k$ (a vertex cover is a set $S \subseteq V$ where each $e \in E$ is incident to some $v \in S$).
+          \item \ $\proc{SAT}(\varphi)$, determining whether the CNF formula $\varphi$ has a variable assignment $\mathcal{A}$ for which $\mathcal{A} \vDash \varphi$.
+          \item \ $\proc{3SAT}(\varphi)$, the restriction of $\proc{SAT}$ to CNF formulas for which each clause has $\le 3$ variables.
+          \item \ $\proc{LargeCut}(G, M)$, determining whether $G$ has a cut of size $\ge M$.
+          \item \ $\proc{HamCycle}(G)$, determining whether $G$ has a Hamiltonian cycle, one which goes through every vertex exactly once.
+          \item \ $\proc{3Col}(G)$, determining whether there exists an assignment $c : V \to \{\mathrm{red}, \mathrm{green}, \mathrm{blue}\}$ such that for each $(u,v) \in E$, $c(u) \neq c(v)$.
+          \item \ $\proc{4Col}(G)$, determining the same for 4 colours.
+          \item \ $\proc{SetCover}(U, \mathcal{F}, k)$, determining for a set $U$, collection $\mathcal{F}$ of subsets of $U$, whether we can choose $k$ sets from $\mathcal{F}$ with union $U$.
+          \item \ $\proc{HittingSet}(U, \mathcal{F}, k)$, determining if there is $U' \subseteq U$ with $|U'| \le k$ such that $U' \cap S_{i} \neq \varnothing$ for all $i$ ($U'$ `hits' all $S_{i}$).
+          \item \ $\proc{SubsetSum}(\{a_{1},\dots,a_{n}\}, K)$, determining if there is $I \subseteq \{1,\dots,n\}$ such that $\sum_{i \in I}a_{i} = K$.
+          \item \ $\proc{Partition}(\{a_{1},\dots,a_{n}\})$, determining whether there is $I \subseteq \{1,\dots,n\}$ such that $\sum_{i \in I} a_{i} = \sum_{i \notin I} a_{i}$. \\
+  \end{itemize}
+
+  Within the above, the first few problems concerning graphs are particularly closely related to one another. We can reduce $\proc{IndSet}$ to $\proc{Clique}$ by setting $E' = (V \times V) \setminus E$ (and vice-versa). We can also reduce $\proc{IndSet}$ to $\proc{VertexCover}$ by noting that $S \subseteq V$ is a vertex cover iff $V \setminus S$ is an independent set, so $f(G,k) = f(G,n-k)$ (and vice-versa to get $\proc{VertexCover} \le_{p} \proc{IndSet}$). \\
+
+  \begin{theorem}[Cook-Levin theorem]
+  \ Both $\proc{SAT}$ and $\proc{3SAT}$ are $\NP$-complete.
+  \end{theorem}
+  \hphantom{}
+
+  Roughly, the proof of $\proc{SAT}$ being $\NP$-complete is done through constructing a polynomial-size CNF which verifies that a sequence of snapshots of a polynomial-time TM is accepting. If this TM is the polynomial verifier for a language in $L \in \NP$, thus we have that $x \in L$ iff this formula is satisfiable. From here the reduction to $\proc{3SAT}$ can be done through algebraic manipulation of formulae. \\
+
+  Using this theorem allows us to then prove that all the above problems are in fact $\NP$-hard (and all are clearly $\NP$). This is because we can reduce $\proc{3SAT}$ to $\proc{VertexCover}$. To do this, given a formula $\varphi$ with $n$ variables and $m$ clauses (which without loss of generality we assume each have exactly $3$ variables, which ends up fine with some algebraic manipulation), for each variable $x$ we include a variable gadget composed of $x$, $\neg x$, and the edge $(x,\neg x)$; for each clause $\{x,y,z\}$ we include a clause gadget which is a clique of 3 vertices, each one with an edge to their corresponding vertex in their variable gadget. \\
+
+  Thus we get that for any vertex cover of the resulting graph, each variable gadget has at least one variable, and each clause gadget has at least two variables, so the vertex cover has size $\ge n + 2m$. If there was a vertex cover of size $\le n + 2m$ (equivalently, equal to $n+2m$), then we take the vertex in each variable gadget and assign it $1$. For each clause gadget there is a vertex not in the cover, and so that variable must have been assigned $1$ (and so included in the cover within its gadget), meaning all clauses are satisfied so we have satisfiability. \\
+
+  On the other hand, if $\varphi$ is satisfiable, then take the satisfying assignment and include every variable assigned true in its variable gadget in the vertex cover, meaning we must include every instance of a variable assigned false in a clause gadget in the vertex cover. As we have that $\varphi$ is satisfiable, we always have that $\le 2$ variables need to be included in the vertex cover in each clause gadget, so thus we get a vertex cover of size $\le n + 2m$. \\
+
+
+
+}
 \end{columns}
 
 \end{document}

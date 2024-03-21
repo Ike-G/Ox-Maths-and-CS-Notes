@@ -1,0 +1,31 @@
+(TeX-add-style-hook
+ "linear-algebra"
+ (lambda ()
+   (TeX-run-style-hooks
+    "latex2e"
+    "tikzposter"
+    "tikzposter10"
+    "amsmath"
+    "parskip"
+    "amsfonts"
+    "amssymb"
+    "verbatim"
+    "nicefrac"
+    "mathtools")
+   (TeX-add-symbols
+    "rank"
+    "Image"
+    "Ker"
+    "Row"
+    "Col")
+   (LaTeX-add-environments
+    "theorem"
+    "lemma"
+    "corollary"
+    "definition"
+    "solution"
+    "remark"
+    "claim"
+    "case"))
+ :latex)
+

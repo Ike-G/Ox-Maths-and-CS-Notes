@@ -1,0 +1,30 @@
+(TeX-add-style-hook
+ "analysis-ii"
+ (lambda ()
+   (TeX-run-style-hooks
+    "latex2e"
+    "tikzposter"
+    "tikzposter10"
+    "amsmath"
+    "parskip"
+    "amsfonts"
+    "amssymb"
+    "verbatim"
+    "nicefrac"
+    "mathtools"
+    "enumitem")
+   (TeX-add-symbols
+    '("restr" 2))
+   (LaTeX-add-environments
+    "theorem"
+    "lemma"
+    "corollary"
+    "definition"
+    "remark"
+    "claim"
+    "case")
+   (LaTeX-add-mathtools-DeclarePairedDelimiters
+    '("floor" "")
+    '("ceil" "")))
+ :latex)
+
