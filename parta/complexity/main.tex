@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=850mm, paperheight=1500mm}
+\geometry{paperwidth=1300mm, paperheight=2900mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -11,12 +11,11 @@
 \usepackage{verbatim}
 \usepackage{nicefrac}
 \usepackage{mathtools}
+\usepackage{dsfont}
 \usepackage{complexity}
 \usepackage{clrscode3e}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
-\DeclareMathOperator{\dtime}{DTIME}
-\DeclareMathOperator{\dspace}{DSPACE}
 \DeclareMathOperator{\Log}{Log}
 \DeclareMathOperator{\res}{res}
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
@@ -111,73 +110,209 @@
 % Title block with title, author, logo, etc.
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
-  \column{0.5}
+  \column{0.33}
 \block{Time and Space}{
-  \begin{definition}
-  \ Let $M$ be a TM and $x \in \Sigma^{*}$ be an input. We say that $M$ uses time $T$ on input $x$ if $M$ halts within $T$ steps on $x$.
+  To begin with, we must define what it means for a computation to take time, and to take space. To do this we refer very much to the expected ideas corresponding to what a TM implemented in real-life would do, although this doesn't always carry over in how they go on to be used, and often it's usually better to consider them as abstract resources of a device capable of computation. \\
+
+  \begin{definition}[Time and space]
+  \ Let $T, S : \mathbb{N} \to \mathbb{N}$ be functions. We say that a TM $M$ runs in time $T$ if for all $x \in \Sigma^{*}$, $M$ halts within $T(|x|)$ steps. Further, we say that $M$ runs in space $S$ if for all $x \in \Sigma^{*}$, $M$ accesses at most $S(|x|)$ cells (excluding the input tape).
   \end{definition}
   \hphantom{}
 
-  \begin{definition}
-  \ Let $M$ be a TM with a read-only input tape, and $x \in \Sigma^{*}$. We say that $M$ uses space $S$ on an input $x$ if $M$ halts on input $x$ and accesses at most $S$ work-tape cells.
+  \innerblock{Robustness of Turing Machines}{
+  There is some initial work to be done here in terms of clarifying the robustness of this definition. Notably, while it was verified in Models of Computation that the TM model is robust to the introduction of multiple tapes, it's unclear how this changes things with respect to time bounds. \\
+
+  Consider a language $L \subseteq \{0,1\}^{*}$ decidable by a TM $M$ with alphabet $\Gamma$ in time $T$, and attempt to construct $M'$ to decide $L$ with alphabet $\{0,1\}$. We can encode any symbol of $\Gamma$ with $\log |\Gamma|$ bits, and so for every transition $(q, a) \to (q', a', D)$ we introduce a sequence of states after identifying the $\log |\Gamma|$ block of bits so to change the value and move to the correct block. This gives us $M'$ which decides $L$ in time $4\log |\Gamma|T(n)$, space $\log |\Gamma| S(n)$. \\
+
+  Further, consider that $L$ is decidable by a $k$-tape TM $M$ with alphabet $\{0,1\}$. To simulate this with one tape, we introduce an alphabet $\{0,1\}^{k}$ (plus any additional necessary constants). Noting that one will never access more than $kT(n)$ cells, we can demonstrate that the single-tape machine can decide $L$ in time $5kT(n)^{2}$, space $S(n)$. Note that the TM constructed here, where we go back and forth at each stage to perform each transition, is an oblivious TM, defined strictly below: \\
+
+  \begin{definition}[Oblivious Turing machine]
+  \ An oblivious Turing machine $M$ is one such that for any input $x \in \{0,1\}^{*}$, the location of the head of $M$ at the $i$th step is a function of $|x|$ and $i$.
   \end{definition}
   \hphantom{}
 
-  \begin{definition}
-  \ Let $T : \mathbb{N} \to \mathbb{N}$ be a function. We say that a TM $M$ runs in time $T$ (or space $S$) if for all $x \in \Sigma^{*}$, $M$ uses time $T(|X|)$ (or space $S(|X|)$).
-  \end{definition}
+  Oblivious Turing machines feature again in later proofs, such as that for the Cook-Levin theorem. This is because it is notable that any TM can be simulated obliviously with only a quadratic time loss (and no space loss), and they make analysis far easier. \\
+
+  Formally, the claim that every reasonable model of computation can be simulated by a Turing machine is the Church-Turing thesis, and the additional view that every reasonable model of computation can be simulated by a TM with a polynomial overhead is the strong form of the Church-Turing thesis. \\
+
+  \begin{theorem}[Efficient Universal Turing machine]
+  \ There exists a TM $\mathcal{U}$ which recognises $\{\langle M, x \rangle : M \text{ accepts } x\}$, and for each $M$, if $M$ halts in time $T$, space $S$, then for any $x \in \{0,1\}^{*}$, $\mathcal{U}(M,x)$ halts in time $C T(n) \log T(n)$, space $C S(n)$ for $C$ a function of $M$.
+  \end{theorem}
   \hphantom{}
 
-  \begin{definition}
-  \ Let $L \subseteq \Sigma^{*}$, $T : \mathbb{N} \to \mathbb{N}$ ($S : \mathbb{N} \to \mathbb{N}$). $L \in \dtime(T)$ ($L \in \dspace(S)$) if there exists a TM $M$ deciding $L$ running in time $O(T)$ (space $O(S)$).
-  \end{definition}
-  \hphantom{}
+  The proof of this bound is somewhat involved, with the chief problem being the simulation of an arbitrary number of tapes using only a constant number of tapes. One can reach an $O(T(n)^{2})$ bound straightforwardly by converting $M$ to a single-tape machine, but to get tighter we need to construct a machine whereby the tape moves under the head, and we keep all filled cells at most $O(\log T(n))$ steps away from the head. \\
 
-  This is a worst case notion, however in certain cases it is more useful to consider a notion of average case complexity. This requires that we have the notion of a distribution over inputs, and while of important practical use, has limited theoretical use due to not entailing any strict bound. \\
+  The importance of this claim is in allowing us to construct reprogrammable TMs with minimal loss. \\
 
-  We define the following complexity classes:
-  \begin{align*}
-    \mathrm{P} &= \bigcup_{k = 0}^{\infty} \dtime(n^{k}) \\
-    \mathrm{E} &= \bigcup_{k=0}^{\infty} \dtime\left(2^{nk}\right) \\
-    \mathrm{EXP} &= \bigcup_{k=0}^{\infty} \dtime\left(2^{n^{k}}\right)
-  \end{align*}
+  A final important result for TMs is that we can comfortably omit coefficients from our analysis, given by the following theorem: \\
 
-  The extended Church-Turing thesis claims that if a problem can be solved in time $T$ on a ``reasonable'' model, then it is in $\bigcup _{k} \dtime(T^{k})$. \\
-
-  Note that we don't particularly care about $\dtime(1)$, because we will always need $n$ steps to read the input. We \emph{do} care about low bounds like $\dspace(1)$, because it's possible to in certain cases construct TMs which don't require much storage (e.g. for regular languages). \\
-
-  \begin{theorem}[Speed-up theorem]
+   \begin{theorem}[Speed-up theorem]
   \ Let $T : \mathbb{N} \to \mathbb{N}$ be a time function. Let $n \in \mathbb{N}$ be a positive integer. If there is a TM $M$ deciding $L \subseteq \Sigma^{*}$ in $T$ steps, then there is a TM $M'$ deciding $L$ in $T/n + n + 3$ steps.
   \end{theorem}
   \hphantom{}
 
-  To do this, we write each 3 symbols in the input as a single one, expanding $\Gamma$ to do so. We then expand $\delta$ to work with $\Gamma'$, and with a larger state set we can process and determine $6n$ steps in $6$ transitions. (\textbf{Consider looking over this again.}) \\
+  To do this, we write each $k$ symbols in the input as a single one, expanding $\Gamma$ to $\Gamma^{k}$ to do so, compressing an input length $n$ to $n/k$. This requires $n + n/k + 2$ steps. We then simulate $M$ on the compressed input by updating the cell and its two adjacent cells by the consequences of simulation of $k$ steps, then doing an additional step to simulate the block we end up in. This takes 5 steps (lecture notes say 6???). Thus we simulate $k$ steps in $6$ steps, giving total time $6T(n)/k + n/k + n + 2$. Setting $k = 6r$ gives our result.
+  }
+  \hphantom{}
+
+  Going forward to consider the efficiency of language computation, we define the following sets for any $T, S : \mathbb{N} \to \mathbb{N}$:
+  \begin{align*}
+    \DTIME(T) &= \{L \subseteq \{0,1\}^{*} : \text{there exists a TM } M \text{ deciding } L \text{ in time } O(T)\} \\
+    \DSPACE(S) &= \{L \subseteq \{0,1\}^{*} : \text{there exists a TM } M \text{ deciding } L \text{ in space } O(S)\}.
+  \end{align*}
+
+  This allows us to begin to define some basic complexity classes. Note we extend the notation slightly here, but this isn't a problem as long as one recognises that $O(f)$ is a set, not a function.
+  \begin{align*}
+    \P &= \DTIME\left(n^{O(1)}\right) \\
+    \E &= \DTIME\left(2^{O(n)}\right) \\
+    \EXP &= \DTIME\left(2^{n^{O(1)}}\right) \\
+    \L &= \DSPACE\left(\log n\right) \\
+    \PSPACE &= \DSPACE\left(n^{O(1)}\right) \\
+    \EXPSPACE &= \DSPACE\left(2^{n^{O(1)}}\right)
+  \end{align*}
+  As one can very easily construct the complement of decidable languages for Turing machines, these are all closed under complementation (this becomes more difficult at later stages with non-determinism and randomness). \\
+
+  Note that we don't particularly care about $\DTIME(1)$ or $\DSPACE(1)$, as these contain only regular languages (for constant space, exactly the regular languages, and for constant time I don't know). \\
+
+  In order to relate time and space, note that we can never access more than $T(n)$ cells for a computation terminating in $T(n)$ steps, and if a procedure terminates using $S(n)$ space we can never take more than $2^{O(S)}$ steps. Thus we get the relation for a function $f : \mathbb{N} \to \mathbb{N}$:
+  \begin{align*}
+    \DTIME(f) \subseteq \DSPACE(f) \subseteq \DTIME(2^{O(f)}),
+  \end{align*}
+  demonstrating that $\L \subseteq \P \subseteq \PSPACE \subseteq \EXP \subseteq \EXPSPACE$, $\P \subseteq \E \subseteq \EXPSPACE$. \\
+
+  One quite unintuitive result that's nevertheless important to note, is that it's possible to get some very weird time and space bounds (unlike the ones chosen above, which behave mostly quite nicely). \\
 
   \begin{theorem}[Gap theorem]
-  \ Let $f : \mathbb{N} \to \mathbb{N}$ be a computable function. Then there exists a time bound $T$, space bound $S$ such that $\dtime(T) = \dtime(f(T))$ and $\dspace(S) = \dspace(f(S))$.
+  \ Let $f : \mathbb{N} \to \mathbb{N}$ be a computable function. Then there exists a time bound $T$, space bound $S$ such that $\DTIME(T) = \DTIME(f(T))$ and $\DSPACE(S) = \DSPACE(f(S))$.
   \end{theorem}
   \hphantom{}
 
-  \begin{definition}
-  \ A time bound $T : \mathbb{N} \to \mathbb{N}$ is time-constructible if there is a TM $M$ that computes $T(n)$ given $1^{n}$ as input in time $O(T)$.
+  The proof of this is omitted within this course. \\
+
+  To get nicer looking bounds we use the following definition: \\
+
+  \begin{definition}[Bound constructibility]
+  \ A time bound $T : \mathbb{N} \to \mathbb{N}$ is time-constructible if there is a TM $M$ that computes $T(n)$ given $1^{n}$ as input in time $O(T)$. Similarly, a space bound $S : \mathbb{N} \to \mathbb{N}$ is space-constructible if there is a TM $M$ that computes $S(n)$ given $1^{n}$ as input in space $O(S)$.
   \end{definition}
   \hphantom{}
 
-  The analogous definition works the same for space-constructibility -- we just require that there is a TM computing $S(n)$ from $1^{n}$ in space $O(S)$. \\
+  Having this then allows us to develop stricter hierarchies, and indeed we get the following results: \\
 
   \begin{theorem}[Time hierarchy]
-  \ Let $T, T' : \mathbb{N} \to \mathbb{N}$ such that $T'$ is time-constructible and $T \log T = o(T')$. Then $\dtime(T) \subset \dtime(T')$.
+  \ Let $T, T' : \mathbb{N} \to \mathbb{N}$ such that $T, T'$ are time-constructible and $T \log T = o(T')$. Then $\DTIME(T) \subset \DTIME(T')$.
   \end{theorem}
   \hphantom{}
 
   \begin{theorem}
-  \ Let $S, S' : \mathbb{N} \to \mathbb{N}$ such that $S'$ is space-constructible and $S \log S = o(S')$. Then $\dspace(S) \subset \dspace(T')$.
+  \ Let $S, S' : \mathbb{N} \to \mathbb{N}$ such that $S, S'$ are space-constructible and $S = o(S')$. Then $\DSPACE(S) \subset \DSPACE(S')$.
   \end{theorem}
   \hphantom{}
-}
 
-\block{Something something reductions}{
-  \begin{theorem}[Cook-Levin]
+  Both of these use a diagonal contradiction with a universal Turing machine. Essentially we construct $D$ to run $\mathcal{U}$ on input $x$ and the TM $M$ with $\langle M \rangle = x$, then return the opposite result if we halt before $T'(|x|)$ steps, and reject otherwise. This is clearly in $\DTIME(T')$. If we assume that $L(D)$ is decided in $T$ time by some $M'$, run $D(\langle M' \rangle)$, provided $|\langle M' \rangle|$ is large enough we will always terminate (as it's only a logarithmic slowdown), and thus give the wrong answer. In space we have almost exactly the same thing, except we have no `slowdown'. \\
+
+  Consequently we conclude this section with the following known relations on the above classes:
+  \begin{align*}
+    &\P \subset \E \subset \EXP \\
+    &\L \subset \PSPACE \subset \EXPSPACE
+  \end{align*}
+}
+  \block{Reducibility}{
+    One of the fundamental methods of proof in complexity theory is that of reductions. These refer to a general means of bounding the difficulty of a problem in terms of how it may be solved with use of solutions to other problems. \\
+
+    \begin{definition}[Karp reductions]
+    \ A language $L_{1} \subseteq \{0,1\}^{*}$ is polynomial-time Karp reducible (or ``many-to-one reducible'') to $L_{2}$, denoted $L_{1} \leq_{P} L_{2}$, if there is a polynomial-time computable function $f : \{0,1\}^{*} \to \{0,1\}^{*}$ such that for any $x \in \{0,1\}^{*}$, $x \in L_{1}$ iff $f(x) \in L_{2}$ (alternatively written, $L_{1} = f^{-1}(L_{2})$).
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Turing reductions]
+    \ A language $L_{1} \subseteq \{0,1\}^{*}$ is polynomial-time Turing reducible (or ``Cook reducible'') to $L_{2}$, denoted $L_{1} \leq_{T} L_{2}$, if $L_{1}$ is decidable in polynomial time by a Turing machine equipped with an oracle for $L_{2}$ (an additional tape storing inputs to $x \in \{0,1\}^{*}$ to $L_{2}$, that verifies in one step whether $x \in L_{2}$). We write this as $L_{1} \in \P^{L_{2}}$.
+    \end{definition}
+    \hphantom{}
+
+    While Turing reductions are useful, note that they behave strangely when reducing to undecidable languages, on account of being able to modify any oracle results after they have been provided meaning one can take an $\RE$ language as the oracle, then invert its result to show that the complement language is `easier' (when of course it may not be). Thus in the context of decidability we almost always use Karp reductions. In this course that continues to complexity, and so our notions of hardness are usually specified in terms of Karp reductions. \\
+
+    \begin{definition}[Log-space reductions]
+    \ A language $L_{1} \subseteq \{0,1\}^{*}$ is logspace reducible to a language $L_{2}$, denoted $L_{1} \leq_{l} L_{2}$ if there is a function $f$ with its length polynomially bounded in $|x|$ for input $x \in \{0,1\}^{*}$, and such that both whether index $i$ is in $f(x)$, and $f(x)_{i}$ itself are computable in logarithmic space, and we have $x \in L_1$ iff $f(x) \in L_{2}$.
+    \end{definition}
+    \hphantom{}
+
+    The above is generally used for considering notions of $\NL$-hardness and completeness. \\
+
+  \begin{definition}[$\NP$-hardness]
+  \ A language $L \subseteq \{0,1\}^{*}$ is $\NP$-hard if for all $L' \in \NP$, $L' \le_{P} L$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}[$\NP$-completeness]
+  \ A language $L \subseteq \{0,1\}^{*}$ is $\NP$-complete if it is both $\NP$-hard and $\NP$.
+  \end{definition}
+  \hphantom{}
+
+  Both of the above definitions are very generalisable to other complexity classes, although usually require different reductions. For example, we have a corresponding notion of $\LSPACE$-completeness with respect to log-space reductions.
+  }
+
+\column{0.33}
+\block{Non-determinism}{
+  As seen in Models of Computation, in addition to standard Turing machines we have the notion of non-deterministic Turing machines. It was shown previously that one can simulate a NDTM with a TM, and therefore the notion of recognisability and decidability remains identical under NDTMs as it does TMs. The construction to prove this uses dovetailing in the computation paths however, inducing a heavy computational cost however, and so without further work we get that non-determinism constitutes an essentially exponential improvement in time. \\
+
+  \begin{definition}[Non-deterministic time and space]
+    \ Let $T, S : \mathbb{N} \to \mathbb{N}$ be functions. We say that an NDTM $M$ decides a language $L$ in time $T$, space $S$ if for all $x \in \Sigma^{*}$:
+    \begin{itemize}
+            \item \ If $x \in L$, there exists an accepting path in $M$'s computation of $x$ of height $\le T(|x|)$, along which every configuration uses $\le S(|x|)$ cells.
+            \item \ If $x \notin L$, every path in $M$'s computation of $x$ rejects within $T(|x|)$ steps, and accesses $\le S(|x|)$ cells.
+    \end{itemize}
+  \end{definition}
+  \hphantom{}
+
+  In the same way as for standard Turing machines, we define our sets for $T, S : \mathbb{N} \to \mathbb{N}$:
+  \begin{align*}
+    \NTIME(T) &= \{L \subseteq \{0,1\}^{*} : \text{ there exists an NDTM } M \text{ deciding } L \text{ in time } O(T)\} \\
+    \NSPACE(S) &= \{L \subseteq \{0,1\}^{*} : \text{ there exists an NDTM } M \text{ deciding } L \text{ in space } O(S)\},
+  \end{align*}
+  giving the following classes
+  \begin{align*}
+    \NP &= \NTIME\left(n^{O(1)}\right) \\
+    \NE &= \NTIME\left(2^{O(n)}\right) \\
+    \NEXP &= \NTIME\left(2^{n^{O(1)}}\right) \\
+    \NL &= \NSPACE(\log n)
+  \end{align*}
+
+  Importantly, as the definition of acceptance and rejection for NDTMs is asymmetric, we do not have necessarily that any of these classes are closed under complementation. Thus we may discuss $\coNP$ as a distinct class from $\NP$ (although as determined later, $\coNL = \NL$). \\
+
+  Immediately we have that for a time bound $T$, space bound $S$, we have $\DTIME(T) \subseteq \NTIME(T)$, $\DSPACE(S) \subseteq \NSPACE(S)$. Further, we see that if $T$ is space-constructible, if $L \in \NTIME(T)$ then we can construct a TM to iterate over the possible computational paths of length $T(|x|)$, giving $L \in \DSPACE(T)$, so $\NTIME(T) \subseteq \DSPACE(T)$. \\
+
+  \begin{theorem}[Alternative definition of $\NP$]
+    \ For any $L \subseteq \{0,1\}^{*}$, $L \in \NP$ iff there is a language $R \in \P$ and a polynomial $p : \mathbb{N} \to \mathbb{N}$ such that
+    \begin{align*}
+      L = \left\{x \in \{0,1\}^{*} : \exists w \in \{0,1\}^{\le p(|x|)} \,.\, \langle w, x \rangle \in R\right\}
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  More intuitively: this theorem gives that $\NP$ is the set of languages stating an existence problem that is efficiently verifiable once a certificate is provided. \\
+
+  In the forward direction, we have when $L \in \NP$ that there is an NDTM $N$ such that for each $x \in L$ there is an accepting polynomial-length computation of $x$ via $N$. Thus we construct
+  \begin{align*}
+    R = \{ \langle w, x \rangle : w \text{ is an accepting computation of } x \text{ via } N \},
+  \end{align*}
+  and by $N$ a polynomial-time NDTM for $L$ we immediately have the desired equality. The backwards direction then follows immediately by just constructing an NDTM $N$ to guess a $w$ then run $R$. \\
+
+  With this alternative definition we can see some of the importance of the $\P \overset{?}{=} \NP$ question. If $\P = \NP$, then it is as easy to verify a certificate to a problem instance's truth as it is to determine the problem instance's truth by any other means. Further, this allows us to construct certificates in polynomial time, with only a small bit of extra work. \\
+
+  Additionally, we have a clearer idea from this as to the construction of $\coNP$. It is precisely the set of $x \in \{0,1\}^{*}$ such that for any $w \in \{0,1\}^{\le p(|x|)}$, $\langle w, x \rangle \notin R$, so a universally quantified statement. \\
+
+  \begin{theorem}[Non-deterministic time hierarchy theorem]
+    \ Let $T,T'$ be time-constructible functions with $T(n+1) = o(T'(n))$, then
+    \begin{align*}
+      \NTIME(T) \subset \NTIME(T')
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  \innerblock{Cook-Levin theorem}{
+    A very important result for the purpose of considering $\NP$-hardness is the Cook-Levin theorem, which allows us to characterise $\NP$ by $\proc{SAT}$: \\
+
+      \begin{theorem}[Cook-Levin]
   \ Both $\proc{SAT}$ and $\proc{3SAT}$ and $\NP$-complete.
   \end{theorem}
   \hphantom{}
@@ -193,27 +328,168 @@
   From here we then just need to verify that the inputs are valid, the first step is valid, and the sequences are valid, which produces a CNF polynomial in $|x|$, as the computation is polynomial in $|x|$. \\
 
   From here reduction to $\proc{3SAT}$ is relatively straightforward.
+
+  }
 }
-\column{0.5}
-\block{Polynomial Hierarchies}{
-  Note that $\NP$ is the set of languages $L$ such that for some polynomial $p$ there is a language $R$ such that
-  \[
-    L = \left\{ x \in \Sigma^{*} : \exists w \in \Sigma^{*}\,.\,|w| \le p(|x|) \land \langle x, w \rangle \in R \right\}.
-  \]
-  We can in fact extend this to a more general notion of a hierarchy, that with a class $\mathcal{C}$, we define the classes $\exists^{\P} \mathcal{C}$ and $\forall^{\P} \mathcal{C}$ as follows:
+\block{Space Complexity}{
+  Non-determinism opens up a wealth of routes through which to analyse space complexity, by introducing a construction that while likely stronger than a deterministic one in time efficiency, nevertheless doesn't immediately appear to give significant space advantages (and indeed, the bounds we have are a lot tighter here). \\
+
+  Firstly, we just remark briefly on the notion of a \emph{configuration graph}. For any NDTM $M$, input $x$, we construct this graph $G_{M,x}$ with each configuration represented as a vertex, and each edge corresponding to a transition between two configurations. Further, by clearing the state before accepting as a form of normalisation, we maintain that there is only ever one accepting state. Thus $M(x) = 1$ iff there is a path from the start vertex to the accept vertex in $G_{M,x}$. \\
+
+  It is clear that for computational purposes that if $M$ has space-complexity $S$, the graph can be constructed in $2^{O(S)}$ time, so we get that $\NSPACE(S) \subseteq \DTIME(2^{O(S)})$. \\
+
+  One of the most important space complexity classes is that of $\PSPACE$. Additionally, we refer to the notion of $\PSPACE$-hardness and completeness, with respect to polynomial-time Karp reductions. To consider it further, take the language of valid fully quantified boolean formulas. An instance of the language takes the form
   \begin{align*}
-    \exists^{\P}\mathcal{C} &:= \{\{x \in \Sigma^{*} : \exists w \in \Sigma^{*} \,.\, |w| \le p(x) \land \langle x, w \rangle \in R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\} \\
-    \forall^{\P}\mathcal{C} &:= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \in R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\}.
+    Q_{1} x_{1} Q_{2} x_{2} \dots Q_{n} x_{n} \,.\, \varphi(x_{1},x_{2},\dots,x_{n}).
+  \end{align*}
+  We can solve this recursively by having $A(\exists x\, \psi) = A(\psi[x / 0]) \lor A(\psi[x/1])$, $A(\forall x\, \psi) = A(\psi[x/0]) \land A(\psi[x/1])$. Note however that we can avoid doubling the space requirement each time by having the first call be processed, then returning the single required bit and making the second call, using their independence. This gives us polynomial space. \\
+
+  Further, we show $\PSPACE$-hardness by taking a language decided by $M$ in space $S$, and then noting we can construct the configuration graph of $M$ on $x$ in space $O(S)$, before then constructing a quantified boolean formula that is true iff there is a path in the configuration graph from the start vertex to the accepting vertex. This can be done in $O(S^{2})$ space (essentially we just need to use quantifiers to avoid doubling the formula size for reducing the path by a factor of $2$). \\
+
+  In fact from this we get the stronger statement that the language is $\NPSPACE$-hard, and in doing so one proves that $\PSPACE = \NPSPACE$. Further, this leads to Savitch's theorem, by using reachability within a configuration graph to get only a polynomial space deficit when losing non-determinism: \\
+
+  $\mathrm{TQBF}$ (the language of true quantified boolean formulas) in fact gives a good description of what $\PSPACE$ represents. Noting that we can represent the statement of the existence of a winning strategy in a turn-based two-player perfect information game as a quantified boolean formula, $\PSPACE$ is the set of problems equivalent to the existence of a winning strategy to some turn-based two-player game. \\
+
+  \begin{theorem}[Savitch's theorem]
+  \ For any space-constructible $S : \mathbb{N} \to \mathbb{N}$ with $S(n) \ge \log n$, $\NSPACE(S) \subseteq \DSPACE(S^{2})$.
+  \end{theorem}
+  \hphantom{}
+
+  Concretely, with $M$ an NDTM using $O(S)$ space, for an input $x$ of length $n$ take $G_{M,x}$ the configuration graph with $2^{O(S(n))}$ vertices, and determine $\proc{REACH}(C_{\mathrm{start}}, C_{\mathrm{acc}}, 2^{O(S(n))})$ (need to calculate exact coefficients, but this is straightforward enough). To do this, note $\proc{REACH}(u,v,2^{i}) = \bigvee_{z} (\proc{REACH}(u,z,2^{i-1}) \land \proc{REACH}(z,v,2^{i-1}))$, and enumerating over all $z$ takes only $O(S)$ space. This allows us to write $s_{i} = s_{i-1} + O(S)$, resulting in $O(S^{2})$ complexity. \\
+
+  Considering now the smaller class of $\NL$, note that $\mathrm{PATH}$, the problem of deciding whether one can reach $t$ from $s$ in the graph $G$, can be determined in logarithmic space non-deterministically by at any point storing the current vertex in $\log n$ space, and accepting if the current vertex ever becomes $t$ by only ever moving over edges. \\
+
+  Then note that if $L \in \NL$, taking the configuration graph for its NDTM $M$ on $x$ as $G_{M,x}$, $|G_{M,x}|$ is polynomial in $n$, and we can determine whether there is an edge from $u$ to $v$ in $G_{M,x}$ in $O(\log n)$ space to store both and check the transition function of $M$. Thus we have a logspace reduction to $\mathrm{PATH}$ so it is $\NL$-complete. \\
+
+  This is in fact quite useful, giving us a similar alternative definition as for $\NP$: \\
+
+  \begin{theorem}[Alternative definition of $\NL$]
+    \ For any $L \subseteq \{0,1\}^{*}$, $L \in \NL$ iff there is a polynomial $p : \mathbb{N} \to \mathbb{N}$, and a language $R \in L$ for which there is a logspace TM $M$ for $R$ where to compute $\langle u, x \rangle$, each element of $u$ is accessed only once, and
+    \begin{align*}
+      L = \left\{x \in \{0,1\}^{*} : \exists u \in \{0,1\}^{\le p(|x|)} \,.\, \langle u, x \rangle \in R\right\}.
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  While this seems slightly insane, note that we can consider $u$ as, for example, a description of a path in a graph of polynomially many vertices. Having this definition we can then see that $\overline{\mathrm{PATH}} \in \NL$, as we can construct a polynomial certificate to demonstrate that searching from the start vertex does not retrieve the end vertex. Consequently we get the following theorem: \\
+
+  \begin{theorem}[Immerman-Szelepcs\'enyi Theorem]
+  \ $\NL = \coNL$.
+  \end{theorem}
+  \hphantom{}
+
+  Furthermore, in fact we have that for space constructible $S(n) > \log n$, $\co\NSPACE(S) = \NSPACE(S)$. This is by generalising the proof for the above, saying that if we have that there are $N$ configurations reachable by a TM $M$ from the starting configuration, we consider each configuration in lexicographical order, guessing a path from the start until it doesn't reach the intended configuration. Each time we find a path to the desired configuration, we increment the number of found reachable configurations, until this reaches $N$. If the configuration is the accepting one, and we find a path to it, immediately we must reject. Otherwise if we can guess $N$ configurations reachable and have them not include the accepting one, we have that $M$ must reject, so we can accept. Note that each guessing process requires only $S(n)$ cells. \\
+
+  By a similar process of doing very many guesses of graph traversals then eventually rejecting if the correct targets were not reached, we can calculate $N$ in space $S(n)$. \\
+
+  Ultimately from the results as given above we can get the understanding:
+  \begin{align*}
+    \L \subseteq \NL \subseteq \P \subseteq \NP \subseteq \PSPACE \subseteq \EXP
+  \end{align*}
+  }
+
+\column{0.33}
+\block{Polynomial Hierarchies}{
+  With $\NP$ and $\coNP$ we can capture a general class of problems that appear very difficult to solve efficiently. This is not the most general notion however, and it is possible to extend this to a wider hierarchy of classes. With a class $\mathcal{C}$, we define the classes $\exists^{\P} \mathcal{C}$ and $\forall^{\P} \mathcal{C}$ as follows:
+  \begin{align*}
+    \exists^{\P}\mathcal{C} &:= \left\{\{x \in \{0,1\}^{*} : \exists w \in \{0,1\}^{\le p(|x|)} \,.\, \langle x, w \rangle \in R\} : p \in \mathbb{N}[x], R \in \mathcal{C}\right\} \\
+    \forall^{\P}\mathcal{C} &:= \left\{\{x \in \{0,1\}^{*} : \forall w \in \{0,1\}^{\le p(|x|)} \,.\, \langle x, w \rangle \in R\} : p \in \mathbb{N}[x], R \in \mathcal{C}\right\}.
   \end{align*}
   Further, we have that
   \begin{align*}
-    \co(\exists^{\P} \mathcal{C}) &= \{L^{c} : L \in \exists^{\P}\mathcal{C}\} \\
-                                   &= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \notin R\} : p \in \mathbb{R}[x], R \in \mathcal{C}\} \\
-                                   &= \{\{x \in \Sigma^{*} : \forall w \in \Sigma^{*} \,.\, |w| \le p(x) \Rightarrow \langle x, w \rangle \in R'\} : p \in \mathbb{R}[x], R' \in \co\mathcal{C}\} \\
-                                   &= \forall^{\mathrm{P}}\co{\mathcal{C}}
+    \co\,\exists^{\P} \mathcal{C} &= \left\{\overline{L} : L \in \exists^{\P}\mathcal{C} \right\} \\
+                                   &= \left\{\{x \in \{0,1\}^{*} : \forall w \in \{0,1\}^{\le p(|x|)} \,.\, \langle x, w \rangle \notin R\} : p \in \mathbb{N}[x], R \in \mathcal{C}\right\} \\
+                                   &= \left\{\{x \in \{0,1\}^{*} : \forall w \in \{0,1\}^{\le p(|x|)} \,.\, \langle x, w \rangle \in R'\} : p \in \mathbb{N}[x], R' \in \co\,\mathcal{C}\right\} \\
+                                   &= \forall^{\P}\co\,\mathcal{C}
   \end{align*}
-  allowing us to write, for example, $\coNP = \forall^{\P}\co\P = \forall^{\P} \P$.
+  allowing us to write, for example, $\coNP = \forall^{\P}\co\P = \forall^{\P} \P$. From here we write inductively:
+  \begin{align*}
+    \Sigma_{0}^{p} &= \P \\
+    \Pi_{i}^{p} &= \co \, \Sigma_{i}^{p} \\
+    \Sigma_{i+1}^{p} &= \exists^{\P} \Pi^{p}_{i},
+  \end{align*}
+  and define $\PH = \bigcup_{i} \Sigma_{i}^{p}$. Note we can also, by the above, write $\Pi_{i+1}^{p} = \forall^{\P} \Sigma_{i}^p$. Note that if we find that $\Sigma_{i}^{p} = \Sigma_{i+1}^{p}$, then $\PH = \Sigma_{i}^{p}$ (it collapses). \\
+
+  More intuitively, given a language $L \in \Sigma_{2i}^{p}$, we know that it solves a problem of the form $\exists x_{1} \forall x_{2} \dots \exists x_{2i-1} \forall x_{2i} \langle x, x_{1}, x_{2}, \dots, x_{2i} \rangle \in R$ for $R \in \P$, each $x_{j}$ of polynomial size in $|x|$. \\
+
+  An alternative means of viewing the hierarchy is via oracle machines. Writing $\Sigma_{i} \proc{SAT}$ as the language of true boolean formulas quantified alternatively $i$ times (beginning with $\exists$, with each variable a boolean vector), note that $\Sigma_{i} \proc{SAT}$ is $\Sigma_{i}^{p}$-complete, applying an almost identical proof as for the Cook-Levin theorem, appending an $\exists z$ to the front that allows $\varphi_{x}(z,u)$ to be true iff $z$ simulates an accepting computation of $\langle x,u \rangle$ by a TM for $R$. \\
+
+  Using this we can then write without loss of generality $\mathcal{C}^{\Sigma_{i}^{p}}$ for $\mathcal{C}^{\Sigma_{i} \proc{SAT}}$. Further, we then get that $\Sigma_{i}^{p} = \NP^{\Sigma_{i-1}^{p}}$ as an alternative definition.
 }
+
+\block{Circuits and Non-uniformity}{
+  One might imagine that for certain languages, while the language itself might be particularly difficult, it behaves rather differently for fixed input sizes. This is known as nonuniform computation, where, unlike for TMs, we deal with inputs of different classes with possibly entirely different constructions. \\
+
+  \begin{definition}[Boolean circuits]
+    \ An $n$-input, single-output Boolean circuit is a directed acyclic graph with $n$ sources (vertices with no incoming edges) and one sink (vertex with no outgoing edges). Any nonsource vertex is a gate, labelled by $\neg$, $\land$, or $\lor$. \\
+
+    We refer to the fan-in of a gate as the number of incoming edges (often restricted to $2$ for $\land$ and $\lor$, $1$ for $\neg$), and the fan-out is unrestricted (unlike for normal Boolean formulas).
+  \end{definition}
+  \hphantom{}
+
+  Note that we can compute the output of a Boolean circuit in linear time by computing its vertices one-by-one. \\
+
+  \begin{definition}[Circuit families]
+    \ Let $T : \mathbb{N} \to \mathbb{N}$ be a function. A $T$-size circuit family is a sequence $(C_{n})$ of Boolean circuits, where $C_{n}$ has $n$ inputs and a single output, with $|C_{n}| \le T(n)$ for every $n$.
+  \end{definition}
+  \hphantom{}
+
+  Using this, we consider a new class:
+  \begin{align*}
+    \SIZE(T) = \left\{ \{ x \in \{0,1\}^{*} : C_{|x|}(x) = 1\} : (C_{n}) \text{ is an } O(T)\text{-size circuit family}\right\}.
+  \end{align*}
+  This gives us the immediate definition
+  \begin{align*}
+    \Ppoly &= \SIZEi\left(n^{O(1)}\right),
+  \end{align*}
+  with some interesting consequences. Firstly, note that $\P \subset \Ppoly$, because not only can we construct a circuit for any language by considering its computation by an oblivious TM, and then constructing a circuit based on snapshots (giving a polynomial-size circuit family), but we can also decide far more difficult languages. Indeed, consider the tally languages, which we can decide all of immediately using a linear-size circuit family. To distinguish slightly here, we use the following definition: \\
+
+  \begin{definition}[$\P$-uniform circuit families]
+  \ A circuit family $(C_{n})$ is $\P$-uniform if there is a polynomial-time TM that on input $1^{n}$ outputs the description of the circuit $C_{n}$.
+  \end{definition}
+  \hphantom{}
+
+  Note that restricting circuits to be $\P$-uniform collapses $\Ppoly$ to $\P$ (in fact, the set of languages decided by $\P$-uniform circuit families is precisely $\P$). Another similar notion is that of logspace-uniform families, where we require that there is a logspace-computable function mapping $1^{n}$ to a description of $C_{n}$. \\
+
+  We would like to be able to relate circuits to Turing machines in some more concrete way, and indeed we can do by adding an additional notion of `advice' to a Turing machine. That is, for an input $x$ of size $n$, the TM takes as input both the $x$ itself as normal, as well as an advice string $\alpha_{n}$. We can then analyse the complexity using the following definition: \\
+  \begin{align*}
+    \DTIME(T)/\alpha = \{ L \subseteq \{0,1\}^{*} : L \text{ decidable in time } T(n) \text{ by a TM with } \alpha(n)  \text{ bits of advice}\}.
+  \end{align*}
+  This yields the characterisation
+  \begin{align*}
+    \Ppoly = \DTIME\left(n^{O(1)}\right) / n^{O(1)},
+  \end{align*}
+  formed by providing the circuit description as advice, for the forward direction. For the reverse direction, we use the existing construction that was used to show $\P \subseteq \Ppoly$, hardwiring in the advice to the circuit so to ensure it functions with polynomial size. \\
+
+  Even despite $\Ppoly$ appearing particularly powerful in certain instances, nevertheless it is unlikely that $\NP \subseteq \Ppoly$. By the Karp-Lipton theorem we have that if this were the case, $\PH = \Sigma_{2}^{p}$. To show this we need to demonstrate that $\Sigma_{2}^{p} = \Sigma_{3}^{p}$ (or, alternatively, $\Pi_{2}^{p} \subseteq \Sigma_{2}^{p}$). \textbf{Continue proof}. \\
+
+  \begin{theorem}
+  \ For every $n > 1$, there exists a function $f : \{0,1\}^{n} \to \{0,1\}$ that cannot be computed by a circuit $C$ of size $2^{n}/10n$.
+  \end{theorem}
+  \hphantom{}
+
+  This can be seen from a counting argument. \textbf{How many circuits are there of size $S$?} \\
+
+  \begin{theorem}[Nonuniform hierarchy theorem]
+    \ For $T, T' : \mathbb{N} \to \mathbb{N}$ with $2^{n}/n > T'(n) > 10T(n) > n$,
+    \begin{align*}
+      \SIZE(T) \subset \SIZE(T').
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  We can do this via a similar counting argument. \\
+
+  Finally, we consider the additional complexity classes:
+  \begin{align*}
+    \NC^{d} &= \{L \subseteq \{0,1\}^{*} : L \text{ decided by a family } (C_{n}) \text{ of polynomial size, depth } O(\log^{d} n) \} \\
+    \NC &= \bigcup_{d \ge 0} \NC^{d}.
+  \end{align*}
+  We also define $\AC^{i}$ and $\AC$ in a similar way, with the exception that we allow circuits with unbounded fan-in. Note $\NC^{0}$ is extremely limited by this definition, only being able to use a bounded number of bits. \\
+
+  The above complexity classes essentially represent whether there exist efficient algorithms for problems. Thus it is of major concern whether $\P = \NC$.
+}
+
 \block{Randomness}{
   Randomness can often be useful when writing programs, for a few reasons. Firstly, it is useful to break symmetries, because in certain instances it can become impossible to make a choice if all is equal between two objects. Secondly, it can be useful for hiding or obfuscating information. Thirdly, it can be useful for making computation more efficient. \\
 
@@ -239,6 +515,36 @@
   \end{definition}
   \hphantom{}
 
+  Between these classes we have the following relations:
+  \begin{align*}
+    \ZPP &= \RP \cap \co\RP \\
+    \RP &\subseteq \BPP \\
+    \co\RP &\subseteq \BPP.
+  \end{align*}
+
+  The intuition one should have for the above is that $\ZPP$ and $\RP$ are analogous to $\P$ and $\NP$. Whereas we don't even have a proof that $\BPP \subseteq \NEXP$ currently (despite believing that $\BPP = \P$), it is clearer that $\ZPP$ and $\RP$ lie firmly in $\NP$. \\
+
+  \begin{theorem}[Alternative definition of $\BPP$]
+    \ A language $L \subseteq \{0,1\}^{*}$ is in $\BPP$ iff there is a polynomial-time TM $M$, polynomial $p$ such that
+    \begin{align*}
+      L = \left\{x \in \{0,1\}^{*} : \mathbb{P}(M(x,R) = 1) \ge 2/3, \, R \sim U(\{0,1\}^{p(|x|)})\right\}.
+    \end{align*}
+  \end{theorem}
+
+  \begin{theorem}[Error reduction for $\BPP$]
+  \ Let $L \subseteq \{0,1\}^{*}$ be a language and suppose there is a polynomial-time PTM $M$ such that for $x \in \{0,1\}^{*}$, $\mathbb{P}(M(x) = \mathds{1}(x \in L)) \ge 1/2 + |x|^{-c}$. Then for every constant $d > 0$ there is a PTM $M'$ such that $\mathbb{P}(M'(x) = \mathds{1}(x \in L)) \ge 1 - 2^{-|x|^{d}}$.
+  \end{theorem}
+  \hphantom{}
+
+  To see this, for each $x \in \{0,1\}^{*}$ run $M$ for $k = 8|x|^{2c+d}$ times, and take the majority answer. \\
+
+  For $\BPP$ we have the following two results:
+  \begin{align*}
+    \BPP &\subseteq \Ppoly \\
+    \BPP &\subseteq \Sigma_{2}^{p} \cap \Pi_{2}^{p} \\
+  \end{align*}
+  The former follows by using Chernoff bounds to obtain error reductions that via counting give that there is a randomly generated string for each $n$ that gives exactly the intended language, allowing for a hardwiring in building a polynomial circuit. The latter follows by considering the size of the set of random strings for which an input is accepted, then using the probabilistic method on discrete distributions to turn this into an existential quantification. \\
+
   One of the major open questions regarding the ordering is whether $\BPP = \P$, as well as whether $\BPP \subseteq \SUBEXP$ (the set of languages in $O(2^{n^{\varepsilon}})$ for all $\varepsilon >0$). \\
 
   \begin{theorem}
@@ -251,6 +557,7 @@
   \begin{theorem}
   \ Suppose $E$ does not have circuits of size $2^{\varepsilon n}$ for almost all $n$ with $\varepsilon > 0$. Then $\BPP = \P$.
   \end{theorem}
+  \hphantom{}
 
   \begin{theorem}
     \ The following are equivalent:
@@ -265,6 +572,9 @@
   \begin{lemma}
   \ Let $x_{1},\dots,x_{m}$ be IID random variables in $[0,1]$. Suppose $\mu = \mathbb{E}[\sum x_{i}]$. Then $\mathbb{P}(\sum x_{i} > \mu + \varepsilon) \le 2e^{-\frac{t^{2}}{2m}}$.
   \end{lemma}
+  \hphantom{}
+
+
 }
 \end{columns}
 
