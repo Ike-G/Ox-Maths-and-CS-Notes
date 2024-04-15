@@ -333,7 +333,7 @@
 
     Consequently, as a function $f$ is Riemann integrable over an interval $I$ iff it is continuous almost everywhere and bounded, any Riemann integrable function is Lebesgue integrable. Further, for such a Riemann integrable function, we have that
     \begin{align*}
-      \sup\left\{ \int_{I} \varphi : \varphi \le f,\,\varphi \text{ step }\right\} = \int_{I}^{\mathcal{R}} f = \inf \left \{\int_{I} \psi : f \le \psi,\,\psi \text{ step }\},
+      \sup\left\{ \int_{I} \varphi : \varphi \le f,\,\varphi \text{ step}\right\} = \int_{I}^{\mathcal{R}} f = \inf \left \{\int_{I} \psi : f \le \psi,\,\psi \text{ step}\right\},
     \end{align*}
     and as $\int^{\mathcal{L}}_{I} f$ is defined as the supremum of simple functions upper bounded by $f$ (for $f$ non-negative), we can sandwich the integral between the LHS and RHS (and by a similar procedure get the same for negative $f$). Thus the Riemann integral and Lebesgue integral are the same where both are defined (although improper Riemann integrals are sometimes defined where Lebesgue integrals are not). \\
 
@@ -523,32 +523,52 @@
       \block{$L^{p}$-spaces}{
         We can define a useful set of (almost) norms for each $p$, \[||f||_{p} = \left(\int |f|^{p}\right)^{1/p}.\]
 
-        While these don't act as norms for $\mathcal{L}^{p} = \{f : \mathbb{R} \to \mathbb{R} : |f|^{p} \text{ integrable }\}$, with $\mathcal{N}$ the set of functions equal to $0$ almost everywhere, they act as norms on the quotient space $L^{p} := \mathcal{L}^{p} / \mathcal{N}$. \\
+        While these don't act as norms for $\mathcal{L}^{p}(E) = \{f : E \to \mathbb{R} : |f|^{p} \text{ integrable }\}$, with $\mathcal{N}$ the set of functions equal to $0$ almost everywhere, they act as norms on the quotient space $L^{p}(E) := \mathcal{L}^{p}(E) / \mathcal{N}$. \\
+
+        We additionally defined a normed space for $p = \infty$, with $\mathcal{L}^{\infty}(E) = \{f : E \to \mathbb{R} : f \text{ measurable and bounded a.e.}\}$, $L^{\infty}(E) := \mathcal{L}^{\infty} / \mathcal{N}$ a metric space with the norm
+        \begin{align*}
+          ||f||_{\infty} = \inf \{C > 0 : |f| \le C \text{ a.e.}\}.
+        \end{align*}
+
+        In particular, convergence in the metric space induced by the $\infty$-norm is equivalent to uniform convergence almost everywhere. \\
+
+        The distinction between $f$ from $[f]$ usually goes unobserved, and we swap between them relatively freely (indeed, so many previous results in the course are made for function properties that are true almost everywhere, so this is somewhat expected). It becomes important when we want to relate our results back to general functions however, so it should be remembered that we work in equivalence classes here. \\
+
+        While this course naturally continues to deal primarily with the Lebesgue measure, the nature of this construction is independent of any particular measure. \\
+
+        Considering these, we start with some algebraic results, and then relate them to understanding the nature of convergence in $L^{p}$, and its applications. \\
 
         \begin{theorem}[Minkowski's Inequality]
-        \ For $p \ge 1$, $f, g \in \mathcal{L}^{p}$, $|| f + g||_{p} \le ||f||_{p} + ||g||_{p}$.
+        \ For $p \ge 1$, $f, g \in L^{p}$, $|| f + g||_{p} \le ||f||_{p} + ||g||_{p}$.
         \end{theorem}
         \hphantom{}
 
         One can find this as an algebraic exercise, using the convexity of $t \mapsto t^{p}$ for $p \ge 1$. \\
 
         \begin{theorem}[H\"{o}lder's Inequality]
-        \ Let $p, q \in (1,\infty)$ with $1/p + 1/q = 1$. For $f \in L^{p}$, $g \in L^{q}$, $fg \in L^{1}$ and $||fg||_{1} \le ||f||_{p} ||g||_{q}$.
+        \ Let $p, q \in [1,\infty]$ with $1/p + 1/q = 1$. For $f \in L^{p}$, $g \in L^{q}$, $fg \in L^{1}$ and $||fg||_{1} \le ||f||_{p} ||g||_{q}$.
         \end{theorem}
         \hphantom{}
 
         The pair $(p,q)$ are sometimes called H\"{o}lder conjugates. To prove, note $t \mapsto - \log t$ is convex to get the inequality $s^{1/p}t^{1/q} \le s/p + t/q$, and the result follows by starting with something in terms of $|f(x)|$, $|g(x)|$, $||f||_{p}$, $||g||_{q}$ and then integrating over the inequality. \\
 
+        For the pair $(1,\infty)$ we can see the result separately, although one would expect it given that the $\infty$-norm is a limit of the $p$-norms. \\
+
         As corollary, we have for $1 \le p_{1} < p_{2} < \infty$, $f \in L^{p_{2}}(a,b)$, that $f \in L^{p_{1}}(a,b)$ with
         \begin{align*}
-          ||f||_{p_{2}} \le (b-a)^{\frac{1}{p_{1}} + \frac{1}{p_{2}}} ||f||_{p_{2}},
+          ||f||_{p_{2}} \le (b-a)^{\frac{1}{p_{1}} - \frac{1}{p_{2}}} ||f||_{p_{2}},
         \end{align*}
-        giving that the norms are equivalent as metrics in finite measure spaces. \\
+        giving that the norms are equivalent as metrics in finite measure spaces. Additionally, we can see that $L^{p_{2}}(a,b) \subseteq L^{p_{1}}(a,b)$ (in fact this is strict, which one can see by using $x^{-1/p_{2}}$ over $(0,1)$). \\
 
+        Now we can consider convergence more strictly. Firstly, note that we can construct functions that converge pointwise and yet not in $L^{p}$ (see $n^{2}x^{n}(1-x)$, which converges pointwise to $0$ but not in $L^{1}$). Secondly, it is possible to get $L^{p}$ convergence without pointwise convergence -- to do this take any function which oscillates through values while being non-zero on a decreasing size set.\\
+
+        We \emph{do} however get the following result: \\
         \begin{theorem}
-        \ For $p \in [1,\infty)$, $L^{p}$ is a complete metric space.
+        \ For $p \ge 1$, $(f_{n})$ a Cauchy sequence in $\mathcal{L}^{p}$, there is a function $f \in \mathcal{L}^{p}$ such that for some subsequence $(f_{n_{k}})$, $f_{n_{k}}(x) \to f(x)$ almost everywhere, and $||f_{n} - f|| \to 0$.
         \end{theorem}
         \hphantom{}
+
+        In particular, this gives that $L^{p}$ is complete. \\
 
         For $p = 1$ one can just use the Beppo Levi theorem applied to a telescoping sum converging to the limit of the Cauchy sequence. For general $p$ we require Minkowski's inequality in addition to Fatou's lemma. \\
 
@@ -561,6 +581,8 @@
         \ Let $1 \le p < \infty$ and $f \in L^{p}(\mathbb{R})$. There is a sequence of step functions $(\psi_{n})$ such that $||f - \psi_{n}||_{p} \to 0$, and a sequence of continuous functions $(g_{n})$ with compact support such that $||f-g_{n}||_{p} \to 0$.
         \end{theorem}
         \hphantom{}
+
+
 
         \begin{lemma}
         \ For $1 \le p < \infty$, $f \in L^{p}(\mathbb{R})$, $||f_{h} - f||_{p} \to 0$ as $h \to 0$.
