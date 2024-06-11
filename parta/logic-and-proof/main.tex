@@ -198,7 +198,7 @@
 
   The claim is that if we have
   \begin{align*}
-  u_{i} = \max \{\mathbb{E}[#(\text{steps to reach } \mathcal{A^{*}})] : \text{at distance } i \text{ from } \mathcal{A}^{*}\},
+  u_{i} = \max \{\mathbb{E}[\#(\text{steps to reach } \mathcal{A^{*}})] : \text{at distance } i \text{ from } \mathcal{A}^{*}\},
   \end{align*}
   then we get $u_{0} = 0$, $u_{n} = 1 + u_{n-1}$, $u_{i} \le 1 + (u_{i-1} + u_{i+1})/2$. The claim is then that we can get a bound by making this equality strict, which is unclear. \\
 
@@ -377,7 +377,7 @@
 
     Having now defined, in the same way as was done for propositional logic, the conditions which constitute a formula, it remains to state how we may assign to it in order to generate instances of it being true or false. We refer to such assignments as $\sigma$-structures.\\
 
-    A $\sigma$-structure $\mathcal{A}$ consists of a non-empty universe $U_{\mathcal{A}}$ and an interpretation $I_{\mathcal{A}}$, where for each variable $x$ we have $I_{\mathcal{A}}(x) \in U_{\mathcal{A}}$, each $k$-ary predicate symbol $P$ we have $I_{\mathcal{A}}(P) \subseteq U_{\mathcal{A}}^{k}$, and each $k$-ary function $f$ we have $I_{\mathcal{A}}(f) : U_{\mathcal{A}}^{k} \to U_{\mathcal{A}}$. For ease we tend to omit the $I_{\mathcal{A}}$, and instead write $x_{\mathcaL{A}}$, $P_{\mathcal{A}}$, and $f_{\mathcal{A}}$. \\
+    A $\sigma$-structure $\mathcal{A}$ consists of a non-empty universe $U_{\mathcal{A}}$ and an interpretation $I_{\mathcal{A}}$, where for each variable $x$ we have $I_{\mathcal{A}}(x) \in U_{\mathcal{A}}$, each $k$-ary predicate symbol $P$ we have $I_{\mathcal{A}}(P) \subseteq U_{\mathcal{A}}^{k}$, and each $k$-ary function $f$ we have $I_{\mathcal{A}}(f) : U_{\mathcal{A}}^{k} \to U_{\mathcal{A}}$. For ease we tend to omit the $I_{\mathcal{A}}$, and instead write $x_{\mathcal{A}}$, $P_{\mathcal{A}}$, and $f_{\mathcal{A}}$. \\
 
     We can then define $\mathcal{A}[t]$ inductively where for any variable $x$, $\mathcal{A}[x] = x_{\mathcal{A}}$, and for any $k$-ary function $f$ in terms $t_{1},\dots,t_{k}$, $\mathcal{A}[f(t_{1}, \dots, t_{k})] = f_{\mathcal{A}}(\mathcal{A}[t_{1}], \dots, \mathcal{A}[t_{k}])$. \\
 

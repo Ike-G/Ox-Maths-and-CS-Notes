@@ -18,6 +18,7 @@
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 \DeclareMathOperator{\Log}{Log}
 \DeclareMathOperator{\res}{res}
+% \DeclareMathOperator{\SIZE}{SIZE}
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
     \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
       #1 % the function
@@ -313,7 +314,7 @@
     A very important result for the purpose of considering $\NP$-hardness is the Cook-Levin theorem, which allows us to characterise $\NP$ by $\proc{SAT}$: \\
 
       \begin{theorem}[Cook-Levin]
-  \ Both $\proc{SAT}$ and $\proc{3SAT}$ and $\NP$-complete.
+  \ Both $\proc{SAT}$ and $\proc{3SAT}$ are $\NP$-complete.
   \end{theorem}
   \hphantom{}
 
@@ -440,7 +441,7 @@
   \end{align*}
   This gives us the immediate definition
   \begin{align*}
-    \Ppoly &= \SIZEi\left(n^{O(1)}\right),
+    \Ppoly &= \SIZE\left(n^{O(1)}\right),
   \end{align*}
   with some interesting consequences. Firstly, note that $\P \subset \Ppoly$, because not only can we construct a circuit for any language by considering its computation by an oblivious TM, and then constructing a circuit based on snapshots (giving a polynomial-size circuit family), but we can also decide far more difficult languages. Indeed, consider the tally languages, which we can decide all of immediately using a linear-size circuit family. To distinguish slightly here, we use the following definition: \\
 

@@ -234,6 +234,7 @@
     \begin{definition}
     \ A parametrisation of a decision problem $\mathcal{P}$ is a computable function $p$ that maps each input instance $x$ to an integer value $k$.
     \end{definition}
+    \hphantom{}
 
     In general a parameter can be either explicit or implicit, it need not be computable in reasonable time (or at all). For example, we can take for $\proc{VertexCover}$ the parameter $k$, which is explicit, or for $\proc{HamCycle}$ the parameter which is the size of the minimum vertex cover. \\
 
@@ -323,7 +324,7 @@
     \end{align*}
     This can then be shown to be both feasible and equal to the optimal primal solution via algebra, and weak duality gives that this must then be an optimal dual solution. \\
 
-    The simplex method as given above is in $\EXP$, although both useful for the above proof, and generally more practical than other methods. At the same time, we do have a couple different algorithms to solve LPs in polynomial time. The Ellipsoid method does this by noting that using duality allows us to reduce LPs to feasibility checks, and while we've used the Simplex method above to do feasibility checks, it is in fact possible to do so with minimisation methods for convex functions, such as the ellipsoid method, which approximates a solution with accuracy of any $\varepsilon > 0$ in polynomial time. Thus we get that solving LPs are in $\P$. \\
+    The simplex method as given above is in $\EXP$, although both useful for the above proof, and generally more practical than other methods. At the same time, we do have a couple different algorithms to solve LPs in polynomial time. The Ellipsoid method does this by noting that using duality allows us to reduce LPs to feasibility checks, and while we've used the Simplex method above to do feasibility checks, it is in fact possible to do so with minimisation methods for convex functions, such that the solution is approximated with accuracy of any $\varepsilon > 0$ in polynomial time. Thus we get that the problem of solving LPs is in $\P$. \\
 
     \innerblock{Zero-sum games}{
       \begin{definition}[Zero-sum game]
