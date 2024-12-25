@@ -264,6 +264,17 @@
 
   \coloredbox{We almost always talk about homogeneous Markov chains in this course.}
 
+  \hphantom{}
+  \begin{theorem}[*Extended Markov Property]
+    \ Let $(X_{n})$ be a Markov chain. For $n \ge 0$, for any event $H$ given in terms of the past history $X_{0},X_{1},\dots,X_{n-1}$, and any event $F$ given in terms of $X_{n+1},X_{n+2},\dots$, we have
+    \begin{align*}
+      \mathbb{P}(F \,|\, X_{n} = i,\, H) = \mathbb{P}(F \,|\, X_{n} = i)
+    \end{align*}
+  \end{theorem}
+  \hphantom{}
+
+  To prove this for $F$ a statement about an infinite future requires material beyond this course, but for finite cases we can just write out the conditional to get the result. \\
+
   From the Markov property, we very quickly get a formula for $n$-step probabilities. \\
 
   \begin{align*}

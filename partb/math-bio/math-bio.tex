@@ -1,0 +1,228 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=850mm, paperheight=1800mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Further Mathematical Biology}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+  \block{Delay Models}{
+    A normal population model takes the form
+    \begin{align*}
+      \frac{\mathrm{d}N}{\mathrm{d}t} = f(N(t)).
+    \end{align*}
+    This is not necessarily, even in the most complex form that $f$ can take, a realistic representation. Often, we need to know not just how many agents there are in the population, but how many have been alive long enough to know be able to reproduce. Therefore, we consider a delay:
+    \begin{align*}
+      \frac{\mathrm{d}N}{\mathrm{d}t} = f(N(t), N(t-T)).
+    \end{align*}
+    Note here that we require in the initial conditions now not just $N(0)$, but $N(\tau)$ for $-T \le \tau \le 0$. \\
+
+    The delayed logistic model takes the form:
+    \begin{align*}
+      \frac{\mathrm{d}N}{\mathrm{d}t} = rN(t)\left(1-\frac{N(t-T)}{K}\right)
+    \end{align*}
+    with $N(\tau)$ for $-T \le \tau \le 0$. \\
+
+    Now assume that at some point $t_{1}$, $N(t_{1}) = K$, and that $N$ has been increasing up to $t_{1}$. Then we have that $f(N(t_{1}), N(t_{1}-T)) > 0$, $f(N(t_{1}+T),N(t_{1})) = 0$, and that $f(N(t+T),N(t)) < 0$ for $t > t_{1}$. Thus we see that with these assumptions, we should get an oscillating system. We note that provided we get a symmetry, we can expect a period of roughly $4T$. \\
+
+    We non-dimensionalise to get the following:
+    \begin{align*}
+      \frac{\mathrm{d}N}{\mathrm{d}t} = N(t)(1-N(t-T)),
+    \end{align*}
+    which has steady states $N^{*} \in \{0,1\}$, as if the state is steady then $N^{*}(t-T) = N^{*}(t)$ (\textbf{investigate a bit further}). \\
+
+    Considering $N^{*} = 1$, write $N(t) = 1+n(t)$ for $n(t) = o(1)$, and we have that (approximately) $\frac{\mathrm{d}n}{\mathrm{d}t} = -n(t-T)$, which with $n(t) = n(0)e^{\lambda t}$ gives $\lambda = -e^{-\lambda T}$. We then analyse $\lambda$, noting that for $\Re \lambda < 0$, we get that the steady state is stable.
+  }
+
+  \block{Age-structured Models}{
+    A delay model may not capture the behaviour of the population properly, because while we can delay processes such as birth and death, we have difficulty capturing the population with a great deal of structure. In an age-structured model, we write the population as $n(t,a)$, the population density at time $t$ of those with age $a$. Using the principle of mass conservation (\textbf{check}), we get von Foerster's equation:
+    \begin{align*}
+      \frac{\partial n}{\partial t} + \frac{\partial n}{\partial a} = -\mu (a) n
+    \end{align*}
+    where $\mu(a)$ is the death rate of individuals of age $a$. We additionally have the initial and boundary conditions:
+    \begin{align*}
+      n(0,a) &= f(a) && \text{initial age-distribution} \\
+      n(t,0) &= \int_{0}^{\infty} b(a)n(t,a) \, \mathrm{d}t && \text{birth rate of population}
+    \end{align*}
+    This requires that we use the method of characteristics, noting that we will have to split the problem into the regions $t > a$ and $t < a$, as the characteristic projections are the lines $t = a + t_{0}$, $t = a - a_{0}$. We then have $n(t,a) = n(t_{0},0)e^{-\int_{0}^{a} \mu(s) \, \mathrm{d}s}$, $n(t,a) = n(0,a_{0})e^{-\int_{0}^{t} \mu(s) \, \mathrm{d}s}$. \\
+
+    In models for populations of proliferating cells, we wish to consider structuring the population as two types of cells: cycling cells, and quiescent (non-cycling) cells. This is considered according to models where a cell goes through a cycle of length $T$ in which they have a choice once each cycle to become quiescent and duplicate themselves. We write $p(t,s)$, $q(t,s)$ for $t \in [0,\infty)$, $s \in [0,T)$, as the number of cells respectively cycling and quiescent at time $t$ globally, time $s$ in their own cell cycle. \\
+
+  }
+
+  \block{Spatial Variation}{
+    Previously, models have tended to assume a `well-mixed' assumption, that rate of change is constant across the space. This is clearly often not the case however, and therefore it is useful to consider spatial models. \\
+
+    \innerblock{Reaction-Diffusion}{
+      Suppose the chemical species $C_{i}$ of concentration $c_{i}$ undergoes a reaction with production levels according to
+      \begin{align*}
+        \frac{\mathrm{d}c_{i}}{\mathrm{d}t} = R_{i}(c_{1},\dots,c_{m}).
+      \end{align*}
+      Then we can write $c_{i}(\bm{x},t)$ as the concentration at time $t$. We also write
+      \begin{align*}
+        \bm{q}(\bm{x},t) = -D \nabla c
+      \end{align*}
+      as the flux for some constant $D$. \\
+
+      Using the principle of mass balance, we have that for any closed volume $V$, $i \in \{1,\dots,m\}$,
+      \begin{align*}
+        \frac{\mathrm{d}}{\mathrm{d}t}\int_{V} c_{i} \, \mathrm{d}V = - \int_{\partial V} \bm{q} \cdot \mathrm{d}\bm{S} + \int_{V} R_{i}(c_{1},\dots,c_{m}) \, \mathrm{d}V.
+      \end{align*}
+      Consequently by the divergence theorem,
+      \begin{align*}
+        \frac{\mathrm{d}}{\mathrm{d}t}\int_{V} c_{i} \, \mathrm{d}V = \int_{V} \nabla \cdot (D_{i} \nabla c_{i}) + R_{i}(c_{1},\dots,c_{m}) \, \mathrm{d}V
+      \end{align*}
+      and as this volume $V$ is arbitrary,
+      \begin{align*}
+        \frac{\partial c_{i}}{\partial t} = \nabla \cdot (D_{i} \nabla c_{i}) + R_{i}(c_{1},\dots,c_{m}).
+      \end{align*}
+
+    }
+    \hphantom{}
+
+    \innerblock{Positional information}{
+      One key consideration aided by spatial modelling is how domain size affects the growth of a population. Considering the budworm population on a one-dimensional domain, undergoing logistic growth and predation by birds, we have:
+      \begin{align*}
+        \frac{\partial u}{\partial t} = D \frac{\partial^{2}u}{\partial x^{2}} + \left[ru\left(1-\frac{u}{q}\right)-\frac{u^{2}}{1+u^{2}}\right].
+      \end{align*}
+      Note however that for $u(x,0) = o(1)$, we can approximate the second term by $ru$. As we have $x$ bounded (say in $[0,L]$), we can write $u(x,t)$ as a fourier series for each $t$,
+      \begin{align*}
+        u(x,t) = \sum_{n=1}^{\infty} a_{n}(t) \sin(\frac{n\pi x}{L})
+      \end{align*}
+      and so
+      \begin{align*}
+        \frac{\mathrm{d}a_{n}}{\mathrm{d}t} = \left(-D \left(\frac{n\pi}{L}\right)^{2} +r\right)a_{n}
+      \end{align*}
+      which, by writing the coefficient of $a_{n}$ as $\sigma_{n}$, gives us that
+      \begin{align*}
+        u(x,t) = \sum_{n=1}^{\infty} a_{n}(0) e^{\sigma_{n}t} \sin\left(\frac{n \pi x}{L}\right)
+      \end{align*}
+    }
+
+  }
+
+
+
+  \column{0.5}
+  \block{Travelling waves}{
+    We consider waves that travel with constant speed and shape, on the basis that there are many phenomena within biology which reflect wave-like behaviour. \\
+
+    Much of the study of this is based on the Fisher-KPP equation, also considered when investigating spatial variation:
+
+    \begin{align*}
+      \frac{\partial u}{\partial t} = D \frac{\partial^{2} u}{\partial x^{2}} + ru\left(1-\frac{u}{K}\right)
+    \end{align*}
+    for $x \in \mathbb{R}$, $t > 0$. \\
+
+    For analysis, we non-dimensionalise to get the slightly nicer form:
+    \begin{align*}
+      \frac{\partial u}{\partial t} = \frac{\partial^{2} u}{\partial x^{2}} + u(1-u)
+    \end{align*}
+  }
+\end{columns}
+
+\end{document}
