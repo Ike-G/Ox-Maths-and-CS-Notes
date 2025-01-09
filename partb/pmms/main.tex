@@ -244,15 +244,17 @@
 
     One can also consider this as a commutativity statement: as $\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big]$ is $\mathcal{F}_{2}$-measurable, thus $\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big] = \mathbb{E}\big[\mathbb{E}[X \,|\, \mathcal{F}_{1}] \,|\, \mathcal{F}_{2}\big]$, so the tower property is stating that with $\mathcal{F}_{1} \subseteq \mathcal{F}_{2}$:
     \begin{align*}
-      \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big] \,|\, \mathcal{F}_{2}\Big] = \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{2}\big] \,|\, \mathcal{F}_{1}\Big].
+      \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big] \,|\, \mathcal{F}_{2}\Big] \overset{\mathrm{a.s.}}{=} \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{2}\big] \,|\, \mathcal{F}_{1}\Big].
     \end{align*}
     \coloredbox{
-    It's tempting to claim the more general statement, that for $\mathcal{F}_{1}$, $\mathcal{F}_{2}$ both $\sigma$-algebras in $\mathcal{F}$:
+    I'm tempted to claim the more general statement, that for $\mathcal{F}_{1}$, $\mathcal{F}_{2}$ both $\sigma$-algebras in $\mathcal{F}$:
     \begin{align*}
       \color{red}
-      \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big] \,|\, \mathcal{F}_{2}\Big] = \mathbb{E}\big[X \,|\, \mathcal{F}_{1} \cap \mathcal{F}_{2}\big].
+      \mathbb{E}\Big[\mathbb{E}\big[X \,|\, \mathcal{F}_{1}\big] \,|\, \mathcal{F}_{2}\Big] \overset{\mathrm{a.s.}}{=} \mathbb{E}\big[X \,|\, \mathcal{F}_{1} \cap \mathcal{F}_{2}\big].
     \end{align*}
-    This statement is true if $\mathcal{F}_{1}$ and $\mathcal{F}_{2}$ are independent, because then both sides are equal to $\mathbb{E}[X]$, but it seems that there could be a `middle-ground' between independence and containment for which commutativity stops holding.
+    This statement is true if $\mathcal{F}_{1}$ and $\mathcal{F}_{2}$ are independent, because then both sides are equal to $\mathbb{E}[X]$, but it seems that there could be a `middle-ground' between independence and containment for which commutativity stops holding. \\
+
+    On the other side, attempting to prove this statement, the tripping point is that it's unclear that the LHS is $\mathcal{F}_{1}$-measurable (although clearly it is $\mathcal{F}_{2}$-measurable).
     }
 
     \begin{lemma}
