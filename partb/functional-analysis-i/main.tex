@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=850mm, paperheight=1200mm}
+\geometry{paperwidth=1600mm, paperheight=2300mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -10,12 +10,16 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{verbatim}
+\usepackage{enumitem}
 \usepackage{nicefrac}
 \usepackage{mathtools}
+\usepackage{bm}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 \DeclareMathOperator{\Int}{int}
 \DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Span}{span}
+
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
   \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
   #1 % the function
@@ -108,39 +112,617 @@
 % Title block with title, author, logo, etc.
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
-  \column{0.5}
-  \block{Banach and Hilbert spaces}{
+  \column{0.25}
+  \block{Banach spaces}{
+    In order to analyse the particular properties of functions, we tend to refer to function spaces and how they interact with one another. A particular function space indicates certain properties of the functions which reside within it, allowing us to consider basic things such as containment to reflect logical relations, as well as to consider more complex relations in terms of convergence. \\
+
+    Function spaces are generally infinite-dimensional vector spaces. Consequently, much of this course involves building up a theory of these. In particular, we see that understanding them requires a notion of convergence, and thus we jointly build on theory from metric spaces. \\
+
     \begin{definition}[Banach space]
-    \ A normed space $(X, ||\cdot ||)$ is a Banach space if it is complete (every Cauchy sequence in $X$ converges).
+    \ A normed space $(X, \Vert \cdot \Vert )$ is a Banach space if it is complete (every Cauchy sequence in $X$ converges).
     \end{definition}
     \hphantom{}
 
-    Note that this means it is sufficient for completeness if a subspace is closed. \\
+    Note that completeness of $X$ means that a subspace $Y$ being closed in $X$ is equivalent to it being complete under the same norm. \\
 
-    It's worth reminding oneself that any normed space is necessarily a vector space. \\
+    It's also worth reminding oneself that any normed space is necessarily a vector space, hence the use of this definition is congruent with the earlier discussion. \\
 
-    As a point to consider initially, we analyse certain vector spaces of bounded functions $f : \Omega \to \mathbb{F}$, such as:
-    \begin{itemize}
-      \item \, $\mathcal{F}^b(\Omega) := \{f : \Omega \to \mathbb{F} \,\,\text{bounded}\}$,
-            \item \, $C_{b}(\Omega) := \{f : \Omega \to \mathbb{F} \,\,\text{continuous and bounded}\}$,
-    \end{itemize}
-    \hphantom{}
-    under the supremum norm, or the $L^{p}(\Omega)$ spaces under the $L^{p}$ norm. Note that in order to make this a norm, the vector space is not precisely one of functions, but a quotient space $L^{p}(\Omega) := \mathcal{L}^{p}(\Omega) / \mathcal{N}$ where
+    While we can see without much difficulty that finite dimensional spaces over $\mathbb{R}$ or $\mathbb{C}$ are Banach under the standard norms (indeed they are under any norm), it's far more interesting to start considering function spaces. \\
+
+    Firstly, sequence spaces. We write $(\ell^{p}, \Vert \cdot\Vert _{p})$ for some $p \in [1,\infty]$ such that for $p < \infty$
     \begin{align*}
-      \mathcal{L}^{p} &:= \left\{f : \Omega \to \mathbb{F} \,\Big|\, \int_{\Omega} |f|^{p} \,\mathrm{d}x < \infty\right\} \\
-      \mathcal{N} &:= \left\{f : \Omega \to \mathbb{F} \,\Big|\, \int_{\Omega} f \,\mathrm{d}x = 0\right\}
+      \Vert (x_{n})\Vert _{p} := \left(\sum_{n=1}^{\infty}|x_{n}|^{p}\right)^{1/p}
+    \end{align*}
+    and for $p = \infty$,
+    \begin{align*}
+      \Vert (x_{n})\Vert _{p} := \sup_{n} |x_{n}|.
+    \end{align*}
+    We then have $\ell^{p}$ defined as the set of sequences such that $\Vert \cdot\Vert _{p}$ is finite. \\
+
+    It can be shown here that H\"{o}lder's inequality applies to this set of spaces, and that such a space is complete for any $p$. Further, we have the containment $\ell^{p} \subset \ell^{q}$ for $p < q$. \\
+
+    While we do have a relatively nice analogy for spaces of functions $f : \Omega \to \mathbb{R}$, it's not quite as generally applicable. We can define the $(L^{p}(\Omega), \Vert \cdot\Vert _{L^{p}(\Omega)})$ spaces for $p \in [1,\infty]$ by having $L^{p}(\Omega) := \mathcal{L}^{p}(\Omega)/\mathcal{N}(\Omega)$ for
+    \begin{align*}
+      \mathcal{L}^{p}(\Omega) &:= \left\{f : \Omega \to \mathbb{F} \,\Big|\, \int_{\Omega} |f(x)|^{p} \,\mathrm{d}x < \infty\right\} \\
+      \mathcal{N}(\Omega) &:= \left\{f : \Omega \to \mathbb{F} \,\Big|\, \int_{\Omega} f(x) \,\mathrm{d}x = 0\right\},
+    \end{align*}
+    and for $[f] \in L^{p}(\Omega)$,
+    \begin{align*}
+      \Vert [f]\Vert _{p} = \left(\int_{\Omega} |f(x)|^{p}\, \mathrm{d}x\right)^{1/p}.
     \end{align*}
 
-    \begin{definition}[Hilbert space]
-    \ A Banach space with its norm defined by an inner product is a Hilbert space.
+    We have that H\"{o}lder's inequality holds for this set of spaces as well, and that they are again all complete. At the same time, we don't have containment for general $\Omega \subseteq \mathbb{R}^{n}$, but the trend reverses to give $L^{q}(\Omega) \subset L^{p}(\Omega)$ for $p < q$, $\mathrm{leb}(\Omega) < \infty$. \\
+
+    While these sets are incredibly useful in their own right, we also want to consider some more familiar function spaces. For this purpose, we use the supremum norm (note that this isn't the same as $\Vert \cdot\Vert _{L^{\infty}}$):
+    \begin{align*}
+      \mathcal{F}_{b}(\Omega) &:= \{f : \Omega \to \mathbb{F} \,\,\text{bounded}\} \\
+      C_{b}(\Omega) &:= \{f : \Omega \to \mathbb{F} \,\,\text{continuous and bounded}\}.
+    \end{align*}
+
+    These are both also complete as well. \\
+
+    In order to prove completeness, we often use a couple of useful results. Firstly, a property of Cauchy sequences:
+
+    \begin{lemma}
+    \ For $(x_{n})$ a Cauchy sequence in a metric space $(X,d)$, $(x_{n})$ converges iff there is a subsequence $(x_{n_{k}})$ which converges.
+    \end{lemma}
+    \hphantom{}
+
+    A corollary of this serves further use as well:
+
+    \begin{corollary}
+    \ For $(X,\Vert \cdot\Vert )$ a normed space, $X$ is Banach iff for any sequence $(x_{n})$ in $X$ we have the implication:
+    \begin{align*}
+    \sum_{n=1}^{\infty} \Vert x_{n}\Vert  < \infty &\Rightarrow \sum_{n=1}^{\infty} x_{n} \in X
+    \end{align*}
+    \end{corollary}
+    \hphantom{}
+
+    If asked for an incomplete space, it's generally best to start with a well-known space like $L^{p}$ or $\ell^{p}$, and then equip it with a `wrong' (but still well-defined) norm. \\
+
+    By the Baire category theorem in Functional Analysis II, the space of polynomials on $\mathbb{R}$ admits no complete norms (not just that we can find a norm for which the space is incomplete).
+  }
+  \block{Hilbert spaces}{
+    An important special case of Banach spaces is where the norm is induced by an inner product. These allow us to say more about the space in terms of the behaviour of the inner product, as well as helping characterise the behaviour of the norm. \\
+
+    \begin{definition}[Inner product]
+    \ An inner product in a vector space $X$ over $\mathbb{R}$ is a function $\langle \cdot , \cdot \rangle : X \times X \to \mathbb{R}$ such that
+    \begin{enumerate}[label={\roman*.}]
+            \item $\langle x, y \rangle$ is linear in both $x$ and $y$ (for fixed $y$ and $x$, respectively);
+            \item $\langle x, y \rangle = \langle y , x \rangle$; and
+            \item $\langle x, x \rangle > 0$ for $x \neq 0$.
+    \end{enumerate}
+    Meanwhile an inner product in a vector space $X$ over $\mathbb{C}$ is a function $\langle \cdot, \cdot \rangle : X \times X \to \mathbb{C}$ such that
+    \begin{enumerate}[label={\roman*.}]
+            \item $\langle x, y \rangle$ is linear in $x$ for fixed $y$, and skewlinear in $y$ for linear $x$ ($\langle x, \alpha y \rangle = \overline{\alpha} \langle x, y \rangle $);
+            \item $\langle x, y \rangle = \overline{\langle y, x \rangle}$; and
+
+            \item $\langle x, x \rangle > 0$ for $x \neq 0$.
+    \end{enumerate}
     \end{definition}
     \hphantom{}
+
+    \begin{definition}[Hilbert space]
+    \ A complete inner product space $(X, \langle \cdot, \cdot \rangle)$ is a Hilbert space.
+    \end{definition}
+    \hphantom{}
+
+    One of the most immediately helpful results for inner product spaces is Cauchy-Schwarz:
+    \begin{theorem}[Cauchy-Schwarz inequality]
+    \ For $x, y \in X$ an inner product space,
+    \begin{align*}
+      |\langle x, y \rangle| \le \Vert x\Vert  \Vert y\Vert .
+    \end{align*}
+    Equality holds iff $x$ and $y$ are linearly dependent.
+    \end{theorem}
+    \hphantom{}
+
+    For some reason the proof of this, while not \emph{massively} complex, generally has a salient step omitted without much reason. Hence I write it down here. With $x, y \in X$, $t \in \mathbb{C}$:
+    \begin{align*}
+      \Vert x+ty\Vert ^{2} &= \langle x, x \rangle + \overline{t} \langle x, y \rangle + t \overline{\langle x, y \rangle} + t \overline{t} \langle y , y \rangle \\
+                   &= \Vert x\Vert ^{2} + \mathrm{Re}\left( \overline{t} \langle x, y \rangle \right) + |t|^{2}\Vert  y\Vert ^{2}.
+    \end{align*}
+    We can then write $t = re^{i \theta}$ in order to get a polynomial in $r \in \mathbb{R}$:
+    \begin{align*}
+      \Vert x+ty\Vert ^{2} &= \Vert x\Vert ^{2} + r \mathrm{Re} \left( e^{-i \theta} \langle x, y \rangle \right) + r^{2} \Vert y\Vert ^{2},
+    \end{align*}
+    and by non-negativity we get the inequality
+    \begin{align*}
+      \left|\mathrm{Re} \left(e^{-i \theta} \langle x, y \rangle \right)\right| \le \Vert x\Vert  \Vert y\Vert
+    \end{align*}
+    of which the desired Cauchy-Schwarz inequality is a special case (as the supremum of the LHS). \\
+
+    We also get the parallelogram law from this line of proof:
+    \begin{align*}
+      \Vert x+y\Vert ^{2} + \Vert x - y\Vert ^{2} &= 2\Vert x\Vert ^{2} + 2\Vert y\Vert ^{2}
+    \end{align*}
+
+    From Cauchy-Schwarz and other methods we get an array of results about orthogonal complements, evidencing that inner products give relatively well-behaved spaces. \\
+
+    In particular, we have that for any closed convex subset of a Hilbert space $Y \subseteq X$, for any $x \in X$, there is a point $y \in Y$ closer to $x$ than any other point in $Y$. This allows us to show that for any closed set $Y \subseteq X$, $X = Y + Y^{\perp}$. \\
+
+    Importantly, this gives an improvement: whereas for inner product spaces we have that $Y \subseteq Y^{\perp \perp}$, for Hilbert spaces we have that if $Y$ is closed, $Y = Y^{\perp \perp}$. \\
+
+    \begin{definition}
+    \ The closed linear span of a set $Y \subseteq X$ for $X$ a Hilbert space, $\overline{\Span Y}$, is the intersection of all closed subspaces of $X$ containing $Y$.
+    \end{definition}
+    \hphantom{}
+
+    This serves as the analogy for $\Span$ with infinite spaces. This is made slightly easier to work with by the fact that for any $Y \subseteq X$, $Y^{\perp \perp} = \overline{\Span Y}$. \\
+
+    \begin{definition}[Orthonormal sets]
+      \ A set $S \subseteq X$ for $X$ a Hilbert space is called an orthonormal set if for all distinct $x, y \in S$, $\langle x, y \rangle = 0$, and $\Vert x\Vert  = 1$. $S$ is an orthonormal basis if $\overline{\Span S} = S$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Every Hilbert space contains an orthonormal basis.
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this is complex and beyond the scope of the course for non-separable Hilbert spaces. Assuming a Hilbert space \emph{is} separable, there is a countable dense subset $S \subseteq X$. We then apply the Gram-Schmidt process to obtain an orthonormal set satisfying our requirements. \\
+
+    We have the Pythagorean theorem in this framework, that for $S = \{x_{1},\dots,x_{m}\}$ a finite orthonormal set in $X$, for any $x$ we get the square of its norm as
+    \begin{align*}
+      \Vert x \Vert^{2} = \sum_{n=1}^{m} |\langle x, x_{n} \rangle|^{2} + \left\Vert x - \sum_{n=1}^{m} \langle x , x_{n} \rangle x_{n} \right\Vert^{2}.
+    \end{align*}
+    Consequently we find Bessel's inequality for an orthonormal sequence $S = \{x_{1}, x_{2}, \dots\}$
+    \begin{align*}
+      \sum_{n=1}^{\infty} |\langle x, x_{n} \rangle|^{2} \le \Vert x \Vert ^{2}.
+    \end{align*}
+
+    As a final remark on the closed linear span of an orthonormal sequence, which will be proven in Functional Analysis II: \\
+
+    \begin{theorem}
+    \ With $X$ a Hilbert space, $S = \{x_{1},x_{2},\dots\}$ an orthonormal sequence in $X$,
+    \begin{align*}
+      \overline{\Span S} &= \left\{\sum_{n=1}^{\infty} a_{n} x_{n} : (a_{n}) \in \ell^{2} \right\}.
+    \end{align*}
+    Furthermore, for $x \in \overline{\Span S}$ with the form of the above,
+    \begin{align*}
+      \Vert x \Vert^{2} &= \sum_{n=1}^{\infty} |a_{n}|^{2}, \\
+      \text{and} \quad a_{n} &= \langle x , x_{n} \rangle.
+    \end{align*}
+
+    \end{theorem}
+
+
+  }
+  \column{0.25}
+  \block{Bounded linear operators}{
+    One of the most important classes of maps are the bounded linear operators. \\
+
+    \begin{definition}[Bounded linear operators]
+      \ For $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$ normed spaces both over the field $\mathbb{F}$, $T : X \to Y$ is a bounded linear operator if it is linear, and there exists some $M \in \mathbb{R}$ such that for all $x \in X$,
+      \begin{align*}
+        \Vert Tx \Vert_{Y} \le M\Vert x \Vert_{X}.
+      \end{align*}
+      We write the normed space of bounded linear operators as
+      \begin{align*}
+        \mathcal{B}(X,Y) := \{T : X \to Y \, \, \text{a bounded linear operator}\}
+      \end{align*}
+      equipped with the norm
+      \begin{align*}
+        \Vert T \Vert_{\mathcal{B}(X,Y)} := \sup_{x \in X \setminus \{0\}} \frac{\Vert Tx \Vert_{Y}}{\Vert x \Vert_{X}}.
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Important special cases are of the space of linear operators from a space to itself, written $\mathcal{B}(X) := \mathcal{B}(X,X)$, and of the space of linear operators from a space to its field, $X^{*} := \mathcal{B}(X, \mathbb{F})$. \\
+
+    For a linear operator $T : X \to Y$ between normed spaces, $T \in \mathcal{B}(X,Y)$ iff $T$ is Lipschitz. \\
+
+    \begin{definition}
+    \ A linear function $T : X \to Y$ is isometric if for every $x \in X$, $\Vert Tx \Vert = \Vert x \Vert$. If $T$ is isometric and bijective, it is an isometric isomorphism, and so $X$ and $Y$ are said to be isometrically isomorphic, $X \cong Y$.
+    \end{definition}
+    \hphantom{}
+
+    For $A = (a_{ij}) \in \mathbb{R}^{n \times m}$, defining $T : \mathbb{R}^{m} \to \mathbb{R}^{n}$ by $Tx = Ax$, $\Vert T \Vert \le \Vert A \Vert$, where the norm on matrices is the Frobenius, or Hilbert-Schmidt norm:
+    \begin{align*}
+      \Vert A \Vert := \left(\sum_{i=1}^{n} \sum_{j=1}^{m} |a_{ij}|^{2}\right)^{1/2}.
+    \end{align*}
+
+    \begin{theorem}
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $(Y, \Vert \cdot \Vert)$ a Banach space, then $\mathcal{B}(X,Y)$ is a Banach space.
+    \end{theorem}
+    \hphantom{}
+
+    We want to go slightly further than this to incorporate composition of operations. Consider normed spaces $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$, $(Z, \Vert \cdot \Vert_{Z})$. \\
+
+    For operations $T \in \mathcal{B}(X,Y)$, $S \in \mathcal{B}(Y,Z)$, $ST \in \mathcal{B}(X,Z)$, and
+    \begin{align*}
+      \Vert ST \Vert_{\mathcal{B}(X,Z)} \le \Vert S \Vert_{\mathcal{B}(Y,Z)} \Vert T \Vert_{\mathcal{B}(X,Y)}.
+    \end{align*}
+    With this fact, we can define without loss of generality for $n \in \mathbb{N}$, $T^{n}$ as the composition of $T$ $n$ times. We can then write for $T \in \mathcal{B}(X)$,
+    \begin{align*}
+      \exp(T) := \sum_{n=0}^{\infty} \frac{1}{n!} T^{n},
+    \end{align*}
+    and see that it converges in $\mathcal{B}(X)$. \\
+
+    As another similar result, for $\Vert T \Vert < 1$ we have that $\mathrm{Id} - T$ is invertible with inverse
+    \begin{align*}
+      (\mathrm{Id}-T)^{-1} = \sum_{n=0}^{\infty} T^{n} \in \mathcal{B}(X).
+    \end{align*}
+
+    \begin{definition}
+      \ An element $T \in \mathcal{B}(X)$ is called invertible in $\mathcal{B}(X)$ if there exists $S \in \mathcal{B}(X)$ such that $ST = TS = \mathrm{Id}$. Furthermore, we write
+      \begin{align*}
+        G\mathcal{B}(X) := \{T \in \mathcal{B}(X) : T \, \, \mathrm{invertible}\}.
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    From the above, we see that $B(\mathrm{Id}, 1) \subseteq G\mathcal{B}(X)$, and more generally can find that for $T \in G\mathcal{B}(X)$, $B(T,1/\Vert T^{-1} \Vert) \subseteq G\mathcal{B}(X)$. Thus $G\mathcal{B}(X)$ is an open subset of $\mathcal{B}(X)$. \\
+
+    Note provided $T \in \mathcal{B}(X)$ is algebraically invertible, $T^{-1} \in \mathcal{B}(X)$ iff $\inf \Vert Tx \Vert / \Vert x \Vert > 0$.
+  }
+  \block{Finite-dimensional normed spaces}{
+    With $(\mathbb{F}^{n},\Vert \cdot\Vert _{p})$ for some $p \in [1,\infty]$, $n \in \mathbb{N}$, $F \in \{\mathbb{R}, \mathbb{C}\}$ we get the most basic Hilbert space. \\
+
+    \begin{lemma}[H\"{o}lder's Inequality]
+      \ For $1 \le p,q \le \infty$ such that $1/p+1/q = 1$, for any $\bm{x}, \bm{y} \in \mathbb{C}^{n}$,
+      \begin{align*}
+        \Vert \bm{x}\bm{y}\Vert _{1} \le \Vert \bm{x}\Vert _{p}\Vert \bm{x}\Vert _{q}
+      \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    We can also see without too much difficulty that all norms $\Vert \cdot\Vert _{p}$ for $p \in [1,\infty]$ are equivalent. \\
+
+    Further, based on this we can find that all norms on any finite-dimensional space are equivalent. We will also see that all linear maps defined on finite dimensional spaces are bounded, and that all finite dimensional spaces are complete. \\
+
+    To see that all norms are equivalent on the space $\mathbb{R}^{n}$, we reduce all norms to the euclidean norm. Take an arbitrary norm $\Vert \cdot \Vert$:
+    \begin{align*}
+      \Vert \bm{x} \Vert &= \Vert \sum_{k=1}^{n} x_{k} \bm{e}_{k} \Vert \\
+                         &\le \sum_{k=1}^{n} |x_{k}| \Vert \bm{e}_{k} \Vert \\
+                         &\le \left(\sum_{k=1}^{n} |x_{k}|^{2} \right)^{1/2} \left(\sum_{k=1}^{n} \Vert \bm{e}_{k} \Vert^{2}\right)^{1/2} \\
+      &= C_{1}\Vert \bm{x} \Vert_{2}.
+    \end{align*}
+    In the other direction, note that by the theorem of Heine-Borel, a subset of $\mathbb{R}^{n}$ is closed and bounded iff it is compact. As $\Vert \cdot \Vert$ is a Lipschitz continuous function from $(\mathbb{R}^{n}, \Vert \cdot \Vert_{2})$ to $\mathbb{R}$, it attains its minimum on a compact set. Thus taking $S = \partial B_{2}(0,1)$ and defining $\delta := \inf_{S} \Vert \bm{x} \Vert$ we can set $C_{2} := 1/\delta$ and get
+    \begin{align*}
+      \Vert \bm{x} \Vert_{2} &= \left\Vert \Vert \bm{x} \Vert_{2} \frac{\bm{x}}{\Vert \bm{x} \Vert_{2}} \right\Vert_{2} \\
+                             &\le \Vert \bm{x} \Vert_{2} \cdot \frac{1}{\delta} \left\Vert \frac{\bm{x}}{\Vert \bm{x} \Vert_{2}} \right\Vert \\
+      &= \frac{1}{\delta} \Vert \bm{x} \Vert = C_{2}\Vert \bm{x} \Vert.
+    \end{align*}
+    Thus all norms on $\mathbb{R}^{n}$ are equivalent by transitivity. \\
+
+    \begin{theorem}
+    \ Let $X$ be any finite dimensional space. Then any two norms $\Vert \cdot \Vert$ and $\Vert \cdot \Vert'$ are equivalent.
+    \end{theorem}
+    \hphantom{}
+
+    This is purely a matter of identifying $X$ with $\mathbb{R}^{\dim X}$, and just takes some slight technical work. \\
+
+    \begin{theorem}
+    \ With $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$ normed spaces, $X$ finite-dimensional, then any linear map $T : X \to Y$ is a bounded linear operator.
+    \end{theorem}
+    \hphantom{}
+
+    To show this, we can write a new norm $\Vert \cdot \Vert_{T} $ on $X$ with
+    \begin{align*}
+      \Vert x \Vert_{T} = \Vert x \Vert_{X} + \Vert Tx \Vert_{Y},
+    \end{align*}
+    and use this to bound $\Vert Tx \Vert_{Y}$ by using equivalence. \\
+
+    A corollary of this result is that any finite-dimensional space $X$ is homeomorphic to $\mathbb{F}^{\dim X}$ (recall that $A$ and $B$ are homeomorphic if there exists $f : A \to B$ invertible such that both $f$ and $f^{-1}$ continuous). Thus closed and open sets are preserved between finite-dimensional spaces using these homeomorphisms. \\
+
+    \begin{theorem}
+    \ Every finite-dimensional normed space $(X, \Vert \cdot \Vert)$ is a Banach space.
+    \end{theorem}
+    \hphantom{}
+
+    This follows relatively quickly from the completeness of $\mathbb{F}^{n}$ for any $n \in \mathbb{N}$, but is once again more of a technical exercise. The former statement results from the completeness of $\mathbb{R}$, which is an exercise from prelims. \\
+
+    A corollary here is that any finite-dimensional subspace of a normed vector space is complete and hence closed. \\
+
+    \begin{theorem}
+      Let $(X, \Vert \cdot \Vert)$ be a normed space. Then the following are equivalent:
+      \begin{enumerate}[label=\roman*.]
+              \item \ $\dim X < \infty$.
+              \item \ If $Y \subseteq X$ is closed and bounded, it is compact.
+              \item \ $\partial B_{X}(0,1)$ is compact.
+      \end{enumerate}
+    \end{theorem}
+    \hphantom{}
+
+    In using compactness, it is worth being reminded that in the general case, compactness is equivalent to being complete and totally bounded (meaning that for any $\varepsilon > 0$, there is a finite set of points such that the set is contained in the union of $\varepsilon$ balls around these points). \\
+
+    In the above theorem, we have implication (i) $\Rightarrow$ (ii) using Heine-Borel and (ii) $\Rightarrow$ (iii) straightforwardly, but require additional help to prove (iii) $\Rightarrow$ (i). \\
+
+    \begin{lemma}[Riesz lemma]
+      \ Let $(X, \Vert \cdot \Vert)$ be a normed space, $Y \subset X$ a closed subspace. Then for any $\varepsilon > 0$, there exists $x \in \partial B(0,1)$ such that
+      \begin{align*}
+        \mathrm{dist} (x,Y) := \inf \{\Vert x - y \Vert : y \in Y\} \ge 1- \varepsilon
+      \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    The key aspect here is that $Y$ is a proper closed subspace, meaning we would expect this lemma to hold in finite-dimensional space immediately. Taking any $x^{*} \in X \setminus Y$, then finding $y^{*} \in Y$ closest to $x^{*}$, we then just translate $x^{*} - y^{*}$ to a vector on the unit sphere, and the result follows. \\
+
+    From this, we see that if $X$ is infinitely dimensional, we can find $(y_{n})$ linearly independent to form the sequence of subspaces $Y_{n} := \Span \{y_{1},\dots, y_{n}\}$ (themselves all closed, as complete subspaces of $X$). We can therefore construct $x_{n} \in Y_{n+1} \cap \partial B(0,1)$ such that $\dist(x_{n},Y_{n}) \ge 1/2$. Yet this means $\Vert x_{n} - x_{m} \Vert \ge 1/2$ for all $n, m \in \mathbb{N}$ so there is no convergent sequence, so $\partial B_{X}(0,1)$ is not compact.
+  }
+  \column{0.25}
+  \block{Density}{
+    As always, a subset $D \subseteq X$ is dense if $\overline{D} = X$. \\
+
+    \begin{theorem}
+      \ With $(X,\Vert \cdot \Vert_{X})$, $Y$ a dense subspace of $X$, and $(Z, \Vert \cdot \Vert_{Z})$ a Banach space. Then there is a unique isometric isomorphism $E : \mathcal{B}(Y,Z) \to \mathcal{B}(X,Z)$ such that for $T \in \mathcal{B}(Y,Z)$, $y \in Y$, $E(T)y = Ty$.
+    \end{theorem}
+    \hphantom{}
+
+    We prove initially the following lemma, then return to this theorem. \\
+
+    \begin{lemma}
+      \ For $(X, \Vert \cdot \Vert_{X})$ a normed space, $D$ dense in $X$, $(Z, \Vert \cdot \Vert_{Z})$ a normed space, then for $T, S \in \mathcal{B}(X,Z)$, $\restr{T}{D} = \restr{S}{D}$ iff $T = S$.
+    \end{lemma}
+    \hphantom{}
+
+    To see this, use continuity of bounded linear operators and density. We can then see that $E$ is unique, because for any $F$ extending elements of $\mathcal{B}(Y,Z)$, $E(T) = F(T)$ for all $T$. We can then see fairly immediately by the continuity of $T$ and the density of $Y$ that $E(T)$ is a bounded linear operator. \\
+
+    Moving further, we want to identify dense subspaces of $C(K) = C(K,\mathbb{R})$ for $K$ compact in $\mathbb{R}^{n}$. Note firstly that for a subspace to be dense in $C(K)$, we need that it can \emph{separate} points, as by their nature we can easily construct continuous functions which take distinct values for distinct points. \\
+
+    \begin{definition}[Separability for $C(K)$]
+    \ $D \subseteq C(K)$ separates points if for all distinct $p,q \in K$, there is $g \in D$ such that $g(p) \neq g(q)$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Linear sublattice]
+    \ A subspace $L \subseteq C(K)$ is a linear sublattice if it is closed under composition of maximum and minimum.
+    \end{definition}
+    \hphantom{}
+
+    Alternatively, we can say that $L$ is a sublattice iff $f \in L \Rightarrow |f| \in L$. This gives us already a relatively large but necessary set for density. \\
+
+    \begin{theorem}[Stone-Weierstrass theorem, lattice form]
+      \ Let $K \subseteq \mathbb{R}^{n}$ be a compact set, $L$ a linear sublattice of $C(K)$ separating $K$ and containing the constant functions. Then $L$ is dense in $C(K)$.
+    \end{theorem}
+    \hphantom{}
+
+    To demonstrate this, for any $f \in C(K)$, $\varepsilon > 0$, we fix a point $p \in K$, and form an open cover of $K$, $\{U_{p,q}^{\varepsilon} : q \in K\}$ by taking $f_{p,q} \in L$ such that $f_{p,q}(p) = f(p)$, $f_{p,q}(q) = f(q)$, and writing $U_{p,q}^{\varepsilon} = (f-f_{p,q})^{-1}(-\varepsilon, \varepsilon)$. We can then use the subcover to get a function with a good upper bound, then perform a similar step again using this function to a get a lower bound. \\
+
+    The only issue with this statement of the theorem is that a lot of spaces we would like to use for approximations aren't immediately sublattices. Therefore, we consider the notion of a subalgebra:
+    \begin{definition}
+    \ A subspace $A \subseteq C(K)$ is a subalgebra if it contains the constant function, and if $f, g \in A$, then $f \cdot g \in A$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Any closed subalgebra $A \subseteq C(K)$ is a linear sublattice.
+    \end{lemma}
+    \hphantom{}
+
+    To show this one needs to show that for each $f \in A$, $|f| \in A$, and to show this we need that $\sqrt{f} \in A$. To demonstrate this, there's a slightly contrived proof on the basis that as $C(K)$ is complete and hence any closed subset is complete, we can apply the contraction mapping theorem to any contraction $T$. We must then construct a contraction on some closed subset of $A$ with fixed points $1\pm\sqrt{f}$, which works for a subset of $A$, and can be extended by closure and linearity. \\
+
+    Using this result, for $A$ a subalgebra of $C(K)$ which separates points, $\overline{A}$ is a linear sublattice, and thus as $\overline{A}$ is already closed and separates points, by Stone-Weierstrass $\overline{A} = C(K)$, so $A$ is dense in $C(K)$. \\
+
+    \begin{theorem}[Weierstrass on approximation of $C(K)$ by polynomials]
+    \ Let $K \subseteq \mathbb{R}^{n}$ be a compact set. Then the space of polynomials is dense in $C(K)$.
+    \end{theorem}
+    \hphantom{}
+
+    This is then just an application of the above, as the space of polynomials is clearly a subalgebra which separates points (indeed, the subalgebra generated by $x$). \\
+
+    \begin{theorem}
+    \ Let $K \subseteq \mathbb{R}^{n}$ be a compact set. Then for any $1 \le p < \infty$, $C^{\infty}(K)$ is dense in $L^{p}(K)$.
+    \end{theorem}
+    \hphantom{}
+
+    This fails to hold immediately for $p = \infty$, because while we can approximate step functions by continuous functions for $p < \infty$ due to some `leniency' on vertical differences that these afford (subject to occurring on a set with decreasing measure), $p = \infty$ requires vertical differences must tend to $0$ (or that horizontal differences are \emph{equal} to $0$).
+  }
+  \block{Separability}{
+    \begin{definition}[Separability]
+    \ A normed space $(X, \Vert \cdot \Vert)$ is separable if there exists a countable set $D \subseteq X$ dense in $X$.
+    \end{definition}
+    \hphantom{}
+
+    We can see immediately that separability is invariant under both isometric isomorphisms and equivalent norms, and thus that all finite dimensional normed spaces are separable. \\
+
+    Meanwhile, we can see that $\ell^{\infty}$ is inseparable, as is $L^{\infty}(\Omega)$ for $\Omega \subseteq \mathbb{R}^{n}$ any non-empty open set. For the former, we can see that $\{0,1\}^{\mathbb{N}} \subset \ell^{\infty}$ is uncountable and yet the distance between any two elements is $1$. Consequently we can take a dense subset $D$, and find an injective map from $\{0,1\}^{\mathbb{N}}$ to $D$. \\
+
+    Similarly, for $L^{\infty}(\Omega)$ one can use characteristic functions of sets. \\
+
+    More generally, it is helpful for proving separability to use the following results:
+    \begin{lemma}
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $Y \subseteq X$ a dense subspace, then if $D \subseteq Y$ is dense in $Y$, then $D$ is dense in $X$.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{lemma}
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $S \subseteq X$ a countable set such that $\Span(\overline{S})$ is dense in $X$, then $X$ is separable.
+    \end{lemma}
+    \hphantom{}
+
+    For the latter, we can show that $\Span_{\mathbb{Q}}(S)$ is dense in $\Span(\overline{S})$ in two steps, giving us our result. \\
+
+    Using these results, we can see the following:
+    \begin{enumerate}[label=\roman*.]
+            \item $C(K)$ is separable for $K \subseteq \mathbb{R}^{n}$ compact.
+            \item $\ell^{p}$ is separable over $\mathbb{R}$ or $\mathbb{C}$ for $1 \le p < \infty$.
+            \item $L^{p}(K)$ is separable for $K \subseteq \mathbb{R}^{n}$ compact, $1 \le p < \infty$.
+    \end{enumerate}
+    \hphantom{}
+
+    (i) can be seen by the density of polynomials in $C(K)$, meaning we just take the set of all monomials as $S$ and the result is immediate. (ii) can be seen similarly through taking the canonical basis as $S$. (iii) requires slightly more work, but just take the set of characteristic functions on intervals $[q,p]$ for $q < p$ rational, of which the closure is the complete set of step functions of which the span is dense in $L^{p}$. \\
+
+    In general, separability is a useful property for allowing us to prove results on a `nicer' space which we then extend. A common general application of this is in the use of a basis, for which we would prefer to use a countable Schauder basis rather than a potential uncountable Hamel basis.
+  }
+  \block{Theorem of Hahn Banach}{
+    Recall that for a normed space $X$, we write $X^{*} := \mathcal{B}(X,\mathbb{F})$ for its respective field, and define $\Vert \cdot \Vert_{X^{*}}$ as normal for a space of bounded linear operators. \\
+
+    \begin{definition}[Sublinearity]
+    \ For $X$ a real vector space, $p : X \to \mathbb{R}$ is sublinear if for $x, y \in X$, $\lambda \ge 0$,
+    \begin{align*}
+      p(x+y) \le p(x) + p(y) \quad \text{and} \quad p(\lambda x) = \lambda p(x)
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Note that this is equivalent to a definition with $p(\lambda x) \le \lambda p(x)$ for $\lambda > 0$. \\
+
+    \begin{theorem}[Hahn-Banach (normed spaces)]
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $Y \subseteq X$ a subspace, there is an isometry $E : Y^{*} \to X^{*}$ such that for $f \in Y^{*}$, $\restr{E(f)}{Y} = f$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}[Hahn-Banach (general sublinear version)]
+      \ For $(X, \Vert \cdot \Vert)$ a real vector space, $Y \subseteq X$ a subspace, $p : X \to \mathbb{R}$ sublinear, $f \in Y^{*}$, if $f \le \restr{p}{Y}$, then there is a linear extension $F \in X^{*}$ such that $F \le p$.
+    \end{theorem}
+    \hphantom{}
+
+    In this course, only a very special case is proved:
+    \begin{lemma}[1-step extension lemma]
+      \ For $(X, \Vert \cdot \Vert)$ a real vector space, $p : X \to \mathbb{R}$ sublinear and $U, V \subseteq X$ subspaces of $X$ such that for some $x_{0} \in X$
+      \begin{align*}
+        V = \Span(U \cup \{x_{0}\}),
+      \end{align*}
+      for $f \in U^{*}$ such that $f \le \restr{p}{U}$, there is a linear extension $F \in V^{*}$ such that $F \le p$.
+    \end{lemma}
+    \hphantom{}
+
+    To prove this, just note that we can write any $v \in V$ uniquely as $v = u+\lambda x_{0}$ for some $u \in U$, $\lambda \in R$. Thus define $F(v) = f(u)+\lambda r$, and we just need to find the appropriate $r \in \mathbb{R}$. \\
+
+    The theorem of Hahn-Banach allows us to characterise dual spaces much further than previously. Firstly, we have that for a normed space $(X, \Vert \cdot \Vert)$, with $x \in X \setminus \{0\}$, there is an $e_{x}$ such that $\Vert e_{x}\Vert = 1$, and $e_{x}(x) = \Vert x \Vert$. \\
+
+    Consequently, for $x \in X$, $\Vert x \Vert_{X} = \sup_{f \in X^{*},\Vert f \Vert_{X^{*}} = 1} |f(x)|$, and for $f \in X^{*}$, $\Vert f \Vert_{X^{*}} = \sup_{x \in X,\Vert x \Vert_{X} = 1} |f(x)|$. Further, for any two elements in $X$ there is an $f \in X^{*}$ which separates them. \\
+
+    For intuition, for any $f : X \to \mathbb{F}$ linear, $\ker f$ has codimension $1$ (i.e. it is `most' of the space). For $x_{0} \not\in \ker f$, $\Span(\ker f + \{x_{0}\}) = X$. This allows us to think of separation in terms of physical separation by some hyperplane $f(x) = \lambda$. \\
+
+    More generally, we can separate points from closed subspaces, as for $Y \subset X$ closed we can get for any $x_{0} \in X \setminus Y$, $f \in X^{*}$ such that $Y \subseteq \ker f$, $\Vert f \Vert = 1$, and $f(x_{0}) = \mathrm{dist} (x_{0}, Y)$. \\
+
+    \begin{definition}[Annihilator]
+    \ For $A \subseteq X$, the annihilator of $A$ is defined as
+    \begin{align*}
+      A^{\circ} := \{f \in X^{*} : \restr{f}{A} = 0\}
+    \end{align*}
+    Furthermore, for $T \subseteq X^{*}$
+    \begin{align*}
+      T_{\circ} := \left\{x \in X : \text{for all }f \in T,\,f(x)=0\right\} = \bigcap_{f \in T} \ker f
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    For $S \subseteq X$, $\Span S$ is dense if and only if $S^{\circ} = \{0\}$, and for $T \subseteq X^{*}$, if $\Span T$ is dense then $T_{\circ} = \{0\}$. \\
+
+    We conclude on the statement that for $A$ a subspace of a normed space $X$, $\overline{A} = (A^{\circ})_{\circ}$.
+  }
+  \column{0.25}
+  \block{Dual spaces}{
+    \begin{lemma}
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $f : X \to \mathbb{F}$. Then $\ker f$ is closed iff $f \in X^{*}$.
+    \end{lemma}
+    \hphantom{}
+
+    To show this, note that if $\ker f$ is closed then for any $x_{0} \in X$ we can find a closest point in $\ker f$ to $x_{0}$. We can then use the distance to bound $\Vert f \Vert$. \\
+
+    \begin{theorem}[Riesz representation theorem]
+    \ For $X$ a Hilbert space, $\ell \in X^{*}$, there is some $x \in X$ such that for all $y \in X$, $\ell(y) = \langle y , x \rangle$. Furthermore, $x$ is uniquely determined and $\Vert x \Vert = \Vert \ell \Vert_{*}$.
+    \end{theorem}
+    \hphantom{}
+
+    For real $X$, this means that there is an isometric isomorphism $\pi : X \to X^{*}$ such that $(\pi x)(y) = \langle y , x \rangle$. Thus $X^{*} \cong X$. For complex $X$, $\pi : X \to X^{*}$ is skewlinear, so there is an isometric anti-isomorphism between $X$ and $X^{*}$. \\
+
+    To prove this for $\ell \not\equiv 0$, we can take an arbitrary element $y^{\perp} \in (\ker \ell)^{\perp}$, and see that for $z \in X$
+    \begin{align*}
+      z - \frac{\ell(z)}{\ell(y^{\perp})}y^{\perp} \in \ker \ell,
+    \end{align*}
+    so then taking the inner product with $y^{\perp}$
+    \begin{align*}
+      \langle z, y^{\perp} \rangle - \frac{\ell(z)}{\ell(y^{\perp})}\Vert y^{\perp} \Vert^{2} = 0.
+    \end{align*}
+    This gives us that
+    \begin{align*}
+      \ell(z) &= \left\langle z, \frac{\ell(y^{\perp})}{\Vert y^{\perp} \Vert^{2}} y^{\perp} \right\rangle.
+    \end{align*}
+    Further, we can use Cauchy-Schwarz to see that the norm is preserved. \\
+
+    Note an additional result that if two linear functionals have the same kernel, then they are multiples of one another. This follows from the kernel having codimension one, along with the above result. \\
+
+    While for finite dimensional spaces we have that dual spaces don't behave so differently to the original space, this is not true for infinite dimensional spaces. For example, we have in finite dimensional spaces that a basis $\{e_{1},\dots,e_{n}\}$ has a dual basis with $f_{i}(e_{j}) = \delta_{ij}$. \\
+
+    \begin{theorem}[Dual space of $L^{p}$]
+    \ Let $\Omega \subseteq \mathbb{R}^{n}$ be measurable, $1 \le p < \infty$ and $1 < q \le \infty$ such that $1/p + 1/q = 1$. Then $(L^{p}(\Omega))^{*} \cong L^{q}(\Omega)$ with isometric isomorphism $L : L^{q}(\Omega) \to (L^{p}(\Omega))^{*}$ defined on each $f \in L^{q}(\Omega)$ such that for $g \in L^{p}(\Omega)$:
+    \begin{align*}
+      (Lf)(g) &= \int_{\Omega} f(x)g(x) \, \mathrm{d}x.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    For $p = q = 2$, this theorem is a consequence of the Riesz representation theorem. In other cases, we need to first demonstrate that $L$ is well-defined and isometric, and next that $L$ is surjective. It should be fairly clear that H\"{o}lder's inequality applies here, giving that $L$ is well-defined. We then need to show the isometry, which requires some technical work. \\
+
+    Surjectivity is far more technical, and we use a result from measure theory in order to prove it. \\
+
+    \begin{theorem}[Radon-Nikodym]
+    \ Let $\Omega \subseteq \mathbb{R}^{n}$ be a bounded measurable set, $\mu$ a finite signed measure defined on the measurable subsets of $\Omega$. Suppose that $\mu$ is absolutely continuous with respect to $\mathrm{leb}$. Then for any $E \in \mathcal{F}$:
+    \begin{align*}
+      \mu(E) = \int_{E} f \, \mathrm{d}x.
+    \end{align*}
+    Further, if $\mu$ is non-negative, so is $f$.
+    \end{theorem}
+    \hphantom{}
+
+    \textbf{Prove this.} \\
+
+    \begin{theorem}[Dual space of $\ell^{p}(\mathbb{R})$]
+    \ Let $1 \le p < \infty$ and $1 < q \le \infty$ be such that $1/p + 1/q = 1$. Then $(\ell^{p})^{*} \cong \ell^{q}$ with isometric isomorphism $L : \ell^{p}(\mathbb{R}) \to (\ell^{q}(\mathbb{R}))^{*}$ such that for $x \in \ell^{q}$, $y \in \ell^{p}$:
+    \begin{align*}
+      (Lx)(y) &= \sum_{j=1}^{\infty} x_{j}y_{j}.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \textbf{Prove this.} \\
+
+      \begin{definition}[Dual operators]
+        \ For $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$ normed spaces over the same field, $T \in \mathcal{B}(X,Y)$, then the dual operator $T' : Y^{*} \to X^{*}$ is defined for $f \in Y^{*}$, $x \in x$ as
+        \begin{align*}
+          (T'f)(x) &:= f(Tx)
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      With this definition, $T' \in \mathcal{B}(Y^{*},X^{*})$, and the statements regarding $\Vert T' \Vert$ are mechanical to demonstrate. \\
+
+      \begin{definition}[Adjoint operators]
+      \ For $X$, $Y$ Hilbert spaces, $A \in \mathcal{B}(X,Y)$, with $y \in Y$, $\langle A(\cdot), y \rangle_{Y} \in X^{*}$. We define the adjoint as the operator $A^{*} \in \mathcal{B}(Y,X)$ such that $\langle Ax, y \rangle_{Y} = \langle x, Ay \rangle_{X}$.
+      \end{definition}
+      \hphantom{}
+
+      Note that this exists and is unique by the Riesz representation theorem. \\
+
+      We have various properties of the adjoint. In particular:
+      \begin{itemize}
+              \item \ $A^{*} = \pi_{X}^{-1}A'\pi_{Y}$.
+              \item \ $\Vert A \Vert = \Vert A^{*} \Vert$.
+              \item \ $A^{**} = A$.
+              \item \ If $A,B \in \mathcal{B}(X,Y)$, $a, b \in \mathbb{C}$, then $(aA+bB)^{*}=\overline{a}A^{*}+\overline{b}B^{*}$.
+              \item \ If $T \in \mathcal{B}(X,Y)$, $S \in \mathcal{B}(Y,Z)$, then $(ST)^{*} = T^{*}S^{*}$.
+      \end{itemize}
+      \hphantom{}
+      Additionally, if $X = Y$, then the identity is invariant under adjoint, and an operator is invertible iff its adjoint is. \\
+
+      Finally, we have that $\ker A = (\mathrm{im} A^{*})^{\perp}$, and $(\ker A)^{\perp} = \overline{\mathrm{im} A^{*}}$. \\
+
+      As the dual space $X^{*}$ of a normed space $X$ is again a normed space, we can consider its dual space $X^{**}$, the second or bidual space of $X$. For this, we have a canonical isometry $i : X \to X^{**}$:
+      \begin{align*}
+        (ix)(f) := f(x).
+      \end{align*}
+      Note that $i$ is in general not an isomorphism, because it is not surjective in many cases. However there are many important cases in which it is, and these are the reflexive spaces. \\
+
+      In particular, we have that $\ell^{p}$ is reflexive for $1 < p < \infty$, as for $q \in (1,\infty)$ such that $1/p+1/q = 1$, $(\ell^{p})^{**} \cong (\ell^{q})^{*} \cong \ell^{p}$. We also have that $L^{p}$ is reflexive with the same pattern. This is dissatisfied for $p \in \{1,\infty\}$ however. \\
+
+      By the Riesz representation theorem, all Hilbert spaces are reflexive. \\
+
+      Nonetheless, we always have that for $X$ a normed space, $X \cong i(X)$, which can be viewed as a dense subspace of its closure in $X^{**}$.
+
+
+
+
+
+
 
 
   }
 
-
-  \column{0.5}
 \end{columns}
 
 \end{document}
