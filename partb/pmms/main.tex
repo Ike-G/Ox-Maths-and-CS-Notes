@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=1800mm, paperheight=2400mm}
+\geometry{paperwidth=2250mm, paperheight=2500mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -115,7 +115,7 @@
 % Title block with title, author, logo, etc.
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
-  \column{0.25}
+  \column{0.2}
   \block{Measurable sets and functions}{
     \begin{definition}[$\sigma$-algebras]
       \ Let $\Omega$ be a set and $\mathcal{A} \subseteq \mathcal{P}(\Omega)$ be a collection of subsets of $\Omega$:
@@ -263,15 +263,18 @@
       \mathbb{E}\big[XY \,|\, \sigma(Y)\big] \overset{\mathrm{a.s.}}{=} Y\mathbb{E}\big[X \,|\, \sigma(Y)\big].
     \end{align*}
     \end{lemma}
-    Ensure for yourself that it's clear why this implies the same holding for $\mathcal{G} \supseteq \sigma(Y)$ instead of $\sigma(Y)$.
+    Ensure for yourself that it's clear why this implies the same holding for $\mathcal{G} \supseteq \sigma(Y)$ instead of $\sigma(Y)$. \\
 
+    \begin{theorem}
+    \ Take $X \in \mathcal{L}^{1}(\Omega, \mathcal{F}, \mathbb{P})$, $\{\mathcal{F}_{i} : i \in I\}$ a family of $\sigma$-algebras in $\mathcal{F}$. Then $\big\{\mathbb{E}\big[X \,|\, \mathcal{F}_{i}\big] : i \in I\big\}$ is uniformly integrable.
+    \end{theorem}
+    \hphantom{}
 
-
-
+    Using conditional expectation, we can introduce an inner product to $\mathcal{L}^{2}$, $\langle X, Y \rangle := \mathbb{E}[XY]$ (`introduce' is probably slightly strong, this inner product already exists for other purposes in functional analysis -- although we usually use the Lebesgue measure). This gives us that $\mathcal{L}^{2}$ is a Hilbert space, and all of the corresponding results.
   }
 
 
-  \column{0.25}
+  \column{0.2}
   \block{Measures on $\mathbb{R}$}{
     \begin{definition}
       \ A measure space is a triple $(\Omega, \mathcal{F}, \mu)$ such that $\Omega$ is a set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$, and $\mu : \mathcal{F} \to [0,\infty]$ is countably additive ($\mu$ is then a \emph{measure} on $(\Omega, \mathcal{F})$).
@@ -448,7 +451,7 @@
       By their nature, the BC lemmas are only informative in relation to almost sure events. While this may seem incredibly limited, by Kolmogorov's 0-1 Law, it turns out that many events of interest are in fact almost sure events.
     }
   }
-  \column{0.25}
+  \column{0.2}
   \block{Integration}{
     As already covered in Part A Integration, we define integration as normal:
 
@@ -582,13 +585,15 @@
 
       This means that providing $\mathrm{leb}(A) = 0$ implies that $\nu(A) = 0$, we can construct $\nu$ in this way. \\
 
-      Using this theorem, we can define for $A, B \in \mathcal{F}$ the conditional distribution $\mathbb{P}(A \,|\, B)$, provided $\mathbb{P}(B) > 0$. If $\mathbb{P}(A) = 0$, then $\displaystyle \frac{\mathbb{P}(A \cap B)}{\mathbb{P(B)}} = 0$, so there is some $f_{B} : \Omega \to [0,\infty]$ measurable such that
+      Using this theorem, we can define for $A, B \in \mathcal{F}$ the conditional distribution $\mathbb{P}(A \,|\, B)$, provided $\mathbb{P}(B) > 0$. If $\mathbb{P}(A) = 0$, then $\displaystyle \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(B)} = 0$, so there is some $f_{B} : \Omega \to [0,\infty]$ measurable such that
       \begin{align*}
         \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(B)} &= \int_{A} f_{B}(\omega) \, \mathrm{d}\mathbb{P}(\omega).
       \end{align*}
     }
-    \hphantom{}
+}
 
+  \column{0.2}
+  \block{Convergence}{
     We now consider modes of convergence of random variables using our results in integration. \\
 
     \begin{definition}[$\mathcal{L}^{p}$ spaces]
@@ -600,7 +605,9 @@
     \end{definition}
     \hphantom{}
 
-    Note that for $0 \le p < 1$, $\mathcal{L}^{p}$ is not a normed space.
+    In these notes I'll refer almost exclusively to $\mathcal{L}^{p}$, although it's worth noting that there's a nuance here: the well-behaved space we generally want to refer to for useful results is not $\mathcal{L}^{p}$, but rather $L^{p} := \mathcal{L}^{p} / \mathcal{N}$, where $\mathcal{N} := \{X \in \mathcal{L}^{0} : \mathbb{E}\big[|X|\big] = 0\}$. At the same time, in this course it's not particularly desirable to be working with $X+\mathcal{N}$ constantly (not least because there are some instances where a property being `just' almost sure \emph{is} relevant), and therefore we principally use $\mathcal{L}^{p}$. \\
+
+    An exception to the comments above comes for $0 \le p < 1$. $L^{p}$ for these values is almost entirely useless, as it is not a normed space. $\mathcal{L}^{p}$ \emph{does} have some use however, in particular for $p = 0$, in that it allows us to specify the set of measurable functions. \\
 
     \begin{definition}
     \ For a sequence $(X_{n})$ of random variables over $(\Omega, \mathcal{F}, \mathbb{P})$, we say that $X_{n}$ converges to $X$:
@@ -633,6 +640,9 @@
     \end{definition}
     \hphantom{}
 
+    Of these, notion (v) of convergence in distribution is the odd one out, as it is independent of any particular instance of a random variable with the same distribution. This is a strictly weaker property than convergence in probability. \\
+
+    Convergence in $\mathcal{L}^{p}$ is an identical notion to that in functional analysis, and (in a mathematical sense) leans very much into the measure-based notion of random variables. It is stronger both than weak convergence in $\mathcal{L}^{1}$ and convergence in probability. \\
 
     \begin{theorem}
       \ For a sequence $(X_{n})$ of random variables,
@@ -643,6 +653,7 @@
     \end{theorem}
     \hphantom{}
 
+    \innerblock{Useful results}{
     \begin{lemma}[Markov's inequality]
     \ Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space, $X$ a non-negative random variable. Then for $\lambda > 0$,
     \begin{align*}
@@ -678,6 +689,7 @@
       \end{align*}
     \end{theorem}
     \hphantom{}
+    }
 
     For considering the $\mathcal{L}^{p}$ spaces, we define $\Vert \cdot \Vert_{p} := \left(\mathbb{E}[|X|^{p}]\right)^{1/p}$. We can note immediately that for $0 \le p \le q$, $\mathcal{L}^{q} \subseteq \mathcal{L}^{p}$. \\
 
@@ -685,10 +697,14 @@
     \begin{align*}
       x \mathbb{P}(X \ge x) \le \mathbb{E}[Y \chi_{X \ge x}],
     \end{align*}
-    then $\Vert X \Vert_{p} \le q \Vert Y \Vert_{p}$.
+    then $\Vert X \Vert_{p} \le q \Vert Y \Vert_{p}$. \\
+
+    In $\mathcal{L}^{2}$, we are able to introduce some geometry to the space, defining an inner product $\langle X, Y \rangle := \mathbb{E}[XY]$. This allows us to consider $\mathcal{L}^{2}$ as a Hilbert space (modulus random variables equal to $0$ almost everywhere). Consequently we get all of the results that we normally have for Hilbert spaces within $\mathcal{L}^{2}$.
   }
-  \column{0.25}
+
   \block{Uniform Integrability}{
+    We've now introduced the notions of convergence in $\mathcal{L}^{1}$, and seen that it implies convergence in probability. We'd quite like to go the other direction however, and find a sufficient condition for which the two are the same. \\
+
     \begin{definition}[Uniform integrability]
     \ A collection $\mathcal{C}$ of random variables is called uniformly integrable (UI) if
     \begin{align*}
@@ -696,6 +712,210 @@
     \end{align*}
     \end{definition}
     \hphantom{}
+
+    Importantly, this is a property of collections, rather than individual random variables. The larger our collection is, the less likely it is to hold (and conversely, if $\mathcal{C}$ is UI, then $\mathcal{D} \subseteq \mathcal{C}$ is also UI). We can see immediately therefore that this is a property that can only hold for collections of random variables in $\mathcal{L}^{1}$, by considering the singleton sets which can be UI. \\
+
+    If we have a $Y \in \mathcal{L}^{1}$ such that for $X \in \mathcal{C}$, $|X| \le Y$, then $\mathcal{C}$ is uniformly integrable. This is one of the most common methods for demonstrating a collection is UI. \\
+
+    Another useful characterisation is found by reframing $|X|\chi_{|X| \ge N}$. From the below fact, we can see that we can replace it with $(|X|-N)^{+}$ in the definition of uniform integrability without effect:
+    \begin{align*}
+      0 \le (|X|-N)^{+} \le |X|\chi_{|X| \ge N} \le 2(|X|-N/2)^{+}.
+    \end{align*}
+    A common formulation that allows us to avoid having to determine the sets on which $|X| \ge N$ is given below:
+    \begin{lemma}
+      \ Let $\mathcal{C}$ be a family of random variables. Then $\mathcal{C}$ is UI iff $\displaystyle \sup_{X \in \mathcal{C}} \mathbb{E}\big[|X|\big] < \infty$ and
+      \begin{align*}
+        \sup \left\{\mathbb{E}\big[|X|\chi_{A}\big] : X \in \mathcal{C},\,A \in \mathcal{F},\, \mathbb{P}(A) \le \delta\right\} \to 0
+      \end{align*}
+      as $\delta \to 0$.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{theorem}[Vitali's convergence theorem]
+    \ Take $(X_{n})$ a sequence of integrable random variables which converge in probability to a random variable $X$. The following are equivalent:
+    \begin{enumerate}[label=\roman*.]
+            \item $\{X_{n} : n \ge 1\}$ is uniformly integrable.
+            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}-X|\big] \to 0$ as $n \to \infty$.
+            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}|\big] \to \mathbb{E}\big[|X|\big]$ as $n \to \infty$.
+    \end{enumerate}
+    \end{theorem}
+    \hphantom{}
+
+    It's worth noting that (ii) is the definition of convergence in $\mathcal{L}^{1}$, from which we get (iii) just via the reverse triangle inequality. The difficult part of this proof is demonstrating that (iii) entails (i) which requires that characterisation of UI in terms of $(|X|-N)^{+}$ in conjunction with convergence in probability. \\
+
+    By a non-examinable result (Dunford-Pettis), a collection is UI iff its closure is compact in $\sigma(L^{1},L^{\infty})$, which is the weak topology on $L^{1}$.
+  }
+
+  \column{0.2}
+  \block{Filtrations}{
+    \begin{definition}[Filtrations]
+    \ For $(\Omega, \mathcal{F}, \mathbb{P})$ a probability space, a filtration $(\mathcal{F}_{n})$ is an sequence of $\sigma$-algebras ($\mathcal{F}_{n} \subseteq \mathcal{F}_{n+1}$ for $n \ge 1$). We then call $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Adapted stochastic process]
+    \ Take $(X_{n})$ a sequence of random variables, $(\mathcal{F}_{n})$ a filtration. If for $n \ge 1$, $X_{n}$ is $\mathcal{F}_{n}$ measurable, then $(X_{n})$ is said to be adapted to $(\mathcal{F}_{n})$.
+    \end{definition}
+    \hphantom{}
+
+    Note that for a stochastic process $(X_{n})$, we get a natural filtration
+    \begin{align*}
+      \mathcal{F}_{n} := \sigma\left(\{X_{k} : k \le n\}\right).
+    \end{align*}
+    This is the smallest filtration possible. \\
+
+    It's worth noting that with $\mathcal{F}_{\infty} = \bigcup_{n \ge 1} \mathcal{F}_{n}$, we don't necessarily have that $\mathcal{F}_{\infty} = \mathcal{F}$. Nonetheless, once we're working primarily within the filtered space, this shouldn't make a significant amount of difference, because the remainder of events will be inaccessible to any adapted process. \\
+
+    \begin{definition}[Stopping time]
+    \ Take $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space. A random variable $\tau : \Omega \to \mathbb{N} \cup \{\infty\}$ is a stopping time with respect to $(\mathcal{F}_{n})$ if for $n \ge 1$, $\tau^{-1}(\{n\}) \in \mathcal{F}_{n}$.
+    \end{definition}
+    \hphantom{}
+
+    Immediate examples of stopping times can be given. Any constant is a stopping time, as are the maxima or minima of any two stopping times. Further, the first hitting time for an adapted stochastic process on any measurable set is a stopping time. \\
+
+    \begin{definition}
+    \ Let $\tau$ be a stopping time on $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$. The $\sigma$-algebra of information at time $\tau$ is
+    \begin{align*}
+      \mathcal{F}_{\tau} = \{A \in \mathcal{F}_{\infty} : \text{for } n \ge 1,\,A \cap \{\tau = n\} \in \mathcal{F}_{n}\}.
+    \end{align*}
+    \end{definition}
+
+    This definition isn't entirely straightforward to understand, but the key aspect is this: if we have the value of $\tau$ (say we know that $\omega \in \{\tau = n\}$), then we shouldn't be able to infer from $\omega \in A \in \mathcal{F}_{\tau}$ that $\omega \in B \in \mathcal{F}_{\infty} \setminus \mathcal{F}_{n}$. The above definition should then be clear as containing the events which are possible to have observed by time $\tau$ (`time' being defined in accordance to steps in the filtration).\\
+
+    We can then get our intuition that if for stopping times $\tau$ and $\rho$, $\tau \le \rho$, then $\mathcal{F}_{\tau} \subseteq \mathcal{F}_{\rho}$ (we get more information if we have longer to discover it). \\
+
+    Note now that for $(X_{n})$ an adapted process, $\tau$ a stopping time, $X^{\tau} := (X_{\min(n,\tau)})$ is a `stopped process', and is adapted to both the filtration $(\mathcal{F}_{\min(n,\tau)})$ and hence $(\mathcal{F}_n)$. \\
+
+    The filtration $(\mathcal{F}_{\min(n,\tau)})$ comes up often, and can be conceived essentially as the information given that you stop observing things (`exit the room') at time $\tau$, whenever that happens to be. This is what we mean by $\tau$ being a \emph{stopping} time, in that it stops the observations continuing.
+  }
+  \block{Martingales}{
+    We often consider notions of random walks in probability theory. The most interesting of these are random walks where the movement at each step has expectation $0$, and this is a concept generalised by the notion of martingales. In this course we cover only the discrete case of martingales, although there is a rich theory concerning continuous martingales. \\
+
+    \begin{definition}[Martingales]
+      \ Let $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ be a filtered probability space. An integrable, $(\mathcal{F}_{n})$-adapted stochastic process $(X_{n})$ is called
+      \begin{enumerate}[label=\roman*.]
+      \item a martingale if for $n \ge 0$, $\mathbb{E}\big[X_{n+1} \,|\, \mathcal{F}_{n}\big] = X_{n}$ a.s.;
+      \item a submartingale if for $n \ge 0$, $\mathbb{E}\big[X_{n+1} \,|\, \mathcal{F}_{n}\big] \ge X_{n}$ a.s.; and
+      \item a supermartingale if for $n \ge 0$, $\mathbb{E}\big[X_{n+1} \,|\, \mathcal{F}_{n}\big] \le X_{n}$ a.s..
+      \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    We can note immediately that the difference between a super- and submartingale is almost purely aesthetic -- negate one and you get the other. Additionally, we can see that a sequence of random variables is a martingale iff it is both a super- and submartingale. Consequently, statements about submartingales are preferable for their generality to statements about martingales. \\
+
+    Under this definition, the key property to observe for a submartingale $(X_{n})$ is this: for $m,n \ge 0$,
+    \begin{align*}
+      \mathbb{E}\big[X_{n} \,|\, \mathcal{F}_{m}\big] \ge X_{\min(m,n)},
+    \end{align*}
+    and the analogous relation follows for martingales and supermartingales. What this says is that a martingale is a sequence of random variables for which we expect no change on average. Meanwhile, a submartingale is a sequence which we expect to increase, and a supermartingale one we expect to decrease. To reflect this, we often refer to sequences $(Y_{n})$ satisfying $\mathbb{E}\big[Y_{n+1} \,|\, \mathcal{F}_{n}\big] = 0$ as `martingale difference sequences'. \\
+
+    If a submartingale is adapted to a smaller filtration, then it is also a submartingale with respect to that filtration. This is because the only information a submartingale is using from the filtration is that in the natural filtration, and consequently the extra information is unnecessary. Note that this doesn't go the other direction though -- it's straightforward to construct a large filtration (e.g. the constant filtration $(\mathcal{F})$) such that $(X_{n})$ is not a submartingale, despite potentially being a martingale in a smaller filtration. \\
+
+    A very general example of a martingale can be given just as a sum of independent random variables $(Y_{n})$ each with mean $0$, with respect to the natural filtration. Another cute example of a martingale involves taking an integrable random variable $X$ and an arbitrary filtration, then defining $X_{n} := \mathbb{E}\big[X \,|\, \mathcal{F}_{n}\big]$. \\
+
+    \begin{lemma}
+    \ Let $(X_{n})$ be a martingale with respect to $(\mathcal{F}_{n})$, and $f : \mathbb{R} \to \mathbb{R}$ convex. Then provided $(f(X_{n}))$ is a sequence of integrable random variables, then it is a submartingale.
+    \end{lemma}
+    \hphantom{}
+
+    See this as an application of Jensen's inequality, and note that this has some very wide-reaching applications. \\
+
+    \begin{definition}[Predictable process]
+    \ A sequence $(V_{n})$ of random variables is predictable with respect to $(\mathcal{F}_{n})$ if $\sigma(V_{n}) \subseteq \mathcal{F}_{n-1}$ ($V_{n}$ is $\mathcal{F}_{n-1}$-measurable) for $n \ge 1$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ For $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space, $(Y_{n})$ a martingale, $(V_{n})$ a predictable process, both with respect to $(\mathcal{F}_{n})$, then defining for $n \ge 0$
+    \begin{align*}
+      X_{n} &= \sum_{k=1}^{n} V_{k}(Y_{k}-Y_{k-1}),
+    \end{align*}
+    if each $X_{n}$ is integrable then $(X_{n})$ is a martingale with respect to $(\mathcal{F}_{n})$.
+    \end{theorem}
+    \hphantom{}
+
+    Note that the sequence $(X_{n})$ is a martingale transform, sometimes denoted $((V \circ Y)_{n})$. \\
+
+    The definition of a submartingale prompts some questions about how exactly the sequence varies from being a martingale, and how exactly we might correct it back to a martingale. \\
+
+    \begin{theorem}[Doob's Decomposition theorem]
+    \ Let $(\Omega, \mathcal{F}, (\mathcal{F})_{n},\mathbb{P})$ be a filtered probability space, $(X_{n})$ an integrable adapted process.
+    \begin{enumerate}[label=\roman*.]
+            \item $(X_{n})$ has a Doob decomposition
+            \begin{align*}
+              X_{n} = X_{0} + M_{n} + A_{n}
+            \end{align*}
+            where $(M_{n})$ is a martingale, $(A_{n})$ is predictable with respect to $(\mathbb{F}_{n})$, and $M_{0} = A_{0} = 0$.
+            \item For any $(\widetilde{M}_{n})$ a martingale, $(\widetilde{A}_{n})$ predictable such that $X_{n} = X_{0} + \widetilde{M}_{n} + \widetilde{A}_{n}$, $M_{n} = \widetilde{M}_{n}$ and $A_{n} = \widetilde{A}_{n}$ for all $n \ge 0$ almost surely.
+            \item $(X_{n})$ is a sub(super)martingale iff $(A_{n})$ is non-decreasing (non-increasing) almost surely.
+    \end{enumerate}
+    \end{theorem}
+    \hphantom{}
+
+    An important consequence of this is known as the angle bracket process. For $(M_{n})$ a martingale of random variables in $\mathcal{L}^{2}$, we have that $(M_{n}^{2})$ is a submartingale. We write the Doob decomposition as
+    \begin{align*}
+      M_{n}^{2} = M_{0}^{2}+N_{n}+\langle M \rangle_{n}
+    \end{align*}
+    where $(N_{n})$ is a martingale, $(\langle M \rangle_{n})$ an increasing predictable process. Using predictability, we see that
+    \begin{align*}
+      \langle M \rangle_{n+1} - \langle M \rangle_{n} = \mathbb{E}\big[M_{n+1}^{2}-M_{n}^{2}\,|\, \mathcal{F}_{n}\big] = \mathbb{E}\big[(M_{n+1}-M_{n})^{2}\,|\,\mathcal{F}_{n}\big].
+    \end{align*}
+    This is the conditional variance of $(M_{n+1}-M_{n})$. \\
+
+    \begin{theorem}
+    \ Let $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ be a filtered probability space, $(X_{n})$ a martingale, and $\tau$ a finite stopping time. Then $(X_{\min(n,\tau)})$ is a martingale with respect to $(\mathcal{F}_{n})$ and hence $(\mathcal{F}_{\min(n,\tau)})$.
+    \end{theorem}
+    \hphantom{}
+
+    This can be proven by noting that $(\chi_{n \le \tau})$ is predictable, and thus we can write $(X_{\min(n,\tau)})$ in terms of both this and $(X_{n})$. \\
+
+    \begin{theorem}[Doob's Optional Sampling theorem]
+      \ Let $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ be a filtered probability space, $(X_{n})$ a martingale, and $\tau,\,\rho$ two finite stopping times, $\tau \le \rho$. Then
+      \begin{align*}
+        \mathbb{E}\big[X_{\rho} \,|\, \mathcal{F}_{\tau}\big] \overset{\mathrm{a.s.}}{=} X_{\tau},
+      \end{align*}
+      and in particular, $\mathbb{E}\big[X_{\rho}\big] = \mathbb{E}\big[X_{\tau}\big] = \mathbb{E}\big[X_{0}\big]$. \\
+
+      Similarly, if $(X_{n})$ is a submartingale, then $\mathbb{E}\big[X_{\rho}\,|\, \mathcal{F}_{\tau}\big] \ge X_{\tau}$ a.s..
+    \end{theorem}
+    \hphantom{}
+
+    We can prove this in two steps. Firstly, prove the case for $\rho$ constant, and then consider the martingale $(X_{\min(n,\rho)}-X_{\min(n,\tau)})$ stopped at $\tau$. \\
+
+    This theorem is quite an important one, as we essentially just expand the definition of a martingale (and, via decomposition, super- and submartingales). The intuition should be that if $(X_{n})$ is a process stopping at $\rho$, but we only observe it up to $\tau$, the properties of the martingale should allow us to calculate the expected value of $X_{\rho}$ as $X_{\tau}$. Importantly, we also generalise that a martingale's expectation is constant, even if stopping at a random time (as long as the time is bounded). \\
+
+    We can also get a generalisation beyond just bounded stopping times:
+    \begin{corollary}
+      \ Let $(X_{n})$ be a martingale, $\tau$ an a.s. finite stopping time. If either $\{X_{n} : n \ge 0\}$ is UI, or $\mathbb{E}\big[\tau\big] < \infty$ and the sequence $\displaystyle        \left(\mathbb{E}\big[|X_{n+1}-X_{n}| \,\big|\, \mathcal{F}_{n}\big]\right)$ is bounded, then
+      \begin{align*}
+        \mathbb{E}\big[X_{\tau} \chi_{\tau < \infty}\big] = \mathbb{E}\big[X_{0}\big].
+      \end{align*}
+    \end{corollary}
+
+    We would like to keep characterising martingales further -- in particular wishing to bound them.
+    \begin{theorem}[Doob's maximal inequality]
+      \ Let $(X_{n})$ be a submartingale. Then, for $\lambda > 0$,
+      \begin{align*}
+        Y^{\lambda}_{n} := (X_{n}-\lambda)\chi_{\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}}
+      \end{align*}
+      is a submartingale, and for $n \ge 1$,
+      \begin{align*}
+        \lambda \mathbb{P}\left(\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}\right) \le \mathbb{E}\big[X_{n} \chi_{\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}}\big] \le \mathbb{E}\big[|X_{n}|\big].
+      \end{align*}
+    \end{theorem}
+
+    Essentially, we expect $(X_{n})$ to grow, but only so quickly. This should (I think?) follow from considering the hitting time of $\rightopen{\lambda}{\infty}$. We then get that if $(X_{n})$ is a martingale in $\mathcal{L}^{p}$,
+    \begin{align*}
+      \mathbb{P}\left(\bigcup_{k = 1}^{n} \{|X_{k}| \ge \lambda \}\right) \le \frac{\mathbb{E}\big[|X_{n}|^{p}\big]}{\lambda^{p}}.
+    \end{align*}
+    \begin{theorem}[Doob's $\mathcal{L}^{p}$ inequality]
+      \ Let $(X_{n})$ be a non-negative submartingale in $\mathcal{L}^{p}$ for $p \ge 1$. Then $\displaystyle \max_{k \le n} X_{k} \in \mathcal{L}^{p}$ and
+      \begin{align*}
+        \mathbb{E}\big[X^{p}_{n}\big] \le \mathbb{E}\left[\max_{k \le n} X_{k}^{p}\right] \le \left(\frac{p}{p-1}\right)^{p}\mathbb{E}\big[X^{p}_{n}\big].
+      \end{align*}
+    \end{theorem}
+    \hphantom{}
+
   }
 \end{columns}
 
