@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=2250mm, paperheight=2500mm}
+\geometry{paperwidth=2550mm, paperheight=2500mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -115,7 +115,7 @@
 % Title block with title, author, logo, etc.
 \maketitle[titletoblockverticalspace=0.4cm]
 \begin{columns}
-  \column{0.2}
+  \column{0.1667}
   \block{Measurable sets and functions}{
     \begin{definition}[$\sigma$-algebras]
       \ Let $\Omega$ be a set and $\mathcal{A} \subseteq \mathcal{P}(\Omega)$ be a collection of subsets of $\Omega$:
@@ -274,7 +274,7 @@
   }
 
 
-  \column{0.2}
+  \column{0.1667}
   \block{Measures on $\mathbb{R}$}{
     \begin{definition}
       \ A measure space is a triple $(\Omega, \mathcal{F}, \mu)$ such that $\Omega$ is a set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$, and $\mu : \mathcal{F} \to [0,\infty]$ is countably additive ($\mu$ is then a \emph{measure} on $(\Omega, \mathcal{F})$).
@@ -451,7 +451,7 @@
       By their nature, the BC lemmas are only informative in relation to almost sure events. While this may seem incredibly limited, by Kolmogorov's 0-1 Law, it turns out that many events of interest are in fact almost sure events.
     }
   }
-  \column{0.2}
+  \column{0.1667}
   \block{Integration}{
     As already covered in Part A Integration, we define integration as normal:
 
@@ -591,8 +591,92 @@
       \end{align*}
     }
 }
+  \block{Uniform Integrability}{
+    We've now introduced the notions of convergence in $\mathcal{L}^{1}$, and seen that it implies convergence in probability. We'd quite like to go the other direction however, and find a sufficient condition for which the two are the same. \\
 
-  \column{0.2}
+    \begin{definition}[Uniform integrability]
+    \ A collection $\mathcal{C}$ of random variables is called uniformly integrable (UI) if
+    \begin{align*}
+      \lim_{N \to \infty} \sup_{X \in \mathcal{C}} \mathbb{E}[|X| \chi_{|X|>N}] = 0
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Importantly, this is a property of collections, rather than individual random variables. The larger our collection is, the less likely it is to hold (and conversely, if $\mathcal{C}$ is UI, then $\mathcal{D} \subseteq \mathcal{C}$ is also UI). We can see immediately therefore that this is a property that can only hold for collections of random variables in $\mathcal{L}^{1}$, by considering the singleton sets which can be UI. \\
+
+    If we have a $Y \in \mathcal{L}^{1}$ such that for $X \in \mathcal{C}$, $|X| \le Y$, then $\mathcal{C}$ is uniformly integrable. This is one of the most common methods for demonstrating a collection is UI. \\
+
+    Another useful characterisation is found by reframing $|X|\chi_{|X| \ge N}$. From the below fact, we can see that we can replace it with $(|X|-N)^{+}$ in the definition of uniform integrability without effect:
+    \begin{align*}
+      0 \le (|X|-N)^{+} \le |X|\chi_{|X| \ge N} \le 2(|X|-N/2)^{+}.
+    \end{align*}
+    A common formulation that allows us to avoid having to determine the sets on which $|X| \ge N$ is given below:
+    \begin{lemma}
+      \ Let $\mathcal{C}$ be a family of random variables. Then $\mathcal{C}$ is UI iff $\displaystyle \sup_{X \in \mathcal{C}} \mathbb{E}\big[|X|\big] < \infty$ and
+      \begin{align*}
+        \sup \left\{\mathbb{E}\big[|X|\chi_{A}\big] : X \in \mathcal{C},\,A \in \mathcal{F},\, \mathbb{P}(A) \le \delta\right\} \to 0
+      \end{align*}
+      as $\delta \to 0$.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{theorem}[Vitali's convergence theorem]
+    \ Take $(X_{n})$ a sequence of integrable random variables which converge in probability to a random variable $X$. The following are equivalent:
+    \begin{enumerate}[label=\roman*.]
+            \item $\{X_{n} : n \ge 1\}$ is uniformly integrable.
+            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}-X|\big] \to 0$ as $n \to \infty$.
+            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}|\big] \to \mathbb{E}\big[|X|\big]$ as $n \to \infty$.
+    \end{enumerate}
+    \end{theorem}
+    \hphantom{}
+
+    It's worth noting that (ii) is the definition of convergence in $\mathcal{L}^{1}$, from which we get (iii) just via the reverse triangle inequality. The difficult part of this proof is demonstrating that (iii) entails (i) which requires that characterisation of UI in terms of $(|X|-N)^{+}$ in conjunction with convergence in probability. \\
+
+    By a non-examinable result (Dunford-Pettis), a collection is UI iff its closure is compact in $\sigma(L^{1},L^{\infty})$, which is the weak topology on $L^{1}$.
+  }
+
+  \column{0.1667}
+  \block{Filtrations}{
+    \begin{definition}[Filtrations]
+    \ For $(\Omega, \mathcal{F}, \mathbb{P})$ a probability space, a filtration $(\mathcal{F}_{n})$ is an sequence of $\sigma$-algebras ($\mathcal{F}_{n} \subseteq \mathcal{F}_{n+1}$ for $n \ge 1$). We then call $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Adapted stochastic process]
+    \ Take $(X_{n})$ a sequence of random variables, $(\mathcal{F}_{n})$ a filtration. If for $n \ge 1$, $X_{n}$ is $\mathcal{F}_{n}$ measurable, then $(X_{n})$ is said to be adapted to $(\mathcal{F}_{n})$.
+    \end{definition}
+    \hphantom{}
+
+    Note that for a stochastic process $(X_{n})$, we get a natural filtration
+    \begin{align*}
+      \mathcal{F}_{n} := \sigma\left(\{X_{k} : k \le n\}\right).
+    \end{align*}
+    This is the smallest filtration possible. \\
+
+    It's worth noting that with $\mathcal{F}_{\infty} = \bigcup_{n \ge 1} \mathcal{F}_{n}$, we don't necessarily have that $\mathcal{F}_{\infty} = \mathcal{F}$. Nonetheless, once we're working primarily within the filtered space, this shouldn't make a significant amount of difference, because the remainder of events will be inaccessible to any adapted process. \\
+
+    \begin{definition}[Stopping time]
+    \ Take $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space. A random variable $\tau : \Omega \to \mathbb{N} \cup \{\infty\}$ is a stopping time with respect to $(\mathcal{F}_{n})$ if for $n \ge 1$, $\tau^{-1}(\{n\}) \in \mathcal{F}_{n}$.
+    \end{definition}
+    \hphantom{}
+
+    Immediate examples of stopping times can be given. Any constant is a stopping time, as are the maxima or minima of any two stopping times. Further, the first hitting time for an adapted stochastic process on any measurable set is a stopping time. \\
+
+    \begin{definition}
+    \ Let $\tau$ be a stopping time on $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$. The $\sigma$-algebra of information at time $\tau$ is
+    \begin{align*}
+      \mathcal{F}_{\tau} = \{A \in \mathcal{F}_{\infty} : \text{for } n \ge 1,\,A \cap \{\tau = n\} \in \mathcal{F}_{n}\}.
+    \end{align*}
+    \end{definition}
+
+    This definition isn't entirely straightforward to understand, but the key aspect is this: if we have the value of $\tau$ (say we know that $\omega \in \{\tau = n\}$), then we shouldn't be able to infer from $\omega \in A \in \mathcal{F}_{\tau}$ that $\omega \in B \in \mathcal{F}_{\infty} \setminus \mathcal{F}_{n}$. The above definition should then be clear as containing the events which are possible to have observed by time $\tau$ (`time' being defined in accordance to steps in the filtration).\\
+
+    We can then get our intuition that if for stopping times $\tau$ and $\rho$, $\tau \le \rho$, then $\mathcal{F}_{\tau} \subseteq \mathcal{F}_{\rho}$ (we get more information if we have longer to discover it). \\
+
+    Note now that for $(X_{n})$ an adapted process, $\tau$ a stopping time, $X^{\tau} := (X_{\min(n,\tau)})$ is a `stopped process', and is adapted to both the filtration $(\mathcal{F}_{\min(n,\tau)})$ and hence $(\mathcal{F}_n)$. \\
+
+    The filtration $(\mathcal{F}_{\min(n,\tau)})$ comes up often, and can be conceived essentially as the information given that you stop observing things (`exit the room') at time $\tau$, whenever that happens to be. This is what we mean by $\tau$ being a \emph{stopping} time, in that it stops the observations continuing.
+  }
   \block{Convergence}{
     We now consider modes of convergence of random variables using our results in integration. \\
 
@@ -702,92 +786,10 @@
     In $\mathcal{L}^{2}$, we are able to introduce some geometry to the space, defining an inner product $\langle X, Y \rangle := \mathbb{E}[XY]$. This allows us to consider $\mathcal{L}^{2}$ as a Hilbert space (modulus random variables equal to $0$ almost everywhere). Consequently we get all of the results that we normally have for Hilbert spaces within $\mathcal{L}^{2}$.
   }
 
-  \block{Uniform Integrability}{
-    We've now introduced the notions of convergence in $\mathcal{L}^{1}$, and seen that it implies convergence in probability. We'd quite like to go the other direction however, and find a sufficient condition for which the two are the same. \\
 
-    \begin{definition}[Uniform integrability]
-    \ A collection $\mathcal{C}$ of random variables is called uniformly integrable (UI) if
-    \begin{align*}
-      \lim_{N \to \infty} \sup_{X \in \mathcal{C}} \mathbb{E}[|X| \chi_{|X|>N}] = 0
-    \end{align*}
-    \end{definition}
-    \hphantom{}
 
-    Importantly, this is a property of collections, rather than individual random variables. The larger our collection is, the less likely it is to hold (and conversely, if $\mathcal{C}$ is UI, then $\mathcal{D} \subseteq \mathcal{C}$ is also UI). We can see immediately therefore that this is a property that can only hold for collections of random variables in $\mathcal{L}^{1}$, by considering the singleton sets which can be UI. \\
+  \column{0.1667}
 
-    If we have a $Y \in \mathcal{L}^{1}$ such that for $X \in \mathcal{C}$, $|X| \le Y$, then $\mathcal{C}$ is uniformly integrable. This is one of the most common methods for demonstrating a collection is UI. \\
-
-    Another useful characterisation is found by reframing $|X|\chi_{|X| \ge N}$. From the below fact, we can see that we can replace it with $(|X|-N)^{+}$ in the definition of uniform integrability without effect:
-    \begin{align*}
-      0 \le (|X|-N)^{+} \le |X|\chi_{|X| \ge N} \le 2(|X|-N/2)^{+}.
-    \end{align*}
-    A common formulation that allows us to avoid having to determine the sets on which $|X| \ge N$ is given below:
-    \begin{lemma}
-      \ Let $\mathcal{C}$ be a family of random variables. Then $\mathcal{C}$ is UI iff $\displaystyle \sup_{X \in \mathcal{C}} \mathbb{E}\big[|X|\big] < \infty$ and
-      \begin{align*}
-        \sup \left\{\mathbb{E}\big[|X|\chi_{A}\big] : X \in \mathcal{C},\,A \in \mathcal{F},\, \mathbb{P}(A) \le \delta\right\} \to 0
-      \end{align*}
-      as $\delta \to 0$.
-    \end{lemma}
-    \hphantom{}
-
-    \begin{theorem}[Vitali's convergence theorem]
-    \ Take $(X_{n})$ a sequence of integrable random variables which converge in probability to a random variable $X$. The following are equivalent:
-    \begin{enumerate}[label=\roman*.]
-            \item $\{X_{n} : n \ge 1\}$ is uniformly integrable.
-            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}-X|\big] \to 0$ as $n \to \infty$.
-            \item $X \in \mathcal{L}^{1}$ and $\mathbb{E}\big[|X_{n}|\big] \to \mathbb{E}\big[|X|\big]$ as $n \to \infty$.
-    \end{enumerate}
-    \end{theorem}
-    \hphantom{}
-
-    It's worth noting that (ii) is the definition of convergence in $\mathcal{L}^{1}$, from which we get (iii) just via the reverse triangle inequality. The difficult part of this proof is demonstrating that (iii) entails (i) which requires that characterisation of UI in terms of $(|X|-N)^{+}$ in conjunction with convergence in probability. \\
-
-    By a non-examinable result (Dunford-Pettis), a collection is UI iff its closure is compact in $\sigma(L^{1},L^{\infty})$, which is the weak topology on $L^{1}$.
-  }
-
-  \column{0.2}
-  \block{Filtrations}{
-    \begin{definition}[Filtrations]
-    \ For $(\Omega, \mathcal{F}, \mathbb{P})$ a probability space, a filtration $(\mathcal{F}_{n})$ is an sequence of $\sigma$-algebras ($\mathcal{F}_{n} \subseteq \mathcal{F}_{n+1}$ for $n \ge 1$). We then call $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space.
-    \end{definition}
-    \hphantom{}
-
-    \begin{definition}[Adapted stochastic process]
-    \ Take $(X_{n})$ a sequence of random variables, $(\mathcal{F}_{n})$ a filtration. If for $n \ge 1$, $X_{n}$ is $\mathcal{F}_{n}$ measurable, then $(X_{n})$ is said to be adapted to $(\mathcal{F}_{n})$.
-    \end{definition}
-    \hphantom{}
-
-    Note that for a stochastic process $(X_{n})$, we get a natural filtration
-    \begin{align*}
-      \mathcal{F}_{n} := \sigma\left(\{X_{k} : k \le n\}\right).
-    \end{align*}
-    This is the smallest filtration possible. \\
-
-    It's worth noting that with $\mathcal{F}_{\infty} = \bigcup_{n \ge 1} \mathcal{F}_{n}$, we don't necessarily have that $\mathcal{F}_{\infty} = \mathcal{F}$. Nonetheless, once we're working primarily within the filtered space, this shouldn't make a significant amount of difference, because the remainder of events will be inaccessible to any adapted process. \\
-
-    \begin{definition}[Stopping time]
-    \ Take $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$ a filtered probability space. A random variable $\tau : \Omega \to \mathbb{N} \cup \{\infty\}$ is a stopping time with respect to $(\mathcal{F}_{n})$ if for $n \ge 1$, $\tau^{-1}(\{n\}) \in \mathcal{F}_{n}$.
-    \end{definition}
-    \hphantom{}
-
-    Immediate examples of stopping times can be given. Any constant is a stopping time, as are the maxima or minima of any two stopping times. Further, the first hitting time for an adapted stochastic process on any measurable set is a stopping time. \\
-
-    \begin{definition}
-    \ Let $\tau$ be a stopping time on $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$. The $\sigma$-algebra of information at time $\tau$ is
-    \begin{align*}
-      \mathcal{F}_{\tau} = \{A \in \mathcal{F}_{\infty} : \text{for } n \ge 1,\,A \cap \{\tau = n\} \in \mathcal{F}_{n}\}.
-    \end{align*}
-    \end{definition}
-
-    This definition isn't entirely straightforward to understand, but the key aspect is this: if we have the value of $\tau$ (say we know that $\omega \in \{\tau = n\}$), then we shouldn't be able to infer from $\omega \in A \in \mathcal{F}_{\tau}$ that $\omega \in B \in \mathcal{F}_{\infty} \setminus \mathcal{F}_{n}$. The above definition should then be clear as containing the events which are possible to have observed by time $\tau$ (`time' being defined in accordance to steps in the filtration).\\
-
-    We can then get our intuition that if for stopping times $\tau$ and $\rho$, $\tau \le \rho$, then $\mathcal{F}_{\tau} \subseteq \mathcal{F}_{\rho}$ (we get more information if we have longer to discover it). \\
-
-    Note now that for $(X_{n})$ an adapted process, $\tau$ a stopping time, $X^{\tau} := (X_{\min(n,\tau)})$ is a `stopped process', and is adapted to both the filtration $(\mathcal{F}_{\min(n,\tau)})$ and hence $(\mathcal{F}_n)$. \\
-
-    The filtration $(\mathcal{F}_{\min(n,\tau)})$ comes up often, and can be conceived essentially as the information given that you stop observing things (`exit the room') at time $\tau$, whenever that happens to be. This is what we mean by $\tau$ being a \emph{stopping} time, in that it stops the observations continuing.
-  }
   \block{Martingales}{
     We often consider notions of random walks in probability theory. The most interesting of these are random walks where the movement at each step has expectation $0$, and this is a concept generalised by the notion of martingales. In this course we cover only the discrete case of martingales, although there is a rich theory concerning continuous martingales. \\
 
@@ -915,6 +917,130 @@
       \end{align*}
     \end{theorem}
     \hphantom{}
+
+    As a weaker result, we can also obtain for a supermartingale that
+    \begin{align*}
+      \lambda \mathbb{P}\left(\bigcup_{k=1}^{n} \{|X_{k}| \ge \lambda\}\right) \le \mathbb{E}\big[X_{0}\big] + 2\mathbb{E}\big[X^{-}_{n}\big].
+    \end{align*}
+    \hphantom{}
+  }
+  \column{0.1667}
+  \block{Martingale Convergence}{
+    \begin{definition}[Upcrossings]
+      \ With a real sequence $(x_{n})$, $a, b \in \mathbb{R}$ with $a < b$, we can define the integer sequences $(\rho_{n})$, $(\tau_{n})$ such that
+      \begin{align*}
+        \rho_{n} &= \inf \{m \ge \tau_{n-1} : x_{m} \le a\} \\
+        \tau_{n} &= \inf \{m \ge \rho_{n} : x_{m} \ge b\}.
+      \end{align*}
+      We can then define the sequence $(U_{n}([a,b],(x_{n})))$ as the number of upcrossings of $[a,b]$ by time $n$, $U([a,b],(x_{n}))$ the total number of upcrossings, by
+      \begin{align*}
+        U_{n}([a,b],(x_{n})) &= \sup \{k \ge 0 : \tau_{k} \le n\} \\
+        U([a,b],(x_{n})) &= \sup \{k \ge 0 : \tau_{k} < \infty\}.
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}[Doob's upcrossing lemma]
+    \ Let $(X_{n})$ be a supermartingale, $a, b \in \mathbb{R}$ with $a < b$. For $n \ge 0$,
+    \begin{align*}
+      \mathbb{E}\big[U_{n}([a,b],(X_{n}))\big] \le \frac{\mathbb{E}\big[(X_{n}-a)^{-}\big]}{b-a}.
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    To prove this, it's firstly useful to check that each $\rho_{n}$, $\tau_{n}$ as defined above are stopping times. We then define the predictable quantity
+    \begin{align*}
+      V_{n} = \sum_{k = 1}^{\infty} \chi_{\rho_{k} < n \le \tau_{k}},
+    \end{align*}
+    which is $1$ if at time $n$, $(X_{n})$ has begun but not finished an upcrossing, $0$ otherwise. We can then define $(V \circ X)$ to represent, understanding $(X_{n})$ as the price of a stock, the profit made by time $n$ if one employs a strategy of buying at each $\rho_{k}$, and selling at each $\tau_{k}$. We can then take expectations of this quantity in order to derive the lemma. \\
+
+    Assuming one follows this hypothetical strategy, one can consider $(X_{n}-a)^{-}$ as the loss on the final buy. The upcrossing lemma indicates that in order to maintain the supermartingale property, for every upcrossing, we must spend a significant amount of time losing money on the initial investment. \\
+
+    Abnormally for this course, we now derive a lemma from real analysis:
+    \begin{lemma}
+    \ A real sequence $(x_{n})$ converges in $[-\infty,\infty]$ iff $U([a,b],(x_{n})) < \infty$ for all $a,b \in \mathbb{Q}$ with $a < b$.
+    \end{lemma}
+    \hphantom{}
+
+    To make this easier when dealing with extended reals, one should work with the $\limsup$ and $\liminf$ to prove this. \\
+
+    \begin{theorem}[Doob's forward convergence theorem]
+    \ Let $(X_{n})$ be a super- or submartingale. If $(X_{n})$ is bounded in $\mathcal{L}^{1}$ ($\mathbb{E}\big[|X_{n}|\big]$ is bounded), then $(X_{n})$ converges a.s. to some $X \in \mathcal{L}^{1}$.
+    \end{theorem}
+    \hphantom{}
+
+    We can see this from applying the upcrossing lemma in conjunction with our previous lemma. \\
+
+    \begin{definition}[Galton-Watson branching process]
+    \ Let $(X_{n,r})$ be an array of i.i.d. random variables. $(Z_{n})$ is a Galton-Watson branching process if $Z_{0} = 1$, and for $n \ge 1$,
+    \begin{align*}
+      Z_{n} = \sum_{k=1}^{Z_{n-1}} X_{n,k}.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    If each $X_{n,r}$ is integrable, and $\mathbb{E}\big[X_{0,0}\big] = \mu \neq 0$, we can write $M_{n} = Z_{n}/\mu^{n}$ to get a martingale $(M_{n})$ with respect to $\mathcal{F}_{n} = \sigma(\{X_{k,r} : r \ge 1,\, k \le n\})$, $(Z_{n})$ a sub-, super-, or normal martingale depending on whether $\mu$ is greater than, less than, or equal to $1$. By the forward-convergence theorem, we see that $(Z_{n})$ can either converge or blow up. \\
+
+    \begin{theorem}
+    \ Let $(X_{n})$ be a martingale on a filtered probability space $(\Omega, \mathcal{F}, (\mathcal{F}_{n}), \mathbb{P})$. The following are equivalent:
+    \begin{enumerate}[label=\roman*.]
+            \item $(X_{n})$ is uniformly integrable.
+            \item There is some $\mathcal{F}_{\infty}$-measurable random variable $X$ such that $X_{n} \to X$ almost surely and in $\mathcal{L}^{1}$.
+            \item There is an integrable $\mathcal{F}_{\infty}$-measurable random variable $X$ such that $X_{n} = \mathbb{E}\big[X \,|\, \mathcal{F}_{n}\big]$ a.s. for $n \ge 1$.
+    \end{enumerate}
+    Further, if $X \in \mathcal{L}^{p}$ for $p \ge 1$, then the convergence $X_{n} \to X$ also holds in $\mathcal{L}^{p}$.
+    \end{theorem}
+    \hphantom{}
+
+    Note that these conditions require slightly more than the forward convergence theorem, because boundedness in $\mathcal{L}^{1}$ doesn't require that the $X_{n}$ themselves have a uniform bound (only that their absolute expectation does). In the other direction, we can use the forward convergence theorem to prove (part of) this statement however, in conjunction with Vitali's convergence theorem. \\
+
+    We find that the optional sampling theorem, as well as the maximal and $\mathcal{L}^{p}$ inequalities all have stronger variants for UI martingales:
+    \begin{theorem}
+    \ Let $(X_{n})$ be a UI martingale. Then for any stopping times $\tau \le \rho$
+    \begin{align*}
+      \mathbb{E}\big[X_{\rho} \,|\, \mathcal{F}_{\tau}\big] \overset{\mathrm{a.s.}}{=} X_{\tau}
+    \end{align*}
+    and in particular $\mathbb{E}\big[X_{\tau}\big] = \mathbb{E}\big[X_{0}\big]$. \\
+
+    For any $\lambda \ge 0$,
+    \begin{align*}
+      \lambda \mathbb{P}\left(\bigcup_{n \ge 1} \{|X_{n}| \ge \lambda\}\right) \le \mathbb{E}\big[|X|\chi_{\bigcup_{n \ge 1} \{|X_{n}| \ge \lambda\}}\big].
+    \end{align*}
+    Finally, if $X \in \mathcal{L}^{p}$ for some $p > 1$, then with $1/p+1/q = 1$,
+    \begin{align*}
+      \Vert X \Vert_{p} \le \Vert \max_{n \ge 1} |X_{n}| \Vert_{p} \le q \Vert X \Vert.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \innerblock{Backwards Martingales}{
+      \begin{definition}[Backwards martingales]
+      \ Let $(\mathcal{F}_{-n})$ with $\mathcal{F}_{-(n+1)} \subseteq \mathcal{F}_{-n} \subseteq \mathcal{F}$ for $n \ge 0$. A backwards martingale with respect to $(\mathcal{F}_{-n})$ is a sequence $(X_{-n})$ of integrable random variables such that $X_{-n}$ is $\mathcal{F}_{-n}$-measurable, and
+      \begin{align*}
+        \mathbb{E}\big[X_{-n+1} \,|\, \mathcal{F}_{-n}\big] = X_{-n}.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      Since $X_{0}$ is integrable, we see that $(X_{-n})$ is automatically UI. We then need to adapt certain definitions such as with respect to upcrossings, but restore all of our normal results as expected, and in particular receive the following:
+
+      \begin{theorem}
+      \ Let $(X_{-n})$ be a backwards martingale with respect to $(\mathcal{F}_{-n})$. Then $X_{-n}$ converges a.s. and in $\mathcal{L}^{1}$ as $n \to \infty$ to $X_{-\infty} = \mathbb{E}\big[X_{0} \,|\, \mathcal{F}_{-\infty}\big]$.
+      \end{theorem}
+      \hphantom{}
+
+      Using this, we can prove the strong law of large numbers.
+      \begin{theorem}[Kolmogorov's strong law of large numbers]
+      \ Let $(X_{n})$ be a sequence of i.i.d. random variables, each integrable with mean $\mu$.
+      \begin{align*}
+        \frac{1}{n} \sum_{k=1}^{n} X_{k} \to \mu
+      \end{align*}
+      as $n \to \infty$ almost surely and in $\mathcal{L}^{1}$.
+      \end{theorem}
+      \hphantom{}
+
+      \textbf{Prove, and finish non-examinable material in Chapter 9}
+    }
 
   }
 \end{columns}
