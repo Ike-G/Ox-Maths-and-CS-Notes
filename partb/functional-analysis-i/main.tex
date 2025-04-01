@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=1600mm, paperheight=2430mm}
+\geometry{paperwidth=1600mm, paperheight=2600mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -19,7 +19,10 @@
 \DeclareMathOperator{\Int}{int}
 \DeclareMathOperator{\cl}{cl}
 \DeclareMathOperator{\Span}{span}
-
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\Real}{Re}
+\newcommand{\rightopen}[2]{\ensuremath{[#1,#2)}}
+\newcommand{\leftopen}[2]{\ensuremath{(#1,#2]}}
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
   \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
   #1 % the function
@@ -239,7 +242,34 @@
 
     From Cauchy-Schwarz and other methods we get an array of results about orthogonal complements, evidencing that inner products give relatively well-behaved spaces. \\
 
-    In particular, we have that for any closed convex subset of a Hilbert space $Y \subseteq X$, for any $x \in X$, there is a point $y \in Y$ closer to $x$ than any other point in $Y$. This allows us to show that for any closed set $Y \subseteq X$, $X = Y + Y^{\perp}$. \\
+    \innerblock{Polarisation}{
+      The constraints satisfied by an inner-product allow us to characterise Hilbert spaces significantly more than we're able to for Banach spaces. A critical tool for doing this is polarisation, allowing us to write norms in terms of their inner products. \\
+
+      Note that for $x, z \in X$ a Hilbert space, via linearity and anti-linearity,
+      \begin{align*}
+        \Vert x + z \Vert^{2} &= \Vert x \Vert^{2} + 2 \Real{\langle x, z \rangle} + \Vert z \Vert^{2}.
+      \end{align*}
+      This immediately gives us an expression for $\langle x, z \rangle$ in terms of the space's norm if over $\mathbb{R}$, and we only need a bit more work to get the same for $\mathbb{C}$. With $z = e^{i\theta} y$ for $\theta \in \rightopen{0}{2\pi}$,
+      \begin{align*}
+        \Vert x + z \Vert^{2} &= \Vert x \Vert^{2} + 2 \Real(e^{-i\theta}\langle x, y \rangle) + \Vert y \Vert^{2},
+      \end{align*}
+      so with $\theta \in \{0,\pi/2\}$,
+      \begin{align*}
+        \langle x, y \rangle &= \frac{1}{2} \left(\Vert x + y \Vert^{2} + \Vert x + iy \Vert^{2}\right) - \Vert x \Vert^{2} - \Vert y \Vert^{2}.
+      \end{align*}
+
+      These methods are very similar to those also used above, but it's worth mentioning given that this is a very persistent idea.
+    }
+    \hphantom{}
+
+    \begin{theorem}[Projection theorem]
+      \ For any closed convex subset $Y$ of a Hilbert space $X$, for any point $x \in X$, there is a point $y^{*} \in Y$ such that
+      \begin{align*}
+        \Vert y^{*} - x \Vert &= \inf_{y \in Y} \Vert y - x \Vert.
+      \end{align*}
+    \end{theorem}
+
+    We can show this using the parallelogram law, and it allows us to show further that for any closed subspace $Y \subseteq X$, $X = Y \oplus Y^{\perp}$. \\
 
     Importantly, this gives an improvement: whereas for inner product spaces we have that $Y \subseteq Y^{\perp \perp}$, for Hilbert spaces we have that if $Y$ is closed, $Y = Y^{\perp \perp}$. \\
 
@@ -283,8 +313,8 @@
       \Vert x \Vert^{2} &= \sum_{n=1}^{\infty} |a_{n}|^{2}, \\
       \text{and} \quad a_{n} &= \langle x , x_{n} \rangle.
     \end{align*}
-
     \end{theorem}
+
 
 
   }
@@ -357,12 +387,12 @@
     Note provided $T \in \mathcal{B}(X)$ is algebraically invertible, $T^{-1} \in \mathcal{B}(X)$ iff $\inf \Vert Tx \Vert / \Vert x \Vert > 0$.
   }
   \block{Finite-dimensional normed spaces}{
-    With $(\mathbb{F}^{n},\Vert \cdot\Vert _{p})$ for some $p \in [1,\infty]$, $n \in \mathbb{N}$, $F \in \{\mathbb{R}, \mathbb{C}\}$ we get the most basic Hilbert space. \\
+    With $(\mathbb{F}^{n},\Vert \cdot\Vert _{p})$ for some $p \in [1,\infty]$, $n \in \mathbb{N}$, $\mathbb{F} \in \{\mathbb{R}, \mathbb{C}\}$ we get the most basic Hilbert space. \\
 
     \begin{lemma}[H\"{o}lder's Inequality]
       \ For $1 \le p,q \le \infty$ such that $1/p+1/q = 1$, for any $\bm{x}, \bm{y} \in \mathbb{C}^{n}$,
       \begin{align*}
-        \Vert \bm{x}\bm{y}\Vert _{1} \le \Vert \bm{x}\Vert _{p}\Vert \bm{x}\Vert _{q}
+        \Vert \bm{x}\bm{y}\Vert _{1} \le \Vert \bm{x}\Vert _{p}\Vert \bm{y}\Vert _{q}
       \end{align*}
     \end{lemma}
     \hphantom{}
@@ -373,7 +403,7 @@
 
     To see that all norms are equivalent on the space $\mathbb{R}^{n}$, we reduce all norms to the euclidean norm. Take an arbitrary norm $\Vert \cdot \Vert$:
     \begin{align*}
-      \Vert \bm{x} \Vert &= \Vert \sum_{k=1}^{n} x_{k} \bm{e}_{k} \Vert \\
+      \Vert \bm{x} \Vert &= \left\Vert \sum_{k=1}^{n} x_{k} \bm{e}_{k} \right\Vert \\
                          &\le \sum_{k=1}^{n} |x_{k}| \Vert \bm{e}_{k} \Vert \\
                          &\le \left(\sum_{k=1}^{n} |x_{k}|^{2} \right)^{1/2} \left(\sum_{k=1}^{n} \Vert \bm{e}_{k} \Vert^{2}\right)^{1/2} \\
       &= C_{1}\Vert \bm{x} \Vert_{2}.
@@ -565,7 +595,7 @@
     \hphantom{}
 
     \begin{theorem}[Hahn-Banach (general sublinear version)]
-      \ For $(X, \Vert \cdot \Vert)$ a real vector space, $Y \subseteq X$ a subspace, $p : X \to \mathbb{R}$ sublinear, $f \in Y^{*}$, if $f \le \restr{p}{Y}$, then there is a linear extension $F \in X^{*}$ such that $F \le p$.
+      \ For $X$ a real vector space, $Y \subseteq X$ a subspace, $p : X \to \mathbb{R}$ sublinear, $f \in Y^{*}$, if $f \le \restr{p}{Y}$, then there is a linear extension $F \in X^{*}$ such that $F \le p$.
     \end{theorem}
     \hphantom{}
 
@@ -652,15 +682,31 @@
     Surjectivity is far more technical, and we use a result from measure theory in order to prove it. \\
 
     \begin{theorem}[Radon-Nikodym]
-    \ Let $\Omega \subseteq \mathbb{R}^{n}$ be a bounded measurable set, $\mu$ a finite signed measure defined on the measurable subsets of $\Omega$. Suppose that $\mu$ is absolutely continuous with respect to $\mathrm{leb}$. Then for any $E \in \mathcal{F}$:
+    \ For $\mu, \nu$ both (possibly signed) finite measures on $(\Omega, \mathcal{F})$ with $\nu \ll \mu$, there exists $f \in \mathcal{L}^{1}(\Omega, \mathcal{F}, \mu)$ such that for $E \in \mathcal{F}$,
     \begin{align*}
-      \mu(E) = \int_{E} f \, \mathrm{d}x.
+      \nu(E) = \int_{E} f \, \mathrm{d}\mu.
     \end{align*}
-    Further, if $\mu$ is non-negative, so is $f$.
+    Further, if $\nu$ is non-negative, so is $f$.
     \end{theorem}
     \hphantom{}
 
-    \textbf{Prove this.} \\
+    For the sake of this course, we only consider non-negative measures (and thus the proof primarily applies to probability measures, and measures such as the Lebesgue measure on a bounded set). \\
+
+    The key idea of this proof is to use the Riesz representation theorem on the Hilbert space $X = L^{2}(\Omega, \mathcal{F}, \mu+\nu)$. Note that this is a subspace of both corresponding spaces with measure $\mu$ and $\nu$, so we can use results from those spaces as well here. To start with, we define for $g \in X$,
+    \begin{align*}
+      \ell(g) = \int g \, \mathrm{d}\mu,
+    \end{align*}
+    noting that by Cauchy-Schwarz we can bound $\Vert \ell \Vert_{X^{*}} \le \sqrt{\mu(\Omega)}$, and thus get that $\ell \in X^{*}$. This then gives us that for any such $g \in X$, there is $h \in X$ such that
+    \begin{align*}
+      \int g \, \mathrm{d}\mu = \int gh \, \mathrm{d}\mu + \int gh \, \mathrm{d}\nu.
+    \end{align*}
+    Consequently we can see that
+    \begin{align*}
+      \int g(1-h) \, \mathrm{d}\mu = \int gh \, \mathrm{d}\nu
+    \end{align*}
+    and thus wish to demonstrate that $f = (1-h)/h$ satisfies the conditions of the theorem. To do this, we need to show that $h \in \rightopen{0}{1}$ almost everywhere, and that it is integrable. To do this, we substitute in $\chi_{h \le 0}$, $\chi_{h > 1}$, and for $E \in \mathcal{F}$, $n > 0$, $\min(1/h, N)\chi_{E}$ for $g$, which gives us the results as necessary. \\
+
+    We can then use this to demonstrate that for H\"{o}lder conjugates $p \ge 1$, $q \le \infty$, $(L^{p})^{*} \cong L^{q}$ for bounded $\Omega$.
 
     \begin{theorem}[Dual space of $\ell^{p}(\mathbb{R})$]
     \ Let $1 \le p < \infty$ and $1 < q \le \infty$ be such that $1/p + 1/q = 1$. Then $(\ell^{p})^{*} \cong \ell^{q}$ with isometric isomorphism $L : \ell^{p}(\mathbb{R}) \to (\ell^{q}(\mathbb{R}))^{*}$ such that for $x \in \ell^{q}$, $y \in \ell^{p}$:
@@ -673,7 +719,7 @@
     \textbf{Prove this.} \\
 
       \begin{definition}[Dual operators]
-        \ For $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$ normed spaces over the same field, $T \in \mathcal{B}(X,Y)$, then the dual operator $T' : Y^{*} \to X^{*}$ is defined for $f \in Y^{*}$, $x \in x$ as
+        \ For $(X, \Vert \cdot \Vert_{X})$, $(Y, \Vert \cdot \Vert_{Y})$ normed spaces over the same field, $T \in \mathcal{B}(X,Y)$, then the dual operator $T' : Y^{*} \to X^{*}$ is defined for $f \in Y^{*}$, $x \in X$ as
         \begin{align*}
           (T'f)(x) &:= f(Tx)
         \end{align*}
@@ -683,7 +729,7 @@
       With this definition, $T' \in \mathcal{B}(Y^{*},X^{*})$, and the statements regarding $\Vert T' \Vert$ are mechanical to demonstrate. \\
 
       \begin{definition}[Adjoint operators]
-      \ For $X$, $Y$ Hilbert spaces, $A \in \mathcal{B}(X,Y)$, with $y \in Y$, $\langle A(\cdot), y \rangle_{Y} \in X^{*}$. We define the adjoint as the operator $A^{*} \in \mathcal{B}(Y,X)$ such that $\langle Ax, y \rangle_{Y} = \langle x, Ay \rangle_{X}$.
+      \ For $X$, $Y$ Hilbert spaces, $A \in \mathcal{B}(X,Y)$, with $y \in Y$, $\langle A(\cdot), y \rangle_{Y} \in X^{*}$. We define the adjoint as the operator $A^{*} \in \mathcal{B}(Y,X)$ such that $\langle Ax, y \rangle_{Y} = \langle x, A^{*}y \rangle_{X}$.
       \end{definition}
       \hphantom{}
 
@@ -708,19 +754,11 @@
       \end{align*}
       Note that $i$ is in general not an isomorphism, because it is not surjective in many cases. However there are many important cases in which it is, and these are the reflexive spaces. \\
 
-      In particular, we have that $\ell^{p}$ is reflexive for $1 < p < \infty$, as for $q \in (1,\infty)$ such that $1/p+1/q = 1$, $(\ell^{p})^{**} \cong (\ell^{q})^{*} \cong \ell^{p}$. We also have that $L^{p}$ is reflexive with the same pattern. This is dissatisfied for $p \in \{1,\infty\}$ however. \\
+      In particular, we have that $\ell^{p}$ is reflexive for $1 < p < \infty$, as for $q \in (1,\infty)$ such that $1/p+1/q = 1$, $(\ell^{p})^{**} \cong (\ell^{q})^{*} \cong \ell^{p}$. We also have that $L^{p}$ is reflexive with the same pattern. This is not satisfied for $p \in \{1,\infty\}$ however. \\
 
       By the Riesz representation theorem, all Hilbert spaces are reflexive. \\
 
       Nonetheless, we always have that for $X$ a normed space, $X \cong i(X)$, which can be viewed as a dense subspace of its closure in $X^{**}$.
-
-
-
-
-
-
-
-
   }
 
 \end{columns}

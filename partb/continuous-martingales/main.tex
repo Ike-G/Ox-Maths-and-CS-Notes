@@ -1,0 +1,1246 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=2550mm, paperheight=4000mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\newcommand\sbullet[1][.65]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\dist}{dist}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Continuous Martingales and Stochastic Calculus}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.167}
+  \block{Motivation}{
+    In reality, we very often need to consider processes that are continuous both in time and space. Diffusion is a very common process which can be considered as involving a huge number of particles behaving randomly. This requires that we build up a theory, because all processes considered thus far primarily deal with discrete time processes. \\
+
+    In Biology, we often try to model processes as evolving with respect to an ODE. With $\bm{x}(t)$ the position of a particle at time $t$, we write
+    \begin{align*}
+      \frac{\mathrm{d}\bm{x}}{\mathrm{d}t} = \bm{f}(t,\bm{x})
+    \end{align*}
+    as describing its evolution subject to an initial condition $\bm{x}(0) = \bm{x}_{0}$. \\
+
+    This isn't necessarily ideal though -- often to construct this model we're incorporating an assumption that noise is negligible which may be inconsistent. \\
+
+    Approximating this by a discrete process with timesteps $\Delta t$, we can write
+    \begin{align*}
+      \bm{x}_{t+\Delta t} = \bm{x}_{t} + \bm{f}(t,\bm{x}) \Delta t + \bm{g}(t,\bm{x}) Z_{\Delta t}
+    \end{align*}
+    for $Z_{\Delta t} \sim \mathcal{N}(0,\Delta t)$. We thus get that with $t_{i} = i \Delta t$,
+    \begin{align*}
+      \bm{x}_{t_{n}} = \bm{x}_{0} + \Delta t \sum_{i = 1}^{n} \bm{f}(t_{i},\bm{x}_{t_{i}}) + \sum_{i=1}^{n} Z^{(i)}_{\Delta t} \bm{g}(t_{i},\bm{x}_{t_{i}}).
+    \end{align*}
+    Immediately we have something familiar when $\bm{g}$ is constant, because the sum of normally distributed random variables is normal, and so $\bm{x}_{t_{n}}$ is distributed normally with variance increasing linearly.
+  }
+  \block{Random Processes}{
+    \begin{definition}[Stochastic processes]
+    \ A stochastic process is a collection $\{X_{t} : t \in \mathcal{T}\}$ of random variables on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ in a common state space $(E, \mathcal{E})$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Filtration]
+    \ A collection $\{\mathcal{F}_{t} : t \in \rightopen{0}{\infty}\}$ is a filtration if for $0 \le t \le s < \infty$, $\mathcal{F}_{t} \subseteq \mathcal{F}_{s}$.
+    \end{definition}
+    \hphantom{}
+
+    As one might expect given work in discrete spaces, the natural filtration of a stochastic process $(X_{t})$ is the collection $\{\sigma(X_{t}) : t \in \rightopen{0}{\infty}\}$. \\
+
+    \begin{definition}[Trajectory]
+      \ The mapping $t \mapsto X_{t}(\omega)$ for a fixed $\omega \in \Omega$ is a sample path or trajectory. If the map $\pi : (\rightopen{0}{\infty} \times \Omega, \mathcal{B}(\rightopen{0}{\infty}) \otimes \mathcal{F}) \to (\mathbb{R}, \mathcal{B}(\mathbb{R}))$,
+      \begin{align*}
+        \pi(\omega, t) &= X_{t}(\omega)
+      \end{align*}
+      is measurable, then we say our stochastic process is measurable.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}
+    \ For $X$, $Y$ two stochastic processes defined on a common probability space $(\Omega, \mathcal{F}, \mathbb{P})$,
+    \begin{enumerate}[label=\roman*.]
+    \item $X$ is a modification of $Y$ if for all $t \ge 0$, $X_{t} = Y_{t}$ a.s..
+    \item $X$ and $Y$ are indistinguishable if
+            \begin{align*}
+              \mathbb{P}\left(\bigcap_{t \ge 0} \{X_{t} = Y_{t}\}\right) = 1.
+            \end{align*}
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    If $X$ and $Y$ are indistinguishable, then certainly they are modifications of one another. However, $X$ and $Y$ can be modifications of one another, and yet it is not the case that for almost every trajectory, $X_{t} = Y_{t}$ (consider defining $X = Y$ everywhere except at time $\tau \sim U[0,1]$). \\
+
+    Indistinguishability is the exact analogy of a.s. equivalence when we consider stochastic processes as random functions $X : \Omega \to \mathcal{E}^{\mathcal{T}}$. This requires slightly more work however, because we then need a $\sigma$-algebra on $\mathcal{E}^{\mathcal{T}}$. \\
+
+    \begin{definition}
+    \ An $n$-dimensional cylinder set in $\mathbb{R}^{\rightopen{0}{\infty}}$ is defined with $A \in \mathcal{B}(\mathbb{R}^{n})$, $0 \le t_{1} < \dots < t_{n}$ as
+    \begin{align*}
+      C = \{\omega \in \mathbb{R}^{\rightopen{0}{\infty}} : (\omega(t_{1}), \dots, \omega(t_{n})) \in A\}
+    \end{align*}
+    \end{definition}
+    We write $\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}})$ as the $\sigma$-algebra generated by all finite-dimensional cylinder sets. \\
+
+    \coloredbox{
+      As a recap on topology: in the standard product topology for $\mathbb{R}^{\rightopen{0}{\infty}}$, the set of open sets, $\mathcal{T}$, is the intersection of all topologies $T$ such that for $t \in \rightopen{0}{\infty}$, the projection $p_{t} : \mathbb{R}^{\rightopen{0}{\infty}} \to \mathbb{R}$, $p_{t}(\omega) = \omega(t)$ is continuous (equivalently, for $I \in \mathcal{B}(\mathbb{R})$, $\{\omega \in \mathbb{R}^{\rightopen{0}{\infty}} : \omega(t) \in I\} \in T$). \\
+
+      With a bit of work, one can see that $\mathcal{T}$ is exactly the collection of $n$-dimensional cylinder sets. We can see readily that this collection is a topology on $\mathbb{R}^{\rightopen{0}{\infty}}$, and then demonstrate firstly that we can construct every $n$-dimensional cylinder set with $A \in \mathcal{B}(\mathbb{R})^{n}$ within a feasible topology $T$, and then extend that to $\mathcal{B}(\mathbb{R}^{n})$. \\
+
+      Consequently, it's clear that $\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}})$ as described above is in fact the Borel $\sigma$-algebra on $\mathbb{R}^{\rightopen{0}{\infty}}$ as we're used to it.
+    }
+    \hphantom{}
+
+    Note in particular that continuity is not a $\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}})$-measurable event, so it takes some additional work to demonstrate that our processes are a.s. continuous (\textbf{what do we mean by this?}). If we have that a process is continuous, then we can describe it entirely by its values on $\mathbb{Q}$, which simplifies the construction of a variety of quantities (this follows due to the finite-dimensional cylinder sets being a $\pi$-system generating $\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}})$). \\
+
+    \innerblock{Distributions on $(\mathbb{R},\mathcal{B}(\mathbb{R}^{\infty}))$}{
+      To simplify notation, we write
+      \begin{align*}
+        \mathbb{T} = \left\{\bm{t} \in \bigcup_{n \ge 1}\rightopen{0}{\infty}^{n} : t_{1} < t_{2} < \dots < t_{|\bm{t}|} \right\}
+      \end{align*}
+      as the set of finite coordinates for $\rightopen{0}{\infty}$. \\
+
+      Note that for $\bm{t} \in \mathbb{T}$, we can define a probability measure $\mathbb{P}_{\bm{t}}$ on $(\mathbb{R}^{|\bm{t}|}, \mathcal{B}(\mathbb{R}^{|\bm{t}|}))$. \\
+
+      \begin{definition}
+      \ A family of finite dimensional distributions $\{\mathbb{P}_{\bm{t}} : \bm{t} \in \mathbb{T}\}$ is called consistent if for $\bm{t} = (t_{1},\dots,t_{n}) \in \mathbb{T}$, $1 \le j \le n$, with $\bm{s} = (t_{1},\dots,t_{j-1},t_{j+1},\dots,t_{n})$,
+      \begin{align*}
+        \mathbb{P}_{\bm{t}}\left(\prod_{k=1}^{j-1} A_{k} \times \mathbb{R} \times \prod_{k=j+1}^{n} A_{k}\right) = \mathbb{P}_{\bm{s}}\left(\prod_{\substack{k=1 \\ k \neq j}}^{n} A_{k} \right),
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      This is a relatively common sense restriction. We only ever want to work with families of distributions such that the marginals are consistent. We can see that for any measure $\mathbb{P}$ on $(\mathbb{R}^{\rightopen{0}{\infty}}, \mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}}))$, it defines a family of consistent measures where for $\bm{t} \in \mathbb{T}$, $A \in \mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}})$,
+      \begin{align*}
+        \mathbb{P}_{\bm{t}}(A) = \mathbb{P}(\{\omega \in \Omega : (\omega(t_{1}),\dots,\omega(t_{|\bm{t}|})) \in A\}).
+      \end{align*}
+
+      We would quite like to develop a converse however -- that we can construct a probability measure $\mathbb{P}$ from a family of finite-dimensional distributions. \\
+
+      \begin{theorem}[Daniell-Kolmogorov extension theorem]
+      \ Let $\{\mathbb{P}_{\bm{t}} : \bm{t} \in \mathbb{T}\}$ be a consistent family of finite-dimensional distributions. Then there is a probability measure $\mathbb{P}$ on $(\mathbb{R}^{\rightopen{0}{\infty}},\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}}))$ such that for $\bm{t} = (t_{1},\dots,t_{n}) \in \mathbb{T}$, $A \in \mathbb{R}^{n}$,
+      \begin{align*}
+        \mathbb{P}_{\bm{t}}(A) = \mathbb{P}(\{\omega \in \Omega : (\omega(t_{1}),\dots,\omega(t_{|\bm{t}|})) \in A\}).
+      \end{align*}
+      \end{theorem}
+
+      Thus we have a bijection between the set of consistent families of finite-dimensional distributions, and probability measures on $(\mathbb{R},\mathcal{B}(\mathbb{R}^{\rightopen{0}{\infty}}))$. \\
+
+      \textbf{Try proving this (appendix of lectures notes).} \\
+
+      \begin{theorem}[Kolmogorov-\v{C}entsov continuity criterion]
+      \ Let a stochastic process $(X_{t})_{t \in [0,T]}$ defined on $(\Omega, \mathcal{F}, \mathbb{P})$ satisfy for some $\alpha, \beta, C > 0$, all $s, t \in [0,T]$,
+      \begin{align*}
+        \mathbb{E}\big[|X_{t}-X_{s}|^{\alpha}\big] \le C|t-s|^{1+\beta}.
+      \end{align*}
+      Then there is a modification $(\widetilde{X}_{t})$ of $(X_{t})$ such that $(\widetilde{X}_{t})$ is almost surely locally $\gamma$-H\"older continuous for $\gamma < \beta/\alpha$.
+      \end{theorem}
+      \hphantom{}
+
+      Recall that $f : X \to Y$ is $\gamma$-H\"older continuous if for some $M \> 0$, $x,y \in X$, $\Vert f(x)-f(y) \Vert \le M\Vert x - y \Vert^{\gamma}$. Thus H\"older continuity implies continuity, although is slightly weaker than Lipschitz continuity for $0 < \gamma \le 1$. If $\gamma > 1$, we must have that $f$ is constant (\textbf{consider proving}). \\
+
+      \textbf{Try proving this too, although this isn't examinable.}
+    }
+  }
+  \column{0.167}
+  \block{Gaussian Processes}{
+    \begin{definition}[Normal distribution]
+    \ A random variable $X$ is Gaussian, $X \sim \mathcal{N}(\mu, \sigma^{2})$, if for $x \in [-\infty,\infty]$
+    \begin{align*}
+      \mathbb{P}(X \le x) = \frac{1}{\sigma\sqrt{2\pi}}\int_{-\infty}^{x} e^{-\frac{1}{2}\left(\frac{u-\mu}{\sigma}\right)^{2}} \, \mathrm{d}u.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    In particular, $X$ is a standard normal variable if $\mu = 0$, $\sigma = 1$. We define
+    \begin{align*}
+      \Phi(x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-\frac{u^{2}}{2}} \, \mathrm{d}u.
+    \end{align*}
+
+
+    \begin{lemma}
+    \ For $X \sim \mathcal{N}(\mu, \sigma^{2})$,
+    \begin{itemize}
+     \item \ Laplace transform: $\mathbb{E}\big[e^{tX}\big] = \exp{\left(\frac{\sigma^{2}}{2}t^{2} + \mu t\right)}$.
+     \item \ Fourier transform: $\mathbb{E}\big[e^{i\xi X}\big] = \exp{\left(-\frac{\sigma^{2} }{2}\xi^{2}+i\mu\xi\right)}$.
+    \end{itemize}
+    \end{lemma}
+    \hphantom{}
+
+    \begin{lemma}
+      \ Let $(X_{n})$ be a sequence of Gaussian random variables with $X_{n} \sim \mathcal{N}(\mu_{n},\sigma^{2}_{n})$. \\
+
+      If for some random variable $X$, $X_{n}\overset{\mathrm{dist}}{\to} X$, then with $\displaystyle \mu = \lim_{n \to \infty} \mu_{n}$, $\displaystyle \sigma^{2} = \lim_{n \to \infty} \sigma^{2}_{n}$, $X \sim \mathcal{N}(\mu, \sigma^{2})$. \\
+
+      Further, if $X_{n} \overset{\mathbb{P}}{\to} X$, then for $p \in \rightopen{1}{\infty}$, $X_{n} \overset{L^{p}}{\to} X$.
+    \end{lemma}
+    \hphantom{}
+
+    As convergence in distribution (pointwise convergence wherever the CDF is continuous) is equivalent to convergence in characteristic functions, thus if $(X_{n})$ converges in distribution, then $(\mu_{n})$ and $(\sigma^{2}_{n})$ both converge (in $\mathbb{R}$ and $\rightopen{0}{\infty}$ respectively).
+    \begin{align*}
+      \left|\mathbb{E}\big[e^{i\xi X_{n}}\big]\right| &= e^{-\sigma_{n}^{2}\xi^{2}/2} \\
+      &\to \left|\mathbb{E}\big[e^{i \xi X}\big]\right|
+    \end{align*}
+    As the characteristic function is continuous and equal to $1$ at $\xi = 0$, there is $\xi \neq 0$ such that $\mathbb{E}\big[e^{i\xi X}\big] \neq 0$, and thus $\sigma^{2} < \infty$. For the mean, we demonstrate that $\liminf \mu_{n} \neq \infty$, and then using the expression as before we see that $\mu \in \mathbb{R}$.\\
+
+    To demonstrate convergence in $L^{p}$ we demonstrate first that $(X_{n})$ is uniformly bounded in $L^{p}$, and then use convergence in probability. \\
+
+    \begin{definition}
+    \ A random vector $\bm{X} : \Omega \to \mathbb{R}^{n}$ is Gaussian if for all $\bm{u} \in \mathbb{R}^{n}$, $\bm{u}^{\top}\bm{X}$ is Gaussian.
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}
+    \ With $\bm{X}$ an $n$-dimensional Gaussian vector with mean vector $\bm{\mu}$, covariance matrix $\Gamma = (\mathrm{Cov}(X_{i},X_{j}))$, then for $\bm{u} \in \mathbb{R}^{n}$, $\bm{u}^{\top}\Gamma \bm{u} \ge 0$ and
+    \begin{align*}
+      \bm{u}^{\top}\bm{X} \sim \mathcal{N}(\bm{u}^{\top}\bm{\mu}, \bm{u}^{\top}\Gamma \bm{u}).
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    This result follows immediately from calculation. \\
+
+    \begin{lemma}
+    \ With $\bm{X}$ an $n$-dimensional Gaussian vector, $\Gamma$ its covariance matrix, $X_{1},\dots,X_{n}$ are independent iff $\Gamma$ is diagonal.
+    \end{lemma}
+    \hphantom{}
+
+    To demonstrate this, we use an initial lemma
+    \begin{lemma}
+    \ Let $\bm{X}$ be an $n$-dimensional random vector. The components of $\bm{X}$ are independent iff for all $\bm{u} \in \mathbb{R}^{n}$,
+    \begin{align*}
+      \mathbb{E}\big[e^{i \bm{u}^{\top}\bm{X}}\big] = \prod_{k=1}^{n} \mathbb{E}\big[e^{u_{i}X_{i}}\big].
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    That $\bm{X}$'s components being independent implies this relation is clear from properties of the characteristic function. To demonstrate the reverse, we take $\widetilde{\bm{X}}$ such that $\widetilde{X}_{1}, \dots, \widetilde{X}_{n}$ are independent, and note that the characteristic functions of $\widetilde{\bm{X}}$ and $\bm{X}$ are the same. Thus by uniqueness of characteristic functions for $n$-dimensional variables, $\widetilde{\bm{X}}$ and $\bm{X}$ are identically distributed so the components of $\bm{X}$ are all independent. \\
+
+    We can now see by evaluating the characteristic function of $\bm{X}$ a Gaussian vector that the above result holds.\\
+
+    This is a critical property of the normal distribution, because it allows us to derive independence from covariance. This allows us to take linear combinations of Gaussian variables in order to determine the conditional distributions of some on others. Specifically, we see that the expectation of any Gaussian random variable conditioned on other Gaussian random variables is a linear combination of the latter. \\
+
+    \begin{theorem}
+      \ Let $\Gamma \in \mathbb{R}^{n}$ be symmetric positive semidefinite, $V \in \mathbb{R}^{n}$ such that its rows are an orthonormal basis of eigenvectors of $\Gamma$. Then there is a centred Gaussian variable $\bm{X}$ with covariance matrix $\Gamma$, $\bm{X} \sim \mathcal{N}(\bm{0}, \Gamma)$. \\
+
+      Specifically, $\bm{X} = V\bm{Y}$ for some random vector $\bm{Y} \sim \mathcal{N}(\bm{0}, V^{-1}\Gamma V)$. Further, if $\Gamma$ is invertible, then $\bm{X}$ admits a density
+    \begin{align*}
+      f_{X}(\bm{x}) = \frac{1}{(2\pi)^{n/2}} \frac{1}{\sqrt{\det \Gamma}} \exp\left(-\frac{1}{2}\bm{x}^{\top}\Gamma^{-1}\bm{x}\right).
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Note that $V$ exists by the spectral theorem for real symmetric matrices. We can then construct $\bm{X}$ as per the result by just demonstrating that $V^{-1}\bm{X}$ is distributed as desired. Noting that $\Gamma$ is only positive semidefinite, it's possible that a selection of its eigenvectors are $0$, and thus the vector $\bm{Y}$ includes $\mathrm{null}(\Gamma)$ constant $0$ elements. Thus we need to adapt $\Gamma$ in order to construct a pdf. \\
+
+    \begin{definition}[Gaussian spaces]
+    \ A closed linear subspace containing only centred Gaussian random variables $H \subseteq L^{2}(\Omega, \mathcal{F}, \mathbb{P})$ is a Gaussian space.
+    \end{definition}
+    \hphantom{}
+
+    Critically, by the above we see that elements of any Gaussian space are orthogonal iff they are independent. More generally, for $H_{1}, H_{2}$ Gaussian subspaces of Gaussian subspace $H$, $\sigma(H_{1})$ and $\sigma(H_{2})$ are independent iff $H_{1}$ and $H_{2}$ are orthogonal. \\
+
+    We then see that with $H$ a Gaussian space, $K \subseteq H$ a closed subspace, $\pi : H \to K$ the projection onto $K$, for $X \in H$,
+    \begin{align*}
+      \mathbb{E}\big[X \,|\, \sigma(K)\big] = \pi(X).
+    \end{align*}
+
+    \begin{definition}[Gaussian processes]
+    \ A stochastic process $(X_{t})$ is called a (centred) Gaussian process if any finite linear combination of its coordinates is a (centred) Gaussian process.
+    \end{definition}
+    \hphantom{}
+
+    Equivalently, a stochastic process $(X_{t})$  is a centred Gaussian process if for all coordinates $\bm{t} \in \mathbb{T}$, $X_{\bm{t}}$ is a Gaussian vector. Thus $(X_{t})$ is characterised fully by $\Gamma : \rightopen{0}{\infty}^{2} \to \mathbb{R}$ the covariance function. \\
+
+    Note that $\{X_{t} : t \ge 0\}$ generates a Gaussian space in this case. \\
+
+    \begin{theorem}
+    \ Let $\Gamma : \rightopen{0}{\infty}^{2} \to \mathbb{R}$ be symmetric and such that for $\bm{t} \in \mathbb{T}$, $\bm{u} \in \mathbb{R}^{|\bm{t}|}$, with $\Gamma_{\bm{t}} = (\Gamma(t_{i},t_{j}))_{i,j \in \{1,\dots,|\bm{t}|\}}$, $\bm{u}^{\top}\Gamma_{\bm{t}}\bm{u} \ge 0$. Then there is a centred Gaussian process with covariance function $\Gamma$.
+    \end{theorem}
+    \hphantom{}
+
+    This follows from the Daniell-Kolmogorov extension theorem. \\
+
+    Note that $\{X_{t} : t \ge 0\}$ is itself a Gaussian space.
+  }
+  \column{0.167}
+\block{Brownian Motion}{
+    \begin{definition}[Brownian motion]
+    \ A real-valued stochastic process $(B_{t})_{t \ge 0}$ is a $\mathbb{P}$-Brownian motion if for some real constant $\sigma$
+    \begin{enumerate}[label=\roman*.]
+    \item for $s \ge 0$, $t > 0$, $B_{t+s}-B_{s} \sim \mathcal{N}(0,\sigma^{2}t)$,
+    \item for $n \ge 1$, times $0 \le t_{0} \le t_{1} \le \cdots \le t_{n}$, $\{B_{t_{r}}-B_{t_{r-1}} : r \in \{1,\dots,n\}\}$ is an independent set,
+    \item $B_{0} = 0$, and
+    \item $B_{t}$ is continuous in $t \ge 0$.
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    In particular, we say that the Brownian motion with $\sigma = 1$ is a \emph{standard} Brownian motion (and this is almost always what we use). \\
+
+    Note that increments being normally distributed is not an inherent part of the definition. It can alternatively come out from defining the expectation and variance of $B_{1}$, and defining that $B_{t_{1}+h} - B_{t_{2}+h}$ is identically distributed to $B_{t_{1}} - B_{t_{2}}$ for $h > 0$. \\
+
+    This can be generalised to $d$-dimensional space exactly as one would expect. \\
+
+    \begin{definition}[$d$-dimensional Brownian motion]
+    \ A $d$-dimensional stochastic process $(B_{t})$ on $(\Omega, \mathcal{F}, \mathbb{P})$ is a $d$-dimensional Brownian motion if $B_{t}$ is continuous, $B_{0} = 0$, and for $(t_{1},\dots,t_{n}) \in \mathbb{T}$, $t_{0} = 0$, the vector with components $B_{t_{k}} - B_{t_{k-1}}$ for $k \in \{1,\dots,n\}$ is normally distributed with covariance matrix $\Gamma = \mathrm{diag}((t_{k}-t_{k-1})_{k = 1}^{n})$.
+    \end{definition}
+    \hphantom{}
+
+    \innerblock{Construction}{
+    In order to construct Brownian motion, we may use a construction as proposed by L\'evy. Firstly, we prove a result to allow us to maintain continuity. \\
+
+    \begin{lemma}
+    \ Let $((X^{(n)}_{t})_{t \ge 0})$ be a sequence of a.s. continuous functions which converge uniformly on compacts in probability to a process $(X_{t})$. Then $(X_{t})$ is continuous.
+    \end{lemma}
+    \hphantom{}
+
+    By convergence in probability, for any $T \ge 0$, there is a subsequence $(n_{k})$ such that $\sup_{t \le T}\Vert X^{(n_{k})}_{t} - X_{t}\Vert \to 0$ almost surely as $k \to \infty$. Thus as the uniform limit of continuous functions is continuous, thus $X_{t}$ is also continuous. \\
+
+    Subsequently, we use a sequence of linear interpolations in order to construct our process. \\
+
+    Take $D_{n} = \{k2^{-n} : k \in \mathbb{N}\}$ an increasing sequence with $D = \bigcup_{n \ge 1}D_{n}$ the set of dyadic rationals. We then take $(Z_{n})_{n \in D}$ a family of i.i.d. standard normal $d$-vectors. \\
+
+    We define initially for $t \in D_{n}$,
+    \begin{align*}
+      X^{(0)}_{t}  = \sum_{\substack{k \in D_{0} \\ k < t}} Z_{k}
+    \end{align*}
+    and linearly interpolate between each $t \in D_{n}$ to get a stochastic process $(X^{(0)}_{t})$. We then write for $n \ge 1$, $t \in D_{n}$
+    \begin{align*}
+      X_{t}^{(n)} = \begin{cases}
+        X_{t}^{(n-1)} & \text{if $t \in D_{n-1}$} \\
+        X_{t}^{(n-1)} + 2^{-(n+1)/2}Z_{t} & \text{otherwise}
+        \end{cases}
+    \end{align*}
+    This is on the basis that conditioned on $B_{u}, B_{v}$, $B_{\frac{u+v}{2}} \sim \mathcal{N}((B_{u}+B_{v})/2, (v-u)/4)$, so as $v-u = 2^{-n+1}$ in this case we need to scale $Z_{t}$ by $2^{-(n+1)/2}$. \\
+
+    \begin{theorem}
+    \ The sequence of processes $((X^{(n)}_{t}))$ converges a.s. uniformly on compacts to a process $(X_{t})$. In its natural filtration, $(X_{t})$ is a Brownian motion starting at $0$.
+    \end{theorem}
+
+    \textbf{Prove.}
+    }
+    \hphantom{}
+
+    \begin{definition}[Wiener measure]
+    \ For a Brownian motion $(B_{t})$, the Wiener measure $\bm{W}$ is the pushforward measure of $\bm{B} = (B_{t})$ under $\mathbb{P}$ (strictly, $\bm{W} = \mathbb{P}\circ \bm{B}^{-1}$). It is a measure on continuous functions.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}[Uniqueness]
+    \ If $\mu$ is a probability measure on $(C(\rightopen{0}{\infty}, \mathbb{R}), \mathcal{B}(C(\rightopen{0}{\infty}, \mathbb{R})))$ such that
+    \begin{enumerate}[label=\roman*.]
+\item \ $\mu(\{\omega \in C(\rightopen{0}{\infty}, \mathbb{R}) : \omega(0) = 0\}) = 1$, and
+\item \ for $n \ge 1$, $\bm{t} = (t_{1},\dots,t_{n}) \in \mathbb{T}$, $t_{0} = 0$, $\mu_{\bm{t}}$ is a centred normal distribution with covariance matrix $\Gamma = \mathrm{diag}((t_{k}-t_{k-1})_{k=1}^{n})$,
+    \end{enumerate}
+    then $\mu \equiv \bm{W}$.
+    \end{theorem}
+    \hphantom{}
+
+    This follows from the $\lambda$-$\pi$ systems lemma. This is a critical result, as it allows us to say that any Brownian motion is identically distributed to one another provided it satisfies the conditions which define a Brownian motion. \\
+
+    That this is useful is only the case if Brownian motions are easily created however -- otherwise we've just constructed a very specific distribution and it would be no surprise that it is unique. Therefore we use the following lemma: \\
+
+    \begin{lemma}
+    \ If $(B_{t})$ is a standard Brownian motion, then the following are also standard Brownian motions:
+    \begin{enumerate}[label=\roman*.]
+            \item $(-B_{t})$ (symmetry);
+            \item for $c > 0$, $(cB_{t/c^{2}})$ (scaling);
+            \item $(tB_{1/t})$, continuously extended to be $0$ for $t = 0$ (time inversion);
+            \item $(B_{1}-B_{1-t})_{[0,1]}$ (time reversal);
+            \item for $s \ge 0$, $(B_{t+s}-B_{t})$, and this is independent of $(B_{t})_{[0,s]}$ (simple Markov property).
+    \end{enumerate}
+    \end{lemma}
+    \hphantom{}
+
+    These are proved in problem sheet 1. \\
+
+    \begin{definition}[Variation]
+      \ Let $\pi$ be an interval partition of $[0,T]$ according to $0 = t_{0} < t_{1} < \dots < t_{|\pi|} = T$, and define
+      \begin{align*}
+        \Vert \pi \Vert = \sup_{k \in \{1,\dots,|\pi|\}} t_{k} - t_{k-1}.
+      \end{align*}
+      The $p$-variation of $f : [0,T] \to \mathbb{R}$ is
+      \begin{align*}
+        V^{(p)}(f)_{T} = \lim_{\delta \to 0} \sup \left\{ \sum_{k = 1}^{|\pi|} |f(t^{(\pi)}_{k})-f(t^{(\pi)}_{k-1})|^{p} : \Vert \pi \Vert = \delta \right\}.
+      \end{align*}
+      We refer to 1-variation as just `variation', writing $V := V^{(1)}$.
+    \end{definition}
+    \hphantom{}
+
+    For $p \in [0,1]$, we have a triangle law $|x|^{p}+|y|^{p} \ge |x+y|^{p}$, meaning $p$-variation must increase as the mesh size decreases, so we can rewrite our definition as simply
+    \begin{align*}
+      V^{(p)}(f)_{T} = \sup_{\pi} \sum_{k=1}^{|\pi|} |f(t_{k}^{(\pi)}) - f(t_{k-1}^{(\pi)})|^{p}.
+    \end{align*}
+
+    For $p > 1$, we are specifically concerned about the variation of the function over small intervals, and note that it is easier to get finite $p$-variation as we increase $p$. Variation is a relatively stable concept with increasing $p$ for continuous functions, and we can see without much difficulty that if for $0 \le p < q$, $V^{(p)}(f)_{T} < \infty$, then necessarily $V^{(q)}(f)_{T} = 0$. \\
+
+    Intuitively, as Brownian motion has standard deviation $\sqrt{t}$ over an interval of length $t$, we would expect that its $2$-variation should be of order $T$ over an interval of length $T$. In fact we don't get almost sure convergence, but we can get $L^{2}$-convergence. \\
+
+    \begin{theorem}
+      \ With $(B_{t})$ a Brownian motion under $\mathbb{P}$, $\pi$ a partition of $[0,T]$,
+      \begin{align*}
+        S(\pi) = \sum_{k=1}^{|\pi|} |B_{t^{(\pi)}_{k}} - B_{t^{(\pi)}_{k-1}}|^{2}
+      \end{align*}
+      $(\pi_{n})$ a sequence of partitions with $\Vert \pi_{n} \Vert \to 0$, then
+      \begin{align*}
+        S(\pi_{n}) \overset{L^{2}}{\to} T
+      \end{align*}
+      as $n \to \infty$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{corollary}
+    \ Brownian sample paths are of infinite variation on any interval, and nowhere locally H\"{o}lder continuous of order $\gamma > 1/2$ almost surely.
+    \end{corollary}
+    \hphantom{}
+
+    Note here that there is a subsequence $(\pi_{n_{k}})$ such that $S(\pi_{n_{k}}) \to T$ almost surely. $S(\pi_{n_{k}}) \to T \le \varepsilon V(B_{t})_{T}$ for all $\varepsilon > 0$ by the continuity of $(B_{t})$, so thus $V(B_{t})_{T} = \infty$ almost surely. Nowhere locally H\"older continuous comes about by contradiction with a similar argument. \\
+
+    In fact we can get a more precise result, although this is far more difficult to obtain and non-examinable. \\
+
+    \begin{theorem}[L\'evy's modulus of continuity]
+      \ For $(B_{t})$ a Brownian motion,
+      \begin{align*}
+        \limsup_{\varepsilon \to 0^{+}} \sup_{\substack{s,t \in [0,1] \\ |s-t| \le \varepsilon}} \frac{|B_{t}-B_{s}|}{\sqrt{2\varepsilon \log(1/\varepsilon)}} = 1.
+      \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    This indicates further that $(B_{t})$ is almost surely nowhere locally H\"older continuous of order $1/2$, and that it has almost surely infinite 2-variation. \\
+
+    \textbf{Fairly certain that this should refer to 2-variation on any $[0,T]$ being infinite, although frankly unclear.} \\
+
+    \begin{theorem}[Blumenthal's 0-1 law]
+    \ Take a Brownian motion $(B_{t})$ on $(\Omega, \mathcal{F}, \mathbb{P})$. Define for $t \ge 0$, $\mathcal{F}_{t} = \sigma(\{B_{s} : s \le t\})$, and
+    \begin{align*}
+      \mathcal{F}_{0^{+}} = \bigcap_{t > 0} \mathcal{F}_{t}.
+    \end{align*}
+    This $\sigma$-algebra is trivial, containing events only of probability $0$ or $1$.
+    \end{theorem}
+    \hphantom{}
+
+    This statement amounts to showing that $\mathcal{F}_{0^{+}}$ is independent of itself, for which it is sufficient to demonstrate that for all $0 < t_{1} < \cdots < t_{n}$, $\mathcal{F}_{0^{+}}$ and $\sigma(B_{t_{1}},\dots,B_{t_{n}})$ are independent, which can be argued through writing independence in terms of expectations. \\
+
+    To see this, for any $A \in \mathcal{F}_{0^{+}}$, $(t_{1},\dots,t_{n}) \in \mathbb{T}$, $E \subseteq \mathbb{R}^{n}$ open, we wish to approximate $\chi_{A}\chi_{(B_{t_{1}},\dots,B_{t_{n}})^{-1}(E)}$ in terms of $B_{t_{1}}-B_{\varepsilon},\dots,B_{t_{n}}-B_{\varepsilon}$ (a set of random variables independent of $B_\varepsilon$, and thus of $\mathcal{F}_{0^{+}}$). \\
+
+    To do this, we take $(f_{k})$ a sequence of bounded continuous functions from $\mathbb{R}^{n}$ converging pointwise to $\chi_{E}$ (e.g. by defining $E_{k} = \{x \in \mathbb{R}^{n} : \mathrm{dist}(x,E^{c}) \ge 1/k\}$, then setting $f_{k}$ to be $1$ on $E_{k}$, $0$ on $E^{c}$, and linearly interpolated with $\mathrm{dist}(x,E_{k})$ and $\mathrm{dist}(x,E^{c})$ in between). We then use their boundedness and measurability (via continuity) to conclude via DCT that for $X_{1},\dots,X_{n}$ random variables,
+    \begin{align*}
+      \mathbb{E}\big[\chi_{A}f_{k}(X_{1},\dots,X_{n})\big] \to \mathbb{P}(A \cap (X_{1},\dots,X_{n})^{-1}(E))
+    \end{align*}
+    as $k \to \infty$. \\
+
+    We then note that by continuity of Brownian motion and of $f_{k}$, $f_{k}(B_{t_{1}-\varepsilon}, \dots,B_{t_{n}-\varepsilon}) \to f_{k}(B_{t_{1}},\dots,B_{t_{n}})$ as $\varepsilon > 0$, and by boundedness of $f_{k}$ and $\chi_{A}f_{k}$ we get by DCT that
+    \begin{align*}
+      \mathbb{E}\big[\chi_{A}f_{k}(B_{t_{1}-\varepsilon},\dots,B_{t_{n}-\varepsilon})\big] &= \mathbb{P}(A)\mathbb{E}\big[f_{k}(B_{t_{1}-\varepsilon},\dots,B_{t_{n}-\varepsilon})\big] \\
+      \downarrow\quad\quad\quad\quad\quad & \quad\quad\quad\quad\quad\quad\downarrow \\
+      \mathbb{E}\big[\chi_{A}f_{k}(B_{t_{1}},\dots,B_{t_{n}})\big] &= \mathbb{P}(A)\mathbb{E}\big[f_{k}(B_{t_{1}},\dots,B_{t_{n}})\big]
+    \end{align*}
+    as $\varepsilon \to 0$. Thus taking limits again we see that
+    \begin{align*}
+      \mathbb{P}(A \cap (B_{t_{1}},\dots,B_{t_{n}})^{-1}(E)) = \mathbb{P}(A)\mathbb{P}((B_{t_{1}},\dots,B_{t_{n}})^{-1}(E)).
+    \end{align*}
+    Consequently as the open sets in $\mathbb{R}^{n}$ generate $\mathcal{B}(\mathbb{R}^{n})$ and the collection of $E \in \mathcal{B}(\mathbb{R}^{n})$ for which the above independence equation holds is a $\lambda$-system, thus $\mathcal{F}_{0^{+}}$ and $\sigma(B_{t_{1}},\dots,B_{t_{n}})$ are independent and so $\mathcal{F}_{0^{+}}$ and $\sigma((B_{t})) \supseteq \mathcal{F}_{0^{+}}$ are independent. $\square$ \\
+
+    From this result, we can derive that for any $\varepsilon > 0$, $\sup_{t \in [0,\varepsilon]} B_{t} > 0$, and then use time inversion to show that $\limsup B_{t} = \infty$ and $\liminf B_{t} = -\infty$. Further, we see that $t \mapsto B_{t}$ is a.s. not monotone on any non-trivial interval.
+  }
+  \column{0.167}
+  \block{Filtrations}{
+    \begin{definition}
+    \ A filtration $(\mathcal{F}_{t})$ is said to satisfy the usual conditions if:
+    \begin{enumerate}[label=\roman*.]
+      \item it is complete: $(\Omega, \mathcal{F}, \mathbb{P})$ is complete (subsets of $\mathbb{P}$-null sets are measurable) and $\mathbb{P}^{-1}(\{0\}) \subseteq \mathcal{F}_{0}$; and
+      \item it is right continuous: for $t \ge 0$, $\mathcal{F}_{t} = \bigcap_{s > t} \mathcal{F}_{s}$.
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    Note that we can make a filtration satisfy the usual conditions without too much difficulty, by defining $\mathcal{F}'_{t}$ as the smallest $\sigma$-algebra containing $\mathcal{F}_{t^{+}}$ and $\mathbb{P}^{-1}(\{0\})$ (also extending $\mathcal{F}$ if necessary). \\
+
+    As normal, we say that a process $(X_{t})$ is adapted to a filtration $(\mathcal{F}_{t})$ if $X_{t}$ is $\mathcal{F}_{t}$-measurable. Intuitively, adaptedness tells us how much information we need to measure the process at each time $t$ (the `regularity' of each $X_{t}$ on $\Omega$), but does not tell us how much information about $\omega \in \Omega$ we need to measure the entire process on $[0,t]$ (which could possibly be more, if the process is poorly behaved over time). We thus give the following: \\
+
+    \begin{definition}[Progressive measurability]
+    \ $(X_{t})$ is $(\mathcal{F}_{t})$-progressive (or $(\mathcal{F}_{t})$ progressively measurable) if for $t \ge 0$, $(s, \omega) \mapsto X_{s}(\omega)$ is measurable on $([0,t]\times \Omega, \mathcal{B}([0,t]) \otimes \mathcal{F}_{t})$.
+    \end{definition}
+    \hphantom{}
+
+    If $(X_{t})$ is $(\mathcal{F}_{t})$-progressive, then it is adapted to $(\mathcal{F}_{t})$. Rigorously, this is because for any $E \in \mathcal{E}$, $\{(s, \omega) \in [0,t] \times \Omega : X_{s}(\omega) \in E\} \in \mathcal{B}([0,t]) \otimes \mathcal{F}_{t}$, so intersect it with $\{s\} \times \Omega \in \mathcal{B}([0,t]) \otimes \mathcal{F}_{t}$ to get $\{s\} \times X_{s}^{-1}(E) \in \mathcal{B}([0,t]) \otimes \mathcal{F}_{t}$. Taking $\pi_{s}(\omega) = (s,\omega)$, note that it is measurable, and thus $X_{s}^{-1}(E) \in \mathcal{F}_{t}$. \\
+
+    The reverse implication does not hold however. To see this, take a set $A \in \mathcal{P}([0,t]) \setminus \mathcal{B}([0,t])$, and define $X_{t}(\omega) = \chi_{A}(t)$. Each $X_{t}$ is clearly $\{\varnothing, \Omega\}$-measurable, but the process $(X_{t})$ is not measurable. \\
+
+    Any almost surely right-continuous stochastic process $(X_{t})$ adapted to a filtration $(\mathcal{F}_{t})$ is progressively measurable. This is because any such process can be seen as a limit of measurable processes taking a finite number of values in finite time. \\
+
+    \begin{definition}
+    \ A process $(B_{t})$ is an $(\mathcal{F}_{t})$-Brownian motion if it is a Brownian motion adapted to $\mathcal{F}_{t}$, and for all $0 \le s \le t$, $\sigma(B_{t}-B_{s})$ is independent of $\mathcal{F}_{s}$.
+    \end{definition}
+    \hphantom{}
+
+    \innerblock{Stopping times}{
+      \begin{definition}[Stopping times]
+      \ Let $(\Omega, \mathcal{F}, (\mathcal{F}_{t}), \mathbb{P})$ be a filtered probability space. A random variable $\tau : \Omega \to [0,\infty]$ is called a stopping time relative to $(\mathcal{F}_{t})$ if for $t \ge 0$, $\{\tau \le t\} \in \mathcal{F}_{t}$.
+      \end{definition}
+      \hphantom{}
+
+      We then have for a stopping time $\tau$,
+      \begin{align*}
+        \mathcal{F}_{\tau} &= \{A \in \mathcal{F} : \text{for all } t \ge 0,\,A \cap \{\tau \le t\} \in \mathcal{F}_{t}\} \\
+        \mathcal{F}_{\tau^{-}} &= \sigma(\{A \cap \{\tau > t\} : \text{there is } t \ge 0\, \text{ s.t. } A \in \mathcal{F}_{t}\}).
+      \end{align*}
+      The former can be understood as in the discrete setting, as the set of events such that their part when $\tau$ has occurred prior to time $t$ is knowable at time $t$ (there is no more information about the event provided after $\tau$). The latter is the set of events known strictly before $\tau$. \\
+
+      Most of the understanding surrounding these filtrations is intuitive, but note specifically that if we have a stopping time $\tau$ and a random variable $\rho : \Omega \to [0,\infty]$, then if $\rho \ge \tau$ and $\rho$ is $\mathcal{F}_{\tau}$ measurable, it is also a stopping time. This allows us to construct sequences of stopping times. \\
+
+      \begin{lemma}
+      \ For $X \in L^{1}(\Omega, \mathcal{F}, \mathbb{P})$, stopping times $\rho$ and $\tau$ on $(\mathcal{F}_{t})$,
+      \begin{align*}
+        \chi_{\rho \le \tau} \mathbb{E}\big[X \,|\, \mathcal{F}_{\rho}\big] = \chi_{\rho \le \tau} \mathbb{E}\big[X \,|\, \mathcal{F}_{\rho \land \tau}\big].
+      \end{align*}
+      \end{lemma}
+
+      \begin{theorem}
+      \ Let $(X_{t})$ be a progressively measurable process and $\tau$ a stopping time. Then $X_{\tau} \chi_{\tau < \infty}$ is $\mathcal{F}_{\tau}$-measurable, and the stopped process $(X_{t \land \tau})$ is progressively measurable.
+      \end{theorem}
+      \hphantom{}
+
+      We prove this through initially showing progressive measurability as composition of measurable maps. \\
+
+      \textbf{On what sets and for what continuous processes is a hitting time a stopping time?} \\
+
+      \begin{definition}[Localisation]
+      \ A process $(X_{t})$ locally has some property $C$ if there exists a sequence of stopping times such that $(X_{t \land \tau_{n}})$ have property $C$ for all $n \ge 1$, and $\tau_{n} \to \infty$ almost surely.
+      \end{definition}
+      \hphantom{}
+
+      For example, any continuous process is locally bounded by taking the sequence of constant stopping times $(n)$. \\
+
+      It is occasionally helpful to reconstruct a global process from local versions. Given a localising sequence $(\tau_{n})$ and a family $(Y^{(n)}_{t})$ such that for $n \le m$, $\chi_{t \le \tau_{n}}Y^{(n)}_{t} = \chi_{t \le \tau_{n}} Y^{(m)}_{t}$ for all $t \ge 0$ almost surely (indistinguishability), we can construct a general $(Y_{t})$ such that $\chi_{t \le \tau_{n}}Y^{(n)}_{t} = \chi_{t \le \tau_{n}} Y_{t}$ for all $n \ge 0$. \\
+
+      The point of localisation is to allow us to talk about processes which a.s. have a property on an arbitrarily large region (even if they might also violate this property on arbitrarily large regions, which is why we use $(\tau_{n})$ rather than simply $(n)$).
+    }
+  }
+  \block{Strong Markov Property}{
+    \begin{theorem}[Strong Markov property of Brownian motion]
+    \ With $(B_{t})$ a standard Brownian motion on $(\Omega, \mathcal{F}, (\mathcal{F}_{t}), \mathbb{P})$, $\tau$ a stopping time with respect to $(\mathcal{F}_{t})$. Conditional on $\{\tau < \infty\}$, $B_{\tau + t} - B_{\tau}$ is a standard Brownian motion independent of $\mathcal{F}_{\tau}$.
+    \end{theorem}
+    \hphantom{}
+
+    Firstly, assume that $\tau < \infty$ almost surely. We then, in a similar manner to the proof of Blumenthal's 0-1 law, attempt to characterise the distributions of $(B_{t})$ and $(B_{\tau+t}-B_{\tau})$ in terms of their expectations, by demonstrating that for any continuous bounded $f : \mathbb{R}^{n} \to \mathbb{R}$, with $0 \le t_{1} < \cdots < t_{n}$, $A \in \mathcal{F}_{\tau}$,
+    \begin{align*}
+      \mathbb{E}\big[\chi_{A} f(B_{\tau+t_{1}}-B_{\tau},\cdots,B_{\tau+t_{n}}-B_{\tau})\big] &= \mathbb{P}(A)\mathbb{E}\big[f(B_{t_{1}},\cdots,B_{t_{n}})\big].
+    \end{align*}
+    With $A = \Omega$ we can approximate simple $\mathcal{B}(\mathbb{R}^{n})$-measurable functions with a sequence $(f_{n})$ of continuous bounded functions in order to demonstrate that $(B_{\tau+t}-B_{\tau}) \overset{\mathrm{dist}}{=} (B_{t})$. It is then consequently clear by a monotone class argument that $\mathcal{F}_{\tau}$ and $(B_{\tau+t}-B_{\tau})$ are independent. \\
+
+    Establishing the above claim comes from conditioning on the interval within which $\tau$ resides. \\
+
+    \coloredbox{
+      The idea of characterising distributions in terms of expectations is a highly valuable one, given how easy expectations are to work with in the context of the random variables we deal with.
+    }
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $(B_{t})$ be a standard Brownian motion and $\tau$ a stopping time. Then
+    \begin{align*}
+      \widetilde{B}_{t} := \begin{cases}
+        B_{t} & t < \tau \\
+        2B_{\tau} - B_{t} & t \ge \tau
+      \end{cases}
+    \end{align*}
+    is a standard Brownian motion.
+    \end{theorem}
+    \hphantom{}
+
+    This is direct from the strong Markov property and symmetry of Brownian motion. \\
+
+    \textbf{What else can we get from this?} \\
+
+    \begin{corollary}
+    \ Let $S_{t} = \sup_{u \le t} B_{u}$. For $0 \le a \le b$,
+    \begin{align*}
+      \mathbb{P}(S_{t} \ge a, B_{t} \le b) = \mathbb{P}(B_{t} \ge 2a -b).
+    \end{align*}
+    \end{corollary}
+
+    In particular, we see that by setting $a = b$
+    \begin{align*}
+      \mathbb{P}(S_{t} \ge a) &= \mathbb{P}(S_{t} \ge a, B_{t} \le b) + \mathbb{P}(S_{t} \ge a, B_{t} > b) \\
+                              &= \mathbb{P}(B_{t} \ge 2a - b) + \mathbb{P}(B_{t} > b) \\
+                              &= 2\mathbb{P}(B_{t} \ge a) \\
+      &= \mathbb{P}(|B_{t}| \ge a)
+    \end{align*}.
+  }
+  \block{Martingales}{
+    \begin{definition}
+    \ An adapted stochastic process $(X_{t})$ in $L^{1}(\Omega, \mathcal{F}, \mathbb{P})$ is a
+    \begin{enumerate}[label=\roman*.]
+            \item martingale if $\mathbb{E}\big[X_{t} \,|\, \mathcal{F}_{s}\big] = X_{s}$ for $s,t \ge 0$;
+            \item supermartingale if $\mathbb{E}\big[X_{t} \,|\, \mathcal{F}_{s}\big] \le X_{s}$ for $s,t \ge 0$;
+            \item submartingale if $\mathbb{E}\big[X_{t} \,|\, \mathcal{F}_{s}\big] \ge X_{s}$ for $s,t \ge 0$.
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    Martingales are relatively well-behaved. A martingale composed by a convex function is a submartingale (or stays a submartingale if convex and increasing), provided it is integrable. \\
+
+    Note that for any $(Z_{t})$ with independent increments, $(Z_{t} - \mathbb{E}\big[Z_{t}\big])$, $(Z^{2}_{t}-\mathbb{E}\big[Z^{2}_{t}\big])$, and $(e^{\theta Z_{t}}/\mathbb{E}\big[e^{\theta Z_{t}}\big])$ are all martingales provided the respective expectations are finite. \\
+
+    \begin{lemma}
+    \ For $(M_{t})$ a martingale in $L^{2}$, $0 \le s < t$,
+    \begin{align*}
+      \mathbb{E}\big[(M_{t}-M_{s})^{2}\big] = \mathbb{E}\big[M^{2}_{t}-M^{2}_{s}\big].
+    \end{align*}
+    \end{lemma}
+
+    To see this, write
+    \begin{align*}
+      \mathbb{E}\big[(M_{t}-M_{s})^{2}\big] &= \mathbb{E}\big[\mathbb{E}\big[M_{t}^{2}-2M_{t}M_{s}+M_{s}^{2} \,|\, \mathcal{F}_{s}\big]\big] \\
+                                            &= \mathbb{E}\big[M_{t}^{2} + M_{s}^{2}\big] - 2\mathbb{E}\big[M_{s}\mathbb{E}\big[M_{t} \,|\, \mathcal{F}_{s}\big]\big] \\
+      &= \mathbb{E}\big[M_{t}^{2}-M_{s}^{2}\big].
+    \end{align*}
+
+
+    \innerblock{Convergence}{
+      \begin{lemma}[C\`adl\`ag modification]
+      \ Let $D$ be a countable dense set in $\rightopen{0}{\infty}$, $f : D \to \mathbb{R}$. If for all $T \in D$, $\restr{f}{[0,T]}$ is bounded, and for all $a, b \in \mathbb{Q}$ with $a < b$,
+      \begin{align*}
+        U([a,b], \restr{f}{[0,T]}) < \infty,
+      \end{align*}
+      then the function $g : \rightopen{0}{\infty} \to \mathbb{R}$ defined by
+      \begin{align*}
+        g(t) = \lim_{\substack{s \to t^{+} \\ s \in D} } f(s)
+      \end{align*}
+      is well-defined, right-continuous, and has left limits everywhere (c\`adl\`ag).
+      \end{lemma}
+      \hphantom{}
+
+      The proof of this is a relatively straightforward by considering $\limsup f(t)$. \\
+
+      \begin{theorem}
+      \ For $(X_{t})$ a right-continuous supermartingale and $\sup_{t} \mathbb{E}\big[X^{-}_{t}\big] < \infty$ then $X_{t} \to X_{\infty} \in L^{1}$ almost surely (but not necessarily in $L^{1}$).
+      \end{theorem}
+      \hphantom{}
+
+      By right continuity, $U([a,b], (X_{t})_{t \le T}) \le U(\rightopen{a}{b}, (X_{t})_{t \le T,\, t \in \mathbb{Q}})$. Extending Doob's upcrossing lemma in discrete time to countable sets, We then apply Doob's upcrossing lemma in discrete time to see that $X_{t}$ converges to a limit as $t \to \infty$. \\
+
+      Note that this does not give that all right-continuous martingales converge a.s., but rather that they converge a.s. if either their positive or negative part is in $L^{1}$. Brownian motion is a particular example of where this does not hold. \\
+
+      \begin{theorem}
+      \ If $(X_{t})$ is a supermartingale, then almost surely for all $t \in (0,\infty)$, $X_{t^{-}}$ and $X_{t^{+}}$ (defined by right and left limits taken in $\mathbb{Q}$) both exist and are finite.
+      \end{theorem}
+      \hphantom{}
+
+      The main limitation in proving this statement is that the discrete upcrossing lemma only works for countable sets, and thus we are restricted to working with $\mathbb{Q}$. \\
+
+      \begin{theorem}
+      \ For any $(X_{t})$ which is a supermartingale with respect to $(\mathcal{F}_{t})$ a right-continuous and complete filtration, if $\mathbb{E}\big[X_{t}\big]$ is right continuous, then $(X_{t})$ admits a modification with c\`adl\`ag paths that is also a $(\mathcal{F}_{t})$-supermartingale.
+      \end{theorem}
+      \hphantom{}
+
+      In particular, c\`adl\`ag modifications of martingales are martingales. \\
+
+      \textbf{Prove this -- in particular clarify how far away from continuity martingales in fact are.} \\
+
+      \begin{definition}
+      \ A martingale is closed if there is a $Z \in L^{1}$ such that for $t \ge 0$, $X_{t} = \mathbb{E}\big[Z \,|\, \mathcal{F}_{t}\big]$.
+      \end{definition}
+      \hphantom{}
+
+      \begin{theorem}
+      \ For $(X_{t})$ a martingale with right-continuous sample paths. TFAE:
+      \begin{itemize}
+              \item $(X_{t})$ is closed;
+              \item $(X_{t})$ is UI;
+              \item $(X_{t})$ converges a.s. and in $L^{1}$ as $t \to \infty$.
+      \end{itemize}
+      Moreover, if the above holds, then $(X_{t})$ is closed in particular by $X_{\infty}$.
+      \end{theorem}
+      \hphantom{}
+    }
+    \hphantom{}
+
+    \begin{theorem}[Doob's maximal inequality]
+      \ If $(X_{t})$ is a right continuous martingale or non-negative submartingale, then for $T \ge 0$, $\lambda > 0$, $p \ge 1$,
+      \begin{align*}
+        \mathbb{P}\left(\sup_{t \le T} |X_{t}| \ge \lambda\right) &\le \frac{\mathbb{E}\big[|X_{T}|^{p}\big]}{\lambda^{p}} \\
+        \mathbb{E}\left[\sup_{t \le T} |X_{t}|^{p}\right] &\le \left(\frac{p}{p-1}\right)^{p} \mathbb{E}\big[|X_{T}|^{p}\big]
+      \end{align*}
+      where the second inequality requires $p > 1$.
+    \end{theorem}
+    \hphantom{}
+
+    \textbf{Prove.} \\
+
+    Further, for $\lambda, T > 0$, $(X_{t})$ a supermartingale,
+    \begin{align*}
+      \mathbb{P}\left(\sup_{t \in [0,T] \cap \mathbb{Q}} |X_{t}| \ge \lambda\right) \le \frac{2 \mathbb{E}\big[|X_{t}|\big] + \mathbb{E}\big[|X_{0}|\big]}{\lambda}.
+    \end{align*}
+
+    \begin{definition}
+    \ A class $\mathcal{C}$ of random variables is uniformly integrable if for any $\varepsilon > 0$ there is $K > 0$ s.t. for all $X \in \mathcal{C}$,
+    \begin{align*}
+      \mathbb{E}\big[|X|\chi_{|X| > K}\big] < \varepsilon.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}[Optional stopping]
+    \ Let $(X_{t})$ be a UI martingale with right-continuous paths. Let $\tau \le \rho$ be stopping times. Then $X_{\tau}, X_{\rho}$ are both in $L^{1}$ and
+    \begin{align*}
+      X_{\tau} = \mathbb{E}\big[X_{\tau} \,|\, \mathcal{F}_{\rho}\big].
+    \end{align*}
+    In particular,
+    \begin{align*}
+      \mathbb{E}\big[X_{\tau}\big] = \mathbb{E}\big[X_{\infty}\big] = \mathbb{E}\big[X_{0}\big].
+    \end{align*}
+    \end{theorem}
+
+    To prove this, we write
+    \begin{align*}
+      X_{\rho}(\omega) = \chi_{\{\rho < \infty\}}X_{\rho(\omega)}(\omega) + \chi_{\{\rho = \infty\}} X_{\infty}(\omega).
+    \end{align*}
+    Noting that as $(X_{t})$ is a UI martingale, $X_{t} \to X_{\infty}$ a.s.. We then define sequences of stopping times $(\tau_{n})$ and $(\rho_{n})$ decreasing to $\tau$ and $\rho$ respectively: \\
+    \begin{align*}
+      \rho_{n} &= \sum_{k=0}^{\infty} \frac{k+1}{2^{n}} \chi_{\{k2^{-n} < \rho \le (k+1)2^{-n}\}} + \infty \chi_{\{\rho = \infty\}} \\
+      \tau_{n} &= \sum_{k=0}^{\infty} \frac{k+1}{2^{n}} \chi_{\{k2^{-n} < \tau \le (k+1)2^{-n}\}} + \infty \chi_{\{\tau = \infty\}}
+    \end{align*}
+    We can then apply the discrete OST with $Y_{k}^{(n)} = X_{k2^{-n}}$. \\
+
+    In particular, note that if $\rho$ is bounded by $M \ge 0$, as $(X_{t \land M})$ is closed by $X_{M}$, this is UI and thus the optional stopping theorem applies. \\
+
+    \begin{corollary}
+    \ Let $(X_{t})$ be a martingale with right-continuous paths, $\tau$ a stopping time.
+    \begin{enumerate}[label=\roman*.]
+            \item $(X_{t \land \tau})$ is a martingale.
+            \item If $(X_{t})$ is UI, then $(X_{t \land \tau})$ is UI.
+    \end{enumerate}
+    \end{corollary}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Suppose $(X_{t})$ is a process with right continuous paths adapted to a right continuous filtration. Then $(X_{t})$ is a martingale iff for every bounded stopping time $\tau$, $X_{\tau} \in L^{1}$ and $\mathbb{E}\big[X_{\tau}\big] = \mathbb{E}\big[X_{0}\big]$.
+    \end{theorem}
+    \hphantom{}
+
+    \textbf{Prove.} \\
+  }
+  \column{0.167}
+  \block{Continuous semimartingales}{
+    \innerblock{Finite variation integrals}{
+    We want to build a theory of stochastic integration, and use the class of semimartingales as our integrators. \\
+
+    We say that a function $a : \rightopen{0}{\infty} \to \mathbb{R}$ is of finite variation over $[0,T]$ if $V(a)_{T} < \infty$. We say that it is of finite variation if $V(a)_{T} < \infty$ for all $T > 0$, recalling the definition of variation for $a : [0,T] \to \mathbb{R}$. We say that it is of bounded variation if $\sup_{T > 0} V(a)_{T} < \infty$. \\
+
+    In order to define stochastic integration, we wish to use the variation to construct a measure. In particular, we write
+    \begin{align*}
+      \mu_{+}\leftopen{0}{t} &= \frac{V(a)_{t} + a(t)}{2} \\
+      \mu_{-}\leftopen{0}{t} &= \frac{V(a)_{t} - a(t)}{2}.
+    \end{align*}
+    By considering their definitions, we see quickly that $V(a)_{t} + a(t)$ and $V(a)_{t} - a(t)$ are both non-decreasing functions, so these define measures as desired. \\
+
+    \begin{definition}[Lebesgue-Stieltjes integral]
+    \ For $a : \rightopen{0}{\infty} \to \mathbb{R}$, $f : \rightopen{0}{\infty} \to \mathbb{R}$, $t \in [0,\infty]$, if
+    \begin{align*}
+      \int_{0}^{t} |f(s)|\, \mathrm{d}|\mu(s)| = \int_{0}^{t} |f(s)| \, \mathrm{d}(\mu_{+}+\mu_{-})(s) < \infty,
+    \end{align*}
+    then $f$ is $a$-integrable, and
+    \begin{align*}
+      (f \cdot a)_{t} := \int_{0}^{t} f(s) \, \mathrm{d}a(s) &= \int_{0}^{t} f(s) \, \mathrm{d}(\mu_{+}-\mu_{-})(s).
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    We say that $\mu = \mu_{+} - \mu_{-}$ is the signed measure associated with $a$, and the parts $\mu_{+}$ and $\mu_{-}$ are its Jordan decomposition. In reality, because $V(a)_{t}$ is non-decreasing, we could just write $\int_{0}^{t} |f(s)| \, \mathrm{d}V(a)_{s} < \infty$ as the first condition (but cannot do this for the latter unless $a$ is non-decreasing). \\
+
+    If to begin with $a$ is of finite variation and $f$ is $a$-integrable, then $f \cdot a$ is right continuous and of finite variation. \\
+
+    Without much work, we can see that the Riemann characterisation of integrals holds for $f : [0,T] \to \mathbb{R}$ left continuous. For any $(\pi_{n})$ with mesh tending to $0$,
+    \begin{align*}
+      (f \cdot a)_{t} = \lim_{n \to \infty} \sum_{i=1}^{N(\pi_{n})} f(t_{i-1}^{(n)}) (a(t_i^{(n)})-a(t_{i-1}^{(n)})).
+    \end{align*}
+    This works by defining $f_{n}(s) = f(t_{i-1}^{(n)})$ for $s \in \leftopen{t_{i-1}^{(n)}}{t_{i}^{(n)}}$, and by left continuity we have $f_{n}(s) \to f(s)$. \\
+
+    \begin{lemma}[Associativity]
+      \ Let $a : \rightopen{0}{\infty} \to \mathbb{R}$ be of finite variation, $f, g : \rightopen{0}{\infty} \to \mathbb{R}$ measurable, respectively $a$ and $(f \cdot a)$-integrable. Then $gf$ is $a$-integrable and for $t \ge 0$
+      \begin{align*}
+        (g \cdot (f \cdot a))_{t} = ((gf) \cdot a)_{t}.
+      \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    \textbf{Several other results from p38...} \\
+
+    \begin{definition}
+    \ An adapted right continuous process $(A_{t})$ is called a process of finite variation if $A_{0} = 0$ and $t \mapsto A_{t}$ is a.s. of finite variation.
+    \end{definition}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Let $(A_{t})$ be a finite variation process and $(K_{t})$ a progressively measurable process such that for $t \ge 0$, $\omega \in \Omega$, if
+    \begin{align*}
+      \int_{0}^{t} |K(\omega)| \,\mathrm{d} |A_{s}(\omega)| < \infty
+    \end{align*}
+    then
+    \begin{align*}
+      (K \cdot A)_{t}(\omega) = \int_{0}^{t} K_{s}(\omega) \, \mathrm{d}A_{s}(\omega)
+    \end{align*}
+    is a finite variation process.
+    \end{lemma}
+    \hphantom{}
+
+    \textbf{Prove.} \\
+    }
+    \hphantom{}
+
+    We would like now to develop a theory of integration where the integrators are martingales. The key problem here is that martingales are never of finite variation. \\
+
+    \begin{definition}
+    \ An adapted process $(M_{t})$ is a continuous local martingale if $t \mapsto M_{t}$ is continuous a.s. and if there is a non-decreasing sequence of stopping times $(\tau_{n})$ such that $\tau_{n} \to \infty$ as $n \to \infty$ a.s. and $(M_{t \land \tau_{n}})$ is a martingale for each $n \ge 1$.
+    \end{definition}
+    \hphantom{}
+
+    \textbf{The fuck are these} \\
+
+    Thus we extend the definition of martingales to locality. These are not necessarily martingales, although are approximately so. \\
+
+    A non-negative continuous local martingale such that $M_{0} \in L^{1}$ is a supermartingale by using Fatou's lemma. \textbf{Continue this.} \\
+
+    \begin{theorem}
+    \ A continuous local martingale $(M_{t})$ with $M_{0} = 0$ a.s. is a process of finite variation iff $(M_{t})$ is indistinguishable from $0$.
+    \end{theorem}
+    \hphantom{}
+
+    If $(M_{t})$ is a continuous local martingale of finite variation, we take $\tau_{n} = \inf \{t \ge 0 : V(M)_{t} \ge n\}$ a sequence of stopping times (as $V(M)$ is continuous and adapted), and $|M_{t \land \tau_{n}}| \le V(M)_{t\land \tau_{n}} \le n$ so hence $(M_{t \land \tau_{n}})$ is a martingale as $\mathbb{E}\big[V(M)_{t \land \tau_{n}}\big] < \infty$.
+    \begin{align*}
+      \mathbb{E}\big[M_{t \land \tau_{n}}^{2}\big] &= \mathbb{E}\left[\sum_{i=1}^{N(\pi)} (M_{t_{i} \land \tau_{n}} - M_{t_{i-1} \land \tau_{n}})^{2}\right] \\
+                                                   &\le n \mathbb{E}\big[\sup_{i} |M_{t_{i} \land \tau_{n}} - M_{t_{i-1} \land \tau_{n}}|\big] \\
+      &\to 0
+    \end{align*}
+    as $\Vert \pi \Vert \to 0$ by continuity of $(M_{t})$. Hence using Fatou's lemma, $\mathbb{E}\big[M^{2}_{t}\big] = 0$ and thus by continuity $(M_{t})$ is indistinguishable from $0$. \\
+
+    Essentially, our theory of integrating against finite variation processes doesn't work for martingales. Thus we want to construct finite variation processes from martingales which we can then integrate against a.s. with desired properties, and this is the quadratic variation. \\
+
+    \begin{theorem}[Quadratic variation]
+      \ For a continuous local martingale $(M_{t})$, there exists a unique (up to indistinguishability) non-decreasing, continuous adapted finite variation process $\langle M \rangle$ with $\langle M \rangle_{0} = 0$ such that $M^{2}_{t} - \langle M \rangle_{t}$ is a continuous local martingale. \\
+
+      Furthermore, for $t > 0$, for any sequence of partitions $(\pi_{n})$ on $[0,t]$ with $\Vert \pi_{n} \Vert \to 0$,
+    \begin{align*}
+      \langle M \rangle_{t} = \lim_{n \to \infty} \sum_{i=1}^{N(\pi_{n})} (M_{t_{i}} - M_{t_{i-1}})^{2}
+    \end{align*}
+    in probability.
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this is non-examinable. The uniqueness result is immediate from the triviality of finite variation continuous local martingales, and the remainder is more technical. \\
+
+    This is essentially a definition of quadratic variation. Note that for many processes this limit is infinite a.s.. Do not get this confused with 2-variation, which is an almost sure limit over supremums. \\
+
+    \begin{definition}
+      \ Let $(\Omega, \mathcal{F}, (\mathcal{F}_{t}), \mathbb{P})$ be a filtered probability space. We define
+      \begin{itemize}
+              \item \ $\mathcal{H}^{2}$ as the space of $L^{2}$-bounded c\`adl\`ag martingales;
+              \item \ $\mathcal{H}^{2,c}$ the subspace of $L^{2}$-bounded continuous martingales;
+              \item \ $\mathcal{H}^{2,c}_{0} = \{M \in \mathcal{H}^{2,c} : \mathbb{P}(M_{0} = 0)=1 \}$.
+      \end{itemize}
+      Further, we define the norm on $\mathcal{H}^{2}$ for $M \in \mathcal{H}^{2}$ by
+      \begin{align*}
+        \Vert M \Vert_{\mathcal{H}^{2}} = \sqrt{\mathbb{E}\big[M^{2}_{\infty}\big]}.
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Note that all of the above are normed vector spaces. \\
+
+    \begin{theorem}
+    \ $\mathcal{H}^{2,c}$ is a closed subspace of $\mathcal{H}^{2}$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $M$ be a continuous local martingale with $M_{0} \in L^{2}$.
+    \begin{enumerate}[label=\roman*.]
+            \item TFAE
+            \begin{enumerate}[label=(\alph*)]
+                    \item $M$ is an $L^{2}$-bounded martingale;
+                    \item $\mathbb{E}\big[\langle M \rangle_{\infty}\big] < \infty$;
+            \end{enumerate}
+            and furthermore, $M_{t}^{2} - \langle M \rangle_{t}$ is a uniformly integrable martingale, with $\mathbb{E}\big[M_{\infty}^{2}\big] = \mathbb{E}\big[M_{0}^{2}\big] + \mathbb{E}\big[\langle M \rangle_{\infty}\big]$.
+            \item TFAE
+            \begin{enumerate}
+                    \item $M$ is a martingale and $M_{t} \in L^{2}$ for $t \ge 0$;
+                    \item $\mathbb{E}\big[\langle M \rangle_{t}\big] < \infty$ for $t \ge 0$;
+            \end{enumerate}
+            and furthermore, $M_{t}^{2} - \langle M \rangle_{t}$ is a martingale.
+    \end{enumerate}
+    \end{theorem}
+    \hphantom{}
+
+    We firstly assume that $M \in \mathcal{H}^{2,c}_{0}$, and then use Doob's $L^{2}$ inequality... \textbf{conclude proof}. \\
+
+    Using that a continuous local martingale starting at $0$ is of finite variation iff $M \equiv 0$ a.s., $\langle M \rangle_{t} \equiv 0$ a.s. iff $M$ is a process of finite variation. \\
+
+    \begin{definition}[Quadratic covariation]
+    \ The quadratic covariation between two continuous local martingales $M, N$ is defined as
+    \begin{align*}
+      \langle M, N \rangle_{t} = \frac{1}{2}(\langle M + N \rangle_{t} - \langle M \rangle_{t} - \langle M \rangle_{t}).
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Similar to before, we argue that $\langle M, N \rangle$ is the unique finite variation process such that $(M_{t}N_{t} - \langle M, N \rangle_{t})$ is a continuous local martingale. By definition this is clearly true for $M = N$, and thus we can reformulate this process as a linear combination of continuous local martingales. \\
+
+    Strictly, we have for any $t > 0$, $(\pi_{n})$ a sequence of partitions on $[0,t]$ with $\Vert \pi_{n} \Vert \to 0$,
+    \begin{align*}
+      \sum_{i=0}^{N(\pi_{n})-1} (M_{t_{i+1}}-M_{t_{i}})(N_{t_{i+1}}-N_{t_{i}}) \overset{\mathbb{P}}{\to} \langle M, N \rangle_{t}.
+    \end{align*}
+    This can be seen basically from the definition. \\
+
+    As a consequence, for any stopping time $\tau$, $\langle M^{\tau}, N^{\tau} \rangle_{t} = \langle M^{\tau}, N \rangle_{t} = \langle M, N^{\tau} \rangle = \langle M, N \rangle_{\tau \land t}$. \\
+
+    Note that this doesn't immediately establish an inner product, as it returns a stochastic process rather than a real value. Taking expectations on the covariation at $\infty$, we get an inner product on $\mathcal{H}^{2,c}$ however. We say that $M$ and $N$ are \emph{strongly} orthogonal if $\langle M, N \rangle = 0$, and orthogonal as normal if $\mathbb{E}\big[\langle M, N \rangle\big] = 0$. \\
+
+    If $M$ and $N$ are two martingales bounded in $L^{2}$ and $M_{0}N_{0} = 0$, then $(M_{t}N_{t} - \langle M, N \rangle_{t})$ is a UI martingale, and for every stopping time $\tau$, $\mathbb{E}\big[M_{\tau}N_{\tau}\big] = \mathbb{E}\big[\langle M, N \rangle_{\tau}\big]$. \\
+
+    \begin{theorem}[Kunita-Watanabe inequality]
+    \ Let $M, N$ be two continuous local martingales and $K, H$ measurable processes. Then for $t \in [0,\infty]$,
+    \begin{align*}
+      \int_{0}^{\infty} |H_{s}| |K_{s}| \, \mathrm{d}|\langle M, N \rangle_{s}| \le \left(\int_{0}^{t} H_{s}^{2} \, \mathrm{d}\langle M \rangle_{s}\right)^{1/2}\left(\int_{0}^{t} K_{s}^{2} \, \mathrm{d}\langle N \rangle_{s}\right)^{1/2}.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    This proof comes about from applying Cauchy-Schwarz to approximations of $K$ and $H$ by simple functions, noting that for $M, N$ continuous local martingales,
+    \begin{align*}
+      |\langle M, N \rangle| \le \sqrt{\langle M \rangle} \sqrt{\langle N \rangle}.
+    \end{align*}
+    Note that this is the first time we can start integrating stochastic processes, and it is only because covariation defines a finite variation process. \\
+
+    \begin{definition}
+    \ A stochastic process is called a continuous semi-martingale if it can be written, for $M$ a continuous local martingale and $A$ a continuous process of finite variation both starting at $0$,
+    \begin{align*}
+      X_{t} = X_{0} + M_{t} + A_{t}
+    \end{align*}
+    for $t \ge 0$.
+    \end{definition}
+    \hphantom{}
+
+    The point of this is extend the domain of integration further, on the basis that we already have an integration theory for finite variation processes (and a trivial theory for constant processes), and we are developing an integration theory for continuous local martingales.
+    }
+    \column{0.166}
+    \block{Stochastic Integration}{
+      We begin by defining stochastic integration with respect to $L^{2}$-bounded martingales. Let $\mathcal{E}$ be the space of simple bounded stochastic processes
+      \begin{align*}
+        \varphi_{t} = \sum_{i=1}^{m} \varphi^{(i)} \chi_{\leftopen{t_{i-1}}{t_{i}}}(t)
+      \end{align*}
+      for $m \ge 1$, $0 \le t_{0} < t_{1} < \dots < t_{m}$, $\varphi^{(i)}$ bounded and $\mathcal{F}_{t_{i}}$ measurable. \\
+
+      \begin{definition}[It\^o stochastic integral of simple processes by continuous martingales]
+        \ For $\varphi = \sum_{i=1}^{m} \varphi^{(i)} \chi_{\leftopen{t_{i-1}}{t_{i}}} \in \mathcal{E}$, $M \in \mathcal{H}^{2,c}$,
+        \begin{align*}
+          (\varphi \sbullet M)_{t} := \sum_{i=1}^{m} \varphi^{(i)}(M_{t \land t_{i}} - M_{t \land t_{i-1}} ).
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      Note that each summand is itself in $\mathcal{H}^{2,c}$, and thus the integral is a martingale. Further, we see that each summand is strongly orthogonal to each other summand as the time intervals are disjoint, and consequently
+      \begin{align*}
+        \left\langle \int_{0}^{\cdot} \varphi_{s} \, \mathrm{d}M_{s} \right\rangle &= \sum_{i=1}^{m} \langle \varphi^{(i)}(M_{t \land t_{i+1}}-M_{t \land t_{i}}) \rangle \\
+                                                                    &= \sum_{i=1}^{m} (\varphi^{(i)})^{2}(\langle M \rangle_{t \land t_{i+1}} - \langle M \rangle_{t \land t_{i}}) \\
+        &= \int_{0}^{t} \varphi^{2}_{s} \, \mathrm{d} \langle M \rangle_{s}.
+      \end{align*}
+      Also, if $N \in \mathcal{H}^{2,c}$,
+      \begin{align*}
+        \left\langle \int_{0}^{\cdot} \varphi_{s} \, \mathrm{d}M_{s}, N \right\rangle_{t} = \int_{0}^{t} \varphi_{s} \, \mathrm{d}\langle M, N \rangle_{s}.
+      \end{align*}
+      Thus we have a map for each $M \in \mathcal{H}^{2,c}$ from $\mathcal{E}$ to $\mathcal{H}^{2,c}_{0}$, via the stochastic integral. In fact, this is a linear map (and probably bounded?). We then wish to extend it to $L^{2}(M)$, the space of progressively measurable processes $K$ such that $\int_{0}^{\infty} K_{s} \, \mathrm{d}M_{s} \in L^{2}$. This is a Hilbert space with the expected inner product, and in fact $\mathcal{E}$ is dense in it. \\
+
+      \begin{definition}
+      \ For $M \in \mathcal{H}^{2,c}$, $L^{2}(M)$ is the set of progressively measurable $K$ such that
+      \begin{align*}
+        \Vert K \Vert^{2}_{L^{2}(M)} = \mathbb{E}\left[\int_{0}^{\infty} K^{2}_{s} \, \mathrm{d}\langle M \rangle_{s}\right] < \infty.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      This is a Hilbert space under the inner product $\mathbb{E}\big[(HK \cdot \langle M \rangle)_{\infty}\big]$. \\
+
+      \begin{lemma}
+      \ Let $M \in \mathcal{H}^{2,c}$. Then $\mathcal{E}$ is a dense vector subspace of $L^{2}(M)$.
+      \end{lemma}
+      \hphantom{}
+
+      Suppose $\langle K, \varphi \rangle_{L^{2}(M)} = 0$ for all $\varphi \in \mathcal{E}$. Firstly, $K \cdot \langle M \rangle \in L^{1}$, as seen below:
+      \begin{align*}
+        \mathbb{E}\left[\left|\int_{0}^{t} K_{s} \, \mathrm{d}\langle M \rangle_{s}\right|\right] &\le \mathbb{E}\left[\int_{0}^{t} |K_{s}| \, \mathrm{d}\langle M \rangle_{s}\right] \\
+                                                                                                  &\le \left(\mathbb{E}\left[\int_{0}^{t} K_{s}^{2} \, \mathrm{d}\langle M \rangle_{s}\right]\right)^{1/2} \left(\mathbb{E}\left[\int_{0}^{t}\mathrm{d}\langle M \rangle_{s}\right]\right)^{1/2} \\
+        &\le \Vert K \Vert_{L^{2}(M)} (\Vert M_{t}^{2} \Vert_{\mathcal{H}^{2}} - \mathbb{E}\big[M_{0}^{2}\big])
+        &< \infty
+      \end{align*}
+      Further, for $A \in \mathcal{F}_{s}$, $\langle K, \chi_{A}(\omega) \chi_{\leftopen{s}{t}}(u) \rangle = 0$ and so $K$ is a martingale, yet it is of finite variation and continuous, so thus it is $0$, and so $\mathcal{E}^{\perp} = \{0\}$ and thus $\overline{\mathcal{E}} = L^{2}(M)$. \\
+
+      \begin{theorem}[It\^o stochastic integral]
+      \ Let $M \in \mathcal{H}^{2,c}$. Then $\varphi \mapsto \int \varphi \, \mathrm{d}M$ from $\mathcal{E} \to \mathcal{H}^{2,c}$ has a unique extension to a linear isometry from $L^{2}(M) \to \mathcal{H}^{2,c}$.
+      \end{theorem}
+      \hphantom{}
+
+      This follows on the basis that $\mathcal{H}^{2,c}$ is Banach, and $L^{2}(M)$ is a normed vector space. Thus we have now defined a stochastic integral for $L^{2}(M)$ with respect to $M \in \mathcal{H}^{2,c}$, and we call it the \^Ito stochastic integral. \\
+
+      We can consequently see the following:
+      \begin{align*}
+        \int_{0}^{t} B_{s} \, \mathrm{d}B_{s} = \frac{B_{t}^{2}-t}{2}.
+      \end{align*}
+      Note that normal calculus doesn't explain this, and rather we need \^Ito's formula. \\
+
+      \begin{theorem}
+      \ Let $M \in \mathcal{H}^{2,c}$, $K \in L^{2}(M)$. There is a unique element in $J \in \mathcal{H}^{2,c}_{0}$ such that for all $N \in \mathcal{H}^{2,c}$,
+      \begin{align*}
+        \left\langle J, N\right\rangle = \int_{0}^{\infty} K_{s} \, \mathrm{d}\langle M, N \rangle_{s}
+      \end{align*}
+      and $\Vert J \Vert_{\mathcal{H}^{2,c}} = \Vert K \Vert_{L^{2}(M)}$. We denote $\int_{0}^{t} K_{s} \, \mathrm{d}M_{s} := J_{t}$.
+      \end{theorem}
+      \hphantom{}
+
+      Uniqueness is immediate using the inner product relation. To construct $J$, note that
+      \begin{align*}
+        \mathbb{E}\left[\left|\int_{0}^{\infty}K_{s} \, \mathrm{d}\langle M, N \rangle_{s}\right|\right] &\le \left(\int_{0}^{\infty} K_{s}^{2} \, \mathrm{d}\langle M \rangle_{s}\right)^{1/2}\left(\int_{0}^{\infty} \mathrm{d}\langle N \rangle_{s}\right)^{1/2} \\
+        &= \Vert K \Vert_{L^{2}(M)} \Vert N \Vert_{\mathcal{H}^{2}} < \infty
+      \end{align*}
+      so $\int_{0}^{\infty} K_{s} \, \mathrm{d}\langle M, N \rangle_{s}$ is well-defined. \textbf{Finish this.} \\
+
+      This does not extend our definition any further beyond $L^{2}(M)$, but rather characterises the extension in a slightly different way. \\
+
+      \begin{lemma}
+      \ Let $H \in L^{2}(M)$. If $K$ is a progressively measurable process, then $KH \in L^{2}(M)$ iff $K \in L^{2}(H \sbullet M)$. In this case,
+      \begin{align*}
+        (KH) \sbullet M = K \sbullet (H \sbullet M).
+      \end{align*}
+      \end{lemma}
+
+      This follows relatively immediately from associativity of integration against finite variation processes. \\
+
+      We can extend our definition further however to continuous local martingales using this relation.
+
+      \begin{definition}[Processes integrable against continuous local martingales]
+      \ For a continuous local martingale $M$, we denote $L^{2}_{\mathrm{loc}}(M)$ as the space of progressively measurable processes $K$ such that for $t \ge 0$, almost surely
+      \begin{align*}
+        \int_{0}^{t} K_{s}^{2} \, \mathrm{d}\langle M \rangle_{s} < \infty.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      While this is the definition provided in the lecture notes, it's a slightly weird decision, as we'd normally interpret the local version of a space as referring to the property holding for processes stopped by $\tau_{n} \to \infty$ as $n \to \infty$. While this isn't the form found above, it \emph{does} give us an equivalent definition: $K \in L_{\mathrm{loc}}^{2}(M)$ iff $K$ is progressively measurable and there is a sequence of stopping times $(\tau_{n})$ with $\tau_{n} \to \infty$ almost surely such that for $n \ge 1$,
+      \begin{align*}
+        \mathbb{E}\left[\int_{0}^{\tau_{n}} K^{2}_{s} \, \mathrm{d}\langle M \rangle_{s}\right] < \infty.
+      \end{align*}
+
+      To see this, take $\tau_{n} := \inf \{t \ge 0 : K^{2} \cdot \langle M \rangle \ge n\}$, and $\tau_{n} \to \infty$ if $K \in L_{\mathrm{loc}}^{2}(M)$. If on the other hand there is a sequence of stopping times $\tau_{n} \to \infty$ such that $\mathbb{E}\big[(K^{2} \cdot \langle M \rangle)_{\tau_{n}}\big] < \infty$, thus for all $t > 0$ a.s. there is $n \ge 1$ s.t. $\tau_{n} \ge t$ and we must have $(K^{2} \cdot \langle M \rangle)_{\tau_{n}} < \infty$. \\
+
+      \begin{theorem}[It\^o integration of continuous local martingales]
+      \ For $M$ a continuous local martingale, $K \in L^{2}_{\mathrm{loc}}(M)$ there is a unique continuous local martingale denoted by $K \sbullet M$ such that for any continuous local martingale $N$,
+      \begin{align*}
+        \langle K \sbullet M, N \rangle = K \cdot \langle M, N \rangle.
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      \begin{definition}[Processes integrable against continuous semimartingales]
+      \ Let $X = X_{0} + M + A$ be a continuous semimartingale. The space of $X$-stochastically integrable processes is denoted
+      \begin{align*}
+        L(X) := L^{2}_{\mathrm{loc}}(M) \cap L^{1}_{\mathrm{loc}}(V(A)).
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      Note if $K$ is progressively measurable and locally bounded ($\sup_{u \le t} |K_{u}| < \infty$ for all $t \ge 0$), then for any continuous martingale $X$, we can take hitting times of $K^{2} \cdot \langle M \rangle + |K| \cdot V(A)$ in order to see there is a sequence of stopping times such that $K^{\tau_{n}}$ has finite $L^{2}(M)$ and $L^{1}(V(A))$ norms and thus $K \in L(X)$. \\
+
+      \begin{definition}[It\^o integration of continuous semimartingales]
+      \ Let $X = X_{0} + M + A$ be a continuous semimartingale and $K \in L(X)$. The It\^o stochastic integral of $K$ with respect to $X$ is the continuous semimartingale
+      \begin{align*}
+        K \sbullet X := K \sbullet M + K \cdot A.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      \begin{theorem}[Stochastic dominated convergence theorem]
+      \ Let $X$ be a continuous semimartingale, $(K^{(n)})$ a sequence in $L(X)$ such that for $t \ge 0$, a.s. $K^{(n)}_{t} \to 0$, and for some $K \in L(X)$, we have for $n \ge 1$, $|K^{(n)}_{t}| \le K_{t}$. Then for $t \ge 0$,
+      \begin{align*}
+        \sup_{s \le t} \left|\int_{0}^{s} K_{u}^{(n)} \, \mathrm{d}X_{u}\right| \overset{\mathbb{P}}{\to} 0
+      \end{align*}
+      as $n \to \infty$.
+      \end{theorem}
+      \hphantom{}
+
+      To see this is an application of DCT on the finite variation part of $X$, and an application of DCT on the $L^{2}$ norm of $K_{t}^{(n)} \sbullet M^{\tau_{m}}$ in order to demonstrate that the continuous local martingale part tends to $0$ in probability. \\
+
+      \begin{corollary}
+      \ Let $X$ be a continuous semimartingale, $K$ a left-continuous process in $L(X)$. If $(\pi_{n})$ is a sequence of partitions of $[0,t]$ with $\Vert \pi_{n} \Vert \to 0$, then
+      \begin{align*}
+        \sum_{i=1}^{N(\pi_{n})} K_{t_{i-1}} (X_{t_{i}} - X_{t_{i-1}}) \overset{\mathbb{P}}{\to} \int_{0}^{t} K_{s} \, \mathrm{d}X_{s}
+      \end{align*}
+      as $n \to \infty$.
+      \end{corollary}
+      \hphantom{}
+    }
+
+    \block{It\^o's formula}{
+      We now get to truly working with stochastic differential forms, having properly defined integration in generality. \\
+
+      \begin{lemma}
+      \ If $X$ and $Y$ are two continuous semimartingales,
+      \begin{align*}
+        X_{t}Y_{t} - X_{0}Y_{0} &= \int_{0}^{t} X_{s}\, \mathrm{d}Y_{s} + \int_{0}^{t} Y_{s} \, \mathrm{d}X_{s} + \langle X, Y \rangle_{t} \\
+        &= (X \sbullet Y)_{t} + (Y \sbullet X)_{t} + \langle X, Y \rangle_{t}.
+      \end{align*}
+      \end{lemma}
+      \hphantom{}
+
+      Noting we can write
+      \begin{align*}
+        X_{t}Y_{t} - X_{s}Y_{s} &= X_{s}(Y_{t}-Y_{s}) + Y_{s}(X_{t}-X_{s}) + (X_{t}-X_{s})(Y_{t}-Y_{s})
+      \end{align*}
+      thus we can write $X_{t}Y_{t}-X_{0}Y_{0}$ as a telescoping sum and take the limit with $\Vert \pi_{n} \Vert \to 0$ in order to see our result. \\
+
+      \begin{theorem}[It\^o's formula]
+      \ Let $X = (X^{(1)}, \dots, X^{(d)})$ be a vector of continuous semimartingales, $F : \mathbb{R}^{d} \to \mathbb{R}$ twice differentiable. Then $F(X_{t})$ is a continuous semimartingale and up to indistinguishability,
+      \begin{align*}
+        F(X_{t}) - F(X_{0}) = \sum_{i=1}^{d} \int_{0}^{t} \frac{\partial F}{\partial x^{(i)}}(X_{s}) \, \mathrm{d}X^{(i)}_{s} + \frac{1}{2}\sum_{i=1}^{d}\sum_{j=1}^{d}\int_{0}^{t} \frac{\partial^{2}F}{\partial x^{(i)} \partial x^{(j)}}(X_{s}) \, \mathrm{d}\langle X^{(i)}, X^{(j)} \rangle_{s}.
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      This is proved by demonstrating the formula for polynomials, and then applying Stone-Weierstrass. To do this, we prove that if the equation is satisfied for two functions, it is also satisfied for their product and any linear combination, and that for $F(x) = x^{(i)}$ the equation is satisfied. \\
+
+      \begin{lemma}[Stochastic exponential]
+      \ Let $M$ be a continuous local martingale and $\lambda \in \mathbb{R}$. Then for $t \ge 0$,
+      \begin{align*}
+        \mathcal{E}^{\lambda}(M)_{t} := \exp\left(\lambda M_{t} - \frac{\lambda^{2}}{2} \langle M \rangle_{t}\right)
+      \end{align*}
+      defines a continuous local martingale.
+      \end{lemma}
+      \hphantom{}
+
+      This is a straightforward application of It\^o's formula to $F(x,y) = \exp\left(\lambda x - \frac{\lambda^{2}}{2} y\right)$, and it provides a solution to the equation
+      \begin{align*}
+        \mathrm{d}Y_{t} &= \lambda Y_{t} \mathrm{d}M_t.
+      \end{align*}
+
+      \begin{theorem}[L\'evy's characterisation of Brownian motion]
+      \ Let $M$ be a continuous local martingale starting at $0$. $M$ is a standard Brownian motion iff $\langle M \rangle_{t} = t$ a.s. for $t \ge 0$.
+      \end{theorem}
+      \hphantom{}
+
+      This comes from considering the characteristic function of $M_{t} - M_{s}$ in the case that the quadratic variation of $M$ is $t$. \\
+
+      \begin{theorem}[Dambis-Dubins-Schwarz]
+        \ Let $M$ be an $(\mathcal{F}_{t})$ continuous local martingale beginning at $0$ and with $\langle M \rangle_{\infty} = \infty$ a.s.. With $\tau_{s} = \inf \{t \ge 0 : \langle M \rangle_{t} > s\}$, $M_{\tau_{s}}$ is a $(\mathcal{F}_{\tau_{s}})$-Brownian motion and for $t \ge 0$, almost surely we have
+        \begin{align*}
+          M_{t} = B_{\langle M \rangle_{t}}.
+        \end{align*}
+      \end{theorem}
+
+      See that the process $\tau_{s}$ is a non-decreasing, right-continuous process of stopping times, and that provided $(\mathcal{F}_{t})$ satisfies the usual conditions, thus $(\mathcal{F}_{\tau_{s}})$ also does. We then use that the intervals of constancy of $\langle M \rangle$ and $M$ coincide with one another a.s. to demonstrate continuity of $M_{\tau_{s}}$, and then use L\'evy's theorem to see that it is sufficient to demonstrate that $\langle M_{\tau_{s}} \rangle = s$. \\
+
+      \textbf{finish the proof, including demonstrating that intervals of constancy coincide.}
+      }
+\end{columns}
+
+\end{document}

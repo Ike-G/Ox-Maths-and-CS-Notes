@@ -1,0 +1,633 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=2600mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Cat}{Cat}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\Ker}{Ker}
+
+\newcommand{\rightopen}[2]{\ensuremath{[#1,#2)}}
+\newcommand{\leftopen}[2]{\ensuremath{(#1,#2]}}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Functional Analysis II}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.33}
+  \block{Introduction}{
+    ``Hahn-Banach is why mathematics without the axiom of choice is really silly." \\
+
+    In this course we see many of the very fundamental results which allow us to do mathematics. \\
+
+    In Functional Analysis I, we prove critically the projection theorem, the Hahn-Banach theorem, and the Riesz representation theorem. Recall these as: \\
+
+    \begin{theorem}[Hahn-Banach]
+    \ For $(X, \Vert \cdot \Vert)$ a normed space, $Y \subseteq X$ a subspace, there is an isometric extension map $E : Y^{*} \to X^{*}$ such that for $f \in Y^{*}$, $\restr{E(f)}{Y} = f$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}[Riesz representation theorem]
+    \ For $X$ a Hilbert space, there is an isometric isomorphism (or anti-isomorphism, if over $\mathbb{C}$) $\pi : X^{*} \to X$ such that $\ell \equiv \langle \cdot , \pi(\ell) \rangle$.
+    \end{theorem}
+  }
+  \block{Compact operators}{
+    \begin{definition}[Compactness]
+    \ Let $X, Y$ be normed spaces, $T \in \mathcal{B}(X,Y)$. Then $T$ is compact if $\overline{T(\overline{B_{X}}(0,1))}$ is compact ($T(\overline{B_{X}}(0,1))$ is precompact).
+    \end{definition}
+    \hphantom{}
+
+    Critically, we can extend this definition from $\overline{B_{X}}(0,1)$ to any bounded $Y \subseteq X$, as given below: \\
+
+    \begin{lemma}
+      \ Let $T \in \mathcal{B}(X,Y)$, $S \in \mathcal{B}(Y,Z)$ for $X,Y,Z$ normed spaces. Then
+      \begin{enumerate}[label=\roman*.]
+              \item $T$ is compact iff every bounded sequence $(x_{n})$ in $X$ has a subsequence $(x_{n_{k}})$ such that $(Tx_{n_{k}})$ converges.
+              \item If $\dim(T(X)) < \infty$ then $T$ is compact.
+              \item If $S$ or $T$ is compact then $S \circ T$ is compact.
+              \item If $Y$ is Banach, $(T_{n})$ is a sequence of compact operators with $T_{n} \to T$, then $T$ is compact.
+      \end{enumerate}
+    \end{lemma}
+    \hphantom{}
+
+    Proofs:
+    \begin{enumerate}[label=\roman*.]
+            \item Follows immediately from equivalence of compactness and sequential compactness on metric spaces.
+            \item $\overline{T(\overline{B}_{X}(0,1))}$ is bounded by the boundedness of $\overline{B}_{X}(0,1)$, and as for finite spaces a subset is closed and bounded iff it is compact, the result follows.
+            \item If $T$ is compact, by the continuity of $S$ preserving compact sets, $\overline{S(\overline{T(\overline{B})})} = S(\overline{T(\overline{B})})$ is compact, and $T(\overline{B})$ is closed so $S \circ T$ is compact. If $S$ is compact on the other hand, we just argue that, by (i), as $T(\overline{B})$ is bounded thus $\overline{S(T(\overline{B}))}$ is compact.
+            \item Follows from a diagonal argument used in problem sheet 1.
+    \end{enumerate}
+    \hphantom{}
+
+    \begin{theorem}[Arzela-Ascoli]
+      \ Take $\Omega \subseteq \mathbb{R}^{n}$ compact, $\mathcal{F} \subseteq C(\Omega)$. $\overline{\mathcal{F}}$ is compact if and only if $\mathcal{F}$ is
+      \begin{enumerate}[label=\roman*.]
+        \item uniformly bounded, so $\displaystyle \sup_{f \in \mathcal{F}} \Vert f \Vert < \infty$, and
+        \item equicontinuous, so for all $\varepsilon > 0$ there is $\delta > 0$ such that for all $f \in \mathcal{F}$, $x, y \in \Omega$, if $\Vert x - y \Vert < \delta$, $| f(x) - f(y) | < \varepsilon$.
+      \end{enumerate}
+
+    \end{theorem}
+    \hphantom{}
+
+    While the proof is non-examinable, it can be shown using the separability of $\mathbb{R}^{n}$ and compactness of closed bounded sets in $\mathbb{R}^{n}$. \\
+
+    This theorem is critical for demonstrating that the integral operator (and various associated operators) is compact. Once we know this, we get a variety of helpful results for these objects.\\
+
+    \begin{lemma}
+    \ For $X$ a Banach space, $T \in \mathcal{B}(X)$ a compact operator,
+    \begin{enumerate}
+          \item $\dim(\ker(\Id-T)) < \infty$.
+          \item $(\Id - T)(X)$ is closed.
+          \item If $X$ is a Hilbert space and $T$ is adjoint then
+            \begin{align*}
+              \ker(\Id-T)^{\perp} = (\Id - T)(X)
+            \end{align*}
+    \end{enumerate}
+    \end{lemma}
+
+    The above is essentially a generalisation of the rank-nullity theorem to infinite dimensions. To prove it, one must use the lemma below. \\
+
+    \begin{lemma}
+    \ Let $X$ be Banach, $S \in \mathcal{B}(X)$ such that
+    \begin{align*}
+      \inf_{x \in X \setminus \{0\}} \frac{\Vert Sx \Vert}{\Vert x \Vert} > 0
+    \end{align*}
+    Then $S$ is injective and $S(X)$ is closed.
+    \end{lemma}
+  }
+  \block{Fourier Series}{
+    Recall that for complex-valued $f \in L^{1}([-\pi,\pi])$, we can write
+    \begin{align*}
+      \mathcal{F}(f)(x) = \frac{1}{2\pi} \sum_{n=-\infty}^{\infty} \langle f, e^{inu} \rangle e^{inx},
+    \end{align*}
+    or, with $e_{n}(x) := e^{inx}/\sqrt{2\pi}$,
+    \begin{align*}
+      \mathcal{F}(f)(x) = \sum_{n=-\infty}^{\infty} \langle f, e_{n} \rangle e_{n}.
+    \end{align*}
+    We want to demonstrate that $\mathcal{F}$ is well-defined on $L^{2}$ with respect to the $L^{2}$ norm, and that $\mathcal{F}(f) = f$ for $f \in L^{2}$. Additionally, we want to show that pointwise convergence is guaranteed with particular conditions on continuous functions. \\
+
+    Recall, for the purpose of this section, that we have $C(-\pi, \pi) \subseteq L^{2}(-\pi,\pi) \subseteq L^{1}(-\pi,\pi)$. \\
+
+    \begin{lemma}[Termwise differentiation in $L^{1}$]
+    \ With $f \in L^{1}(-\pi, \pi)$ s.t. $\int_{-\pi}^{\pi} f(x) \, \mathrm{d}x = 0$, define
+    \begin{align*}
+      F(x) = \int_{0}^{x} f(t) \, \mathrm{d}t.
+    \end{align*}
+    Then $F \in C^{0}([-\pi,\pi])$ satisfies $F(\pi) = F(-\pi)$, and
+    \begin{align*}
+      \langle f, e_{n} \rangle = in \langle F, e_{n} \rangle.
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    To see this, use integration by parts. \\
+
+    \begin{theorem}[Completeness of the trigonometric system in $L^{2}$]
+    \ For $f \in L^{2}(-\pi, \pi)$,
+    \begin{align*}
+      \sum_{k=-n}^{n} \langle f_{n}, e_{n}\rangle e_{n} \to f
+    \end{align*}
+    in $L^{2}(-\pi, \pi)$ as $n \to \infty$.
+    \end{theorem}
+    \hphantom{}
+
+    In other words, the closed span of $\{e_{n} : n \in \mathbb{Z}\}$ is $L^{2}(-\pi, \pi)$. In order to prove this, we need to demonstrate that $f = 0$ iff $\langle f, e_{n} \rangle = 0$ for all $n \in \mathbb{Z}$. This requires some creativity to demonstrate that no part of $f$ can `escape' the inner product and thus be orthogonal to all but non-zero. \\
+
+    It's worth pointing out that due to Parseval's identity, we have that
+    \begin{align*}
+      \int_{-\pi}^{\pi} |f|^{2} = \sum_{n=-\infty}^{\infty} |\langle f_{n}, e_{n} \rangle|.
+    \end{align*}
+    This allows us to claim the below result for $L^{2}(-\pi,\pi)$: \\
+
+    \begin{lemma}[Riemann-Lebesgue]
+    \ For $f \in L^{1}(-\pi, \pi)$, $\langle f, e_{n} \rangle \to 0$ as $|n| \to \infty$.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{theorem}
+    \ There exists a function $f \in C_{\mathrm{per}}[-\pi,\pi]$ whose Fourier series diverges at $x = 0$.
+    \end{theorem}
+    \hphantom{}
+
+    This is a consequence of the uniform boundedness theorem proven later in the course. Assuming that for any $f \in C(-\pi, \pi)$, $\mathcal{F}(f)(0)$ is well-defined under pointwise convergence, we have
+    \begin{align*}
+      A_{n}(f) = \int_{-\pi}^{\pi} f(u) \sum_{k=-n}^{n} e^{iku} \, \mathrm{d}u
+    \end{align*}
+    a sequence in $C_{\mathrm{per}}[-\pi,\pi]^{*}$ such that $A_{n} \to A$ pointwise. Yet we can see that $\Vert A_{n} \Vert_{*} \to \infty$ as $n \to \infty$, giving us a contradiction. \\
+
+
+    Consequently we see that continuity is not sufficient to give us pointwise convergence, and in fact pointwise convergence is a more difficult thing to guarantee. \\
+
+    \begin{definition}[H\"{o}lder continuity]
+    \ With $\alpha \in \leftopen{0}{1}$, $f : \mathbb{R} \to \mathbb{R}$ is $\alpha$-H\"{o}lder continuous if for $x \in \mathbb{R}$ there is $M > 0$, $\delta > 0$ such that for $y \in \mathbb{R}$ with $|x - y| < \delta$,
+    \begin{align*}
+      |f(x)-f(y)| < M|x-y|^{\alpha}.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Using this definition, we write for any compact interval $I \subseteq \mathbb{R}$, $f : I \to \mathbb{R}$,
+    \begin{align*}
+      [f]_{\alpha} = \sup_{\substack{x, y \in I \\ x \neq y}} \frac{|f(x)-f(y)|}{|x-y|^{\alpha}},
+    \end{align*}
+    and then define correspondingly
+    \begin{align*}
+      C^{0,\alpha}(I) = \{f \in C^{0}(I) : [f]_{\alpha} < \infty\}.
+    \end{align*}
+    In particular, this is a Banach space when equipped with $\Vert \cdot \Vert_{0,\alpha} = \Vert \cdot \Vert_{\mathrm{sup}} + [\cdot]_{\alpha}$. \\
+
+    \begin{theorem}
+    \ For $f \in L_{\mathrm{loc}}^{1}(-\pi, \pi)$, $2\pi$-periodic and $\alpha$-H\"older continuous for some $\alpha \in \leftopen{0}{1}$ at $x_{0} \in [-\pi,\pi]$, $\mathcal{F}(f)(x_{0}) = f(x_{0})$.
+    \end{theorem}
+    \hphantom{}
+
+    This is a very slightly stronger statement than if made for $f \in L^{1}(-\pi,\pi)$, which just results from the fact that our proof only relies on integrating $f$ within compact subsets of $(-\pi,\pi)$. Note in particular that this is a statement about pointwise convergence, rather than $L^{1}$ or $L^{2}$ convergence.
+  }
+  \column{0.33}
+  \block{Big theorems}{
+    \innerblock{Baire category theorem}{
+      \begin{definition}
+      \ A subset $S$ of a metric space $M$
+      \begin{enumerate}[label=\roman*.]
+              \item is nowhere dense in $M$ if $\Int(\overline{S}) = \varnothing$.
+              \item has Baire category 1 if there is a sequence of nowhere dense sets $(A_{n})$ such that $S = \bigcup_{n \in \mathbb{N}} A_{n}$.
+              \item has Baire category 2 if it does not have category 1.
+              \item residual if $S^{c}$ has category 1.
+      \end{enumerate}
+      \end{definition}
+      \hphantom{}
+
+      More intuitively, with these definitions we're trying to get a notion of when things are tiny (category 1), not tiny (category 2), or when sets are ``essentially everything'' (residual). \\
+
+      \begin{lemma}
+      \ For $A$ a subset of a metric space, $A$ is closed and nowhere dense iff $A^{c}$ is open and dense.
+      \end{lemma}
+      \hphantom{}
+
+      \begin{theorem}[Baire category theorem]
+      \ Let $(M, d)$ be a complete non-trivial metric space. Then $\Cat(M) = 2$, and every residual set is dense.
+      \end{theorem}
+      \hphantom{}
+
+      Note firstly that if every residual set is dense, then immediately $\Cat(M) = 2$, as if $\Cat(M) = 1$ then $\varnothing$ would be residual and thus dense, which is a contradiction. \\
+
+      Thus we want to claim for our proof that for any countable collection $(U_{n})$ of open dense sets, that $\bigcap_{n \in \mathbb{N}} U_{n}$ is dense. To do this, take $x \in M$, $\varepsilon > 0$. We want a sequence $(y_{n})$ such that $y_{n} \in B(x, \varepsilon) \cap \bigcap_{k=1}^{n} U_{k}$, and to do this we take $y_{n+1}$ such that $d(y_{n}, y_{n+1}) < \varepsilon_{n}/2$. Critically, to ensure that the limit of $(y_{n})$ is in the intersection of $(U_{n})$, we take for each $n \in \mathbb{N}$, $F_{n} = B(y_{n}, \varepsilon_{n})$. \\
+
+      Fundamentally, we want to construct for each $x \in M$, $\varepsilon > 0$, a decreasing sequence of closed sets $(F_{n})$ with $F_{n} \subseteq U_{n}$ and $\dist(x, F_{n}) < \varepsilon$. \\
+
+      From this, we then take any residual set $S = \bigcap_{n \in \mathbb{N}} A_{n}^{c}$ where $\varnothing = \Int(\overline{A_{n}}) = \overline{(\overline{A_{n}}^{c})}^{c} = \overline{\Int(A_{n}^{c})}^{c}$, so $\Int(A_{n}^{c})$ is dense in $M$ and thus by our claim $S$ is dense (being larger than the intersection of $\Int(A_{n}^{c})$).
+    }
+    \hphantom{}
+
+    \innerblock{Principle of uniform boundedness}{
+      \begin{theorem}
+      \ Let $X$ be a Banach space, $Y$ a normed space, and $\mathcal{F} \subseteq \mathcal{B}(X,Y)$ is pointwise bounded, so for $x \in X$,
+      \begin{align*}
+        \sup_{T \in \mathcal{F}} \Vert Tx \Vert < \infty
+      \end{align*}
+      Then $\mathcal{F}$ is uniformly bounded, so in fact
+      \begin{align*}
+        \sup_{T \in \mathcal{F}} \Vert T \Vert < \infty.
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      To prove this, consider the collection of sets $(A_{n})$ with
+      \begin{align*}
+      A_{n} = \left\{x \in X : \sup_{T \in \mathcal{F}} \Vert Tx \Vert_{Y} \le n\right\}.
+      \end{align*}
+      As $T$ and $\Vert \cdot \Vert_{Y}$ are continuous, thus $A_{n}$ is closed as an intersection of closed sets. If $\mathcal{F}$ is pointwise bounded, then $X = \bigcup_{n = 1}^{\infty} A_{n}$ so by the Baire category theorem there is an $n \in \mathbb{N}$ such that $A_{n}$ is not nowhere dense, so there is an open ball $B(x,r) \subseteq A_{n}$. Thus we have a bound on $\Vert Tx \Vert$ for $x \in B(x,r)$, which we can use to get a bound on $\Vert Tx \Vert$ for $x \in B(0,r)$, and thus a bound on $\Vert T \Vert$. \\
+
+      \begin{theorem}
+      \ With $X$, $Y$ Banach spaces, $(T_{n})$ a sequence in $\mathcal{B}(X,Y)$, TFAE:
+      \begin{enumerate}[label=\roman*.]
+              \item There is $T \in \mathcal{B}(X,Y)$ such that $T_{n} \to T$ pointwise as $n \to \infty$.
+              \item For $x \in X$, $(T_{n}x)$ is convergent.
+              \item There is $M \in \rightopen{0}{\infty}$ and a dense $Z \subseteq X$ such that $\Vert T_{n} \Vert \leq M$ and $(T_{n}z)$ is convergent for $z \in Z$.
+      \end{enumerate}
+      \end{theorem}
+      \hphantom{}
+
+      \begin{theorem}
+      \ Let $X$ be a Hilbert space, $\mathcal{F} \subseteq \mathcal{B}(X)$ such that for $x, y \in X$,
+      \begin{align*}
+        \sup_{T \in \mathcal{F}} | \langle Tx, y \rangle | < \infty.
+      \end{align*}
+      Then $\sup_{T \in \mathcal{F}} \Vert T \Vert < \infty$.
+      \end{theorem}
+    }
+    \hphantom{}
+    \innerblock{Open mapping theorem}{
+      \begin{definition}
+      \ For $X, Y$ topological spaces, $f : X \to Y$ is open if $f(U)$ is open for every open $U \subseteq X$.
+      \end{definition}
+      \hphantom{}
+
+      \begin{lemma}
+      \ Let $X, Y$ be normed spaces, $T : X \to Y$ linear. TFAE:
+      \begin{enumerate}[label=\roman*.]
+            \item $T$ is open.
+            \item There is $\delta > 0$ such that $B_{Y}(0,\delta) \subseteq T(B_{X}(0,1))$.
+            \item There is $\varepsilon > 0$, $y \in Y$, $r > 0$ such that $B_{Y}(y,\varepsilon) \subseteq T(B_X(0,r))$.
+      \end{enumerate}
+      \end{lemma}
+      \hphantom{}
+
+      \begin{theorem}[Open mapping theorem]
+      \ Let $X, Y$ be Banach spaces and $T \in \mathcal{B}(X,Y)$ be surjective. Then $T$ is an open map.
+      \end{theorem}
+      \hphantom{}
+
+      To prove this, we first show that there is $\varepsilon > 0$ such that $B_{Y}(0,2\varepsilon) \subseteq \overline{T(B_{X}(0,1)))}$ using the Baire category theorem. We then show that for this $\varepsilon$, $B_Y(0,\varepsilon) \subseteq T(B_{X}(0,1))$. This gives our result. \\
+
+      \begin{theorem}[Inverse mapping theorem]
+      \ Let $X, Y$ be Banach spaces and $T \in \mathcal{B}(X,Y)$ a bijection. Then $T^{-1} \in \mathcal{B}(Y,X)$.
+      \end{theorem}
+      \hphantom{}
+
+      \begin{theorem}
+      \ Let $X, Y$ be Hilbert spaces, $T \in \mathcal{B}(X,Y)$. Then $T(X)$ is closed iff $T^{*}(Y)$ is closed.
+      \end{theorem}
+    }
+    \hphantom{}
+    \innerblock{Closed graph theorem}{
+      \begin{theorem}[Closed graph theorem]
+      \ Let $X, Y$ be Banach spaces, $T : X \to Y$ linear. Then $T \in \mathcal{B}(X,Y)$ iff its graph $\Gamma(T) = \{(x,Tx) : x \in X\}$ is closed in $X \times Y$.
+      \end{theorem}
+      \hphantom{}
+
+      One direction of this proof (that $T \in \mathcal{B}(X,Y)$ implies $\Gamma(T)$ is closed) is clear from the continuity of bounded linear operators. The other direction involves the construction of $T$ in terms of projections on $\Gamma(T)$, which are continuous by IMT and thus give the continuity of $T$. \\
+
+      At first glance, the closure of $\Gamma(T)$ seems like a far weaker statement than $T \in \mathcal{B}(X,Y)$. We only need to show that for $(x_{n},y_{n}) \in \Gamma(T)$, $x_{n}$ and $y_{n}$ both converge in their own spaces (and don't need to check whether $\lim y_{n} \in T(X)$). Thus we apply the closed graph theorem almost exclusively in order to show that linear maps are bounded linear maps. \\
+
+      \begin{corollary}
+      \ Let $X$ be a Hilbert space and $T : X \to X$ linear. If $\langle Tx, y \rangle = \langle x, Ty \rangle$ for $x, y \in X$, then $T \in \mathcal{B}(X)$ and is self-adjoint.
+      \end{corollary}
+      \hphantom{}
+    }
+    \hphantom{}
+
+    \begin{lemma}
+    \ If $h$ is measurable such that for all $f \in L^{1}(I)$ we have $f\cdot h \in L^{1}(I)$, then $h \in L^{\infty}(I)$.
+    \end{lemma}
+    \hphantom{}
+
+    We can prove this by any of the above theorems. By PUB, we take $h_{n}(x)\chi_{|h(x)| \le n}$. \\
+
+    \textbf{Prove with all of the above theorems.}
+  }
+  \block{Weak Convergence}{
+    A distinct point of annoyance in applied maths is the inability to guarantee that bounded sequences in an infinite-dimensional space have a convergent subsequence -- in particular, that bounded functions may not have a convergent subsequence. \\
+
+    A key idea, therefore, is to weaken the notion of convergence to one that retains key properties of convergence (uniquenesss of limits, boundedness, and other good interactions with strong convergence), while gaining that for reflexive Banach spaces, any bounded sequence has a convergent subsequence. \\
+
+    \begin{definition}[Weak convergence]
+    \ A sequence $(x_{n})$ in a normed space $X$ is said to converge weakly to $x \in X$, $x_{n} \rightharpoonup x$, if for all $\ell \in X^{*}$,
+    \begin{align*}
+      \lim_{n \to \infty} \ell(x_{n}) = \ell(x).
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    Without too much difficulty, we can see that the weak limit is unique if it exists, and its norm bounded above by $\liminf \Vert x_{n} \Vert$. The former is a corollary of Hahn-Banach extending any non-zero $\ell \in \langle x-y \rangle^{*}$ to $X^{*}$. The latter utilises the identification of $X$ and $X^{**}$ by $\iota(x)(\ell) = \ell(x)$ so that if $x_{n} \rightharpoonup x$, thus $\iota(x_{n}) \to \iota(x)$ pointwise. Consequently the sequence is pointwise bounded, and thus uniformly bounded so $\sup \Vert \iota(x_{n}) \Vert = \sup \Vert x_{n} \Vert < \infty$. We then find $\ell \in X^{*}$ s.t. $\ell(x) = \Vert x \Vert$ and $\Vert \ell \Vert = 1$, so $|\ell(x_{n})| \le \Vert x_{n} \Vert$ and the result follows. \\
+
+    In fact, this is a special case of a wider statement about sets closed under weak convergence. \\
+
+    \begin{theorem}[Mazur]
+    \ Let $K$ be a closed convex subset of a normed space $X$, $(x_{n})$ a sequence in $K$ which converges weakly to $x \in X$. Then $x \in K$.
+    \end{theorem}
+    \hphantom{}
+
+    Otherwise stated: if $K$ is closed and convex with respect to standard convergence, then $K$ is sequentially weakly closed (note this is a non-metrizable topology). \\
+
+    \begin{theorem}[Hyperplane separation]
+    \ Let $X$ be a normed space, $A, B \subseteq X$ disjoint and convex such that $\mathrm{int}(B) \neq \varnothing$. Then $A$ and $B$ can be separated by a hyperplane.
+    \end{theorem}
+    \hphantom{}
+
+    Note we define a hyperplane by $\ell^{-1}(c + i \mathbb{R})$ for some $c \in \mathbb{R}$, so its sides are $\ell^{-1}(\leftopen{-\infty}{c}+i\mathbb{R})$ and $\ell^{-1}(\rightopen{c}{\infty}+i\mathbb{R})$.  \\
+
+    \begin{theorem}[Geometric version of Mazur]
+    \ Every closed convex subset $K$ of a normed space can be written as an intersection of half-spaces.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}
+    \ For $X$ a reflexive Banach space, the closed unit ball is weakly sequentially compact.
+    \end{theorem}
+    \hphantom{}
+
+    This is a major result, as it gives us immediately that bounded sequences in a reflexive Banach space have weakly convergent subsequences. \\
+
+    We prove this only for Hilbert spaces. To do this, we show first that there is a subsequence for any $(x_{n})$, $(x_{n_{j}})$ such that $\langle x_{n_{j}}, x_{m} \rangle$ converges for every $m$ (using a diagonal argument with Bolzano-Weierstrass). \textbf{Complete proof later.} \\
+
+    \begin{theorem}[Eberlein]
+    \ The closed unit ball in a Banach space is weakly sequentially compact iff the space is reflexive.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}[Closed point in a closed convex subset]
+    \ Let $K$ be a non-empty closed convex subset of a reflexive Banach space $X$. Then, for every $x \in X$, there is a point $y \in K$ such that
+    \begin{align*}
+      \mathrm{dist}(x,K) = \Vert x - y \Vert.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this is an instance of a more general method, whereby for a function $E : \Omega \to \mathbb{R}$ we demonstrate that a minimising sequence $E(u_{n}) \to \inf E(u)$ is bounded and thus that a weakly convergent subsequence exists by sequential compactness, to a point in $\Omega$ such that $E(u) \le \liminf E(u_{n})$ (\textbf{why is this necessary?}). Thus $E(u) = \inf E$.
+
+
+    \innerblock{Weak convergence in Hilbert spaces}{
+      \begin{lemma}
+      \ For $X$ a Hilbert space, $x_{n} \to x$ iff $x_{n} \rightharpoonup x$ and $\Vert x_{n} \Vert \to \Vert x \Vert$.
+      \end{lemma}
+      \hphantom{}
+
+      If $x_{n} \to x$, then immediately we have that $(x_{n})$ converges weakly and $\Vert x_{n} \Vert \to \Vert x \Vert$. The other direction can be seen from the fact that if $x_{n} \rightharpoonup x$, $\langle x_{n}, y \rangle \to \langle x, y \rangle$, and combined with $\langle x_{n}, x_{n} \rangle \to \langle x, x \rangle$, $\Vert x_{n} - x \Vert \to 0$. \\
+
+      Due to being able to identify $X$ with $X^{*}$ by Riesz, we can characterise weak convergence of $(x_{n})$ in terms of the convergence of $\langle x_{n}, y \rangle$ for $y \in X$, and consequently for Hilbert spaces by behaviour on a basis. \\
+
+      A corollary of this is that any orthonormal sequence converges weakly to zero (but not strongly to zero). \\
+    }
+  }
+  \column{0.33}
+  \block{Spectral theory}{
+    Fundamentally, spectral theory is concerned with answering the question: for $T \in \mathcal{B}(X)$, $\lambda \in \mathbb{F}$, is $T - \lambda \,\mathrm{Id}$ invertible? \\
+
+    \begin{definition}
+    \ Let $X$ be a complex Banach space, $T \in \mathcal{B}(X)$.
+    \begin{enumerate}[label=\roman*.]
+            \item The resolvent set $\rho(T)$ is
+            \begin{align*}
+              \rho(T) := \{\lambda \in \mathbb{C} : T - \lambda \,\mathrm{Id} \text{ is invertible}\}.
+            \end{align*}
+            \item The resolvent operator is, for $\lambda \in \rho(T)$,
+            \begin{align*}
+              R_{\lambda}(T) := (T-\lambda \, \mathrm{Id})^{-1}.
+            \end{align*}
+            \item The spectrum set $\sigma(T)$ is $\rho(T)^{c}$,
+            \begin{align*}
+              \sigma(T) := \{\lambda \in \mathbb{C} : T - \lambda \, \mathrm{Id} \text{ is not invertible}\}.
+            \end{align*}
+            \item The point spectrum $\sigma_{p}(T)$ is
+            \begin{align*}
+              \sigma_{p}(T) := \{\lambda \in \mathbb{C} : \Ker (T - \lambda \, \mathrm{Id}) \neq \{0\}\}.
+            \end{align*}
+            As normal, these are called the eigenvalues of $T$, and the non-trivial elements of $\Ker(T-\lambda \, \mathrm{Id})$ are eigenvectors of $T$ (or eigenfunctions if $X$ is a function space).
+            \item The residual spectrum $\sigma_{r}(T)$ of $T$ is
+            \begin{align*}
+              \sigma_{r}(T) := \{\lambda \in \mathbb{C} : \Ker (T - \lambda \, \mathrm{Id}) = \{0\},\,\overline{\im(T - \lambda \,\mathrm{Id})} \neq X\}.
+            \end{align*}
+            \item The continuous spectrum $\sigma_{c}(T)$ of $T$ is
+            \begin{align*}
+              \sigma_{c}(T) := \{\lambda \in \mathbb{C} : \Ker (T - \lambda \, \mathrm{Id}) = \{0\},\,\im(T - \lambda \, \mathrm{Id}) \neq \overline{\im(T - \lambda \,\mathrm{Id})} = X\}.
+            \end{align*}
+            \item The approximate point spectrum $\sigma_{ap}(T)$ of $T$ is
+            \begin{align*}
+              \sigma_{ap}(T) := \{\lambda \in \mathbb{C} : \exists (x_{n}) \in \partial B_{X}(0,1)\, \mathrm{s.t.}\, \Vert Tx_{n} - \lambda x_{n} \Vert \to 0 \}.
+            \end{align*}
+            \item The spectral radius $r_{\sigma}(T)$ is
+            \begin{align*}
+              r_{\sigma}(T) := \sup_{\lambda \in \sigma(T)} |\lambda|
+            \end{align*}
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    Immediately, $\sigma(T) = \sigma_{p}(T) \cup \sigma_{r}(T) \cup \sigma_{c}(T)$ is a disjoint union. We also get that $\sigma_{p}(T) \subseteq \sigma_{ap}(T)$, $\sigma_{c}(T) \subseteq \sigma_{ap}(T)$, and $\sigma(T) \subseteq \overline{B}(0,\Vert T \Vert)$. \\
+
+    \begin{lemma}[Neumann series]
+    \ If $X$ is Banach, $S \in B_{\mathcal{B}(X)}(0,1)$, then
+    \begin{align*}
+      (\Id - S)^{-1} = \sum_{n=0}^{\infty} S^{n}
+    \end{align*}
+    and the RHS is a well-defined bounded linear operator in $\mathcal{B}(X)$.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $(X, \Vert \cdot \Vert)$ be a complex Banach space. For $T \in \mathcal{B}(X)$, $\rho(T)$ is open and $R_{\lambda}(T)$ is analytic in $\lambda \in \rho(T)$, and $\varnothing \neq \sigma(T) \subseteq \overline{B}(0, \Vert T \Vert)$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Let $(X, \Vert \cdot \Vert)$ be a normed space, $S, T \in \mathcal{B}(X)$. If $ST = TS$ and $ST$ is invertible, then $S$ and $T$ are invertible.
+    \end{lemma}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $(X, \Vert \cdot \Vert)$ be a complex Banach space, $T \in \mathcal{B}(X)$, $p : \mathbb{C} \to \mathbb{C}$ a complex polynomial. Then $\sigma(p(T)) = p(\sigma(T))$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{corollary}
+    \ Let $(X, \Vert \cdot \Vert)$ be a Banach space, $T \in \mathcal{B}(X)$. For $k \in \mathbb{N}$, $\lambda \in \sigma(T)$, then $\lambda^{k} \in \sigma(T^{k})$, and
+    \begin{align*}
+      |\lambda| \le \inf_{j \in \mathbb{N}} \Vert T^{j} \Vert^{1/j}.
+    \end{align*}
+    \end{corollary}
+    \hphantom{}
+
+    \begin{theorem}[Gelfand's formula]
+    \ Let $(X, \Vert \cdot \Vert)$ be a complex Banach space. For $T \in \mathcal{B}(X)$,
+    \begin{align*}
+      r(T) = \lim_{j \to \infty} \Vert T^{j} \Vert^{1/j} = \inf_{j \in \mathbb{N}} \Vert T^{j} \Vert^{1/j}.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \begin{corollary}
+    \ Let $(X, \langle \cdot, \cdot \rangle)$ be a complex Hilbert space, $T \in \mathcal{B}(X)$ self-adjoint, then
+    \begin{align*}
+      r_{\sigma}(T) = \Vert T \Vert.
+    \end{align*}
+    \end{corollary}
+
+    \begin{theorem}
+    \ Let $(X, \Vert \cdot \Vert)$ be a Banach space, $T \in \mathcal{B}(X)$, $T' \in \mathcal{B}(X^{*})$. Then
+    \begin{align*}
+      \sigma(T) = \sigma_{ap}(T) \cup \sigma_{p}(T').
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $(X, \langle \cdot , \cdot \rangle)$ be a complex Hilbert space, $T \in \mathcal{B}(X)$. Then
+    \begin{align*}
+      \sigma(T) = \sigma_{ap}(T) \cup \sigma'_{p}(T^{*})
+    \end{align*}
+    where for $A \subseteq \mathbb{C}$, $A' = \{\overline{x} : x \in A\}$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Let $(X, \langle \cdot, \cdot \rangle)$ be a complex Hilbert space, $T \in \mathcal{B}(X)$ self-adjoint. Then
+    \begin{itemize}
+      \item \ With $a = \inf_{\Vert x \Vert = 1} \langle x, Tx \rangle$, $b = \sup_{\Vert x \Vert = 1} \langle x, Tx \rangle$,
+          \begin{align*}
+            \{a, b\} \subseteq \sigma(T) = \sigma_{ap}(T) \subseteq [a, b]
+            \end{align*}.
+       \item \ $\sigma(T) = \sigma_{p}(T) \cup \sigma_{c}(T)$.
+       \item \ Eigenvectors corresponding to different eigenvalues of $T$ are orthogonal.
+    \end{itemize}
+    \end{theorem}
+    \hphantom{}
+
+    Let $X = \ell^{2}(\mathbb{C})$, $(a_{j}) \in \ell^{\infty}(\mathbb{R})$, with $T((x_{j})) = (a_{j}x_{j})$ ... \\
+
+    \begin{lemma}
+    \ Let $(X, \Vert \cdot \Vert)$ be Banach, $T \in \mathcal{B}(X)$ compact, $\Id - T$ injective. Then $\Id - T$ is also surjective.
+    \end{lemma}
+
+
+
+
+  }
+\end{columns}
+
+\end{document}

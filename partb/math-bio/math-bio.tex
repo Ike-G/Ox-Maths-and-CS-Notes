@@ -135,7 +135,7 @@
     \end{align*}
     which has steady states $N^{*} \in \{0,1\}$, as if the state is steady then $N^{*}(t-T) = N^{*}(t)$ (\textbf{investigate a bit further}). \\
 
-    Considering $N^{*} = 1$, write $N(t) = 1+n(t)$ for $n(t) = o(1)$, and we have that (approximately) $\frac{\mathrm{d}n}{\mathrm{d}t} = -n(t-T)$, which with $n(t) = n(0)e^{\lambda t}$ gives $\lambda = -e^{-\lambda T}$. We then analyse $\lambda$, noting that for $\Re \lambda < 0$, we get that the steady state is stable.
+    Considering $N^{*} = 1$, write $N(t) = 1+n(t)$ for $n(t) = o(1)$, and we have that (approximately) $\frac{\mathrm{d}n}{\mathrm{d}t} = -n(t-T)$, which with $n(t) = n(0)e^{\lambda t}$ gives $\lambda = -e^{-\lambda T}$. We then analyse $\lambda$, noting that for $\mathrm{Re} \lambda < 0$, we get that the steady state is stable.
   }
 
   \block{Age-structured Models}{
@@ -191,7 +191,7 @@
       \end{align*}
       Note however that for $u(x,0) = o(1)$, we can approximate the second term by $ru$. As we have $x$ bounded (say in $[0,L]$), we can write $u(x,t)$ as a fourier series for each $t$,
       \begin{align*}
-        u(x,t) = \sum_{n=1}^{\infty} a_{n}(t) \sin(\frac{n\pi x}{L})
+        u(x,t) = \sum_{n=1}^{\infty} a_{n}(t) \sin\left(\frac{n\pi x}{L}\right)
       \end{align*}
       and so
       \begin{align*}
@@ -222,6 +222,10 @@
     \begin{align*}
       \frac{\partial u}{\partial t} = \frac{\partial^{2} u}{\partial x^{2}} + u(1-u)
     \end{align*}
+  }
+  \block{Stochastic Modelling}{
+    In many instances, it's useful to deal with processes stochastically rather than attempting to model them deterministically. In doing this, we can more accurately derive an understanding of both the average case, and our expectation of what ought to occur. \\
+
   }
 \end{columns}
 

@@ -1,0 +1,197 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=850mm, paperheight=2000mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{bm}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Markov}{Markov}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\Exp}{Exp}
+\DeclareMathOperator{\Po}{Po}
+\DeclareMathOperator{\PP}{PP}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Applied Probability}
+\author{Ike Glassbrook}
+
+\begin{document}
+
+% Title block with title, author, logo, etc.
+\maketitle[titletoblockverticalspace=0.4cm]
+\begin{columns}
+  \column{0.5}
+  \block{Poisson Processes}{
+    \begin{definition}[Markov property]
+    \ The sequence of random variables $(Y_{n})$ is a discrete time Markov chain with state space $\mathbb{S}$ if it satisfies the Markov property
+    \begin{align*}
+      \mathbb{P}(Y_{n} = y_{n} \,|\, Y_{0}=y_{0},\dots,Y_{n-1}=y_{n-1}) &= \mathbb{P}(Y_{n} = y_{n} \,|\, Y_{n-1}=y_{n-1}).
+    \end{align*}
+    \end{definition}
+
+    As shown in Part A, provided the Markov chain is time-homogeneous, then the distribution of $(Y_{n})$ is entirely specified by an initial distribution $\mu_{s} = \mathbb{P}(Y_{0} = s)$, and a transition matrix $P = (P_{st})_{s,t \in \mathbb{S}}$. \\
+
+    \begin{definition}
+    \ Let $(Z_{n})$ be a sequence of i.i.d. $\Exp(\lambda)$ distributed random variables for $\lambda > 0$. With
+    \begin{align*}
+      T_{n} = \sum_{k=1}^{n} Z_{k},
+    \end{align*}
+    we define $(X_{t})$ for $t \ge 0$ by
+    \begin{align*}
+      X_{t} = \sup \{n \ge 1 : T_{n} \le t\}.
+    \end{align*}
+    $(X_{t})$ is called a Poisson process of rate $\lambda$, written $(X_{t}) \sim \PP(\lambda)$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}
+    \ Take $(X_{t}) \sim \PP(\lambda)$. For $t \ge 0$, $(X_{r})_{r \le t}$ and $(X_{r})_{r \ge t}$ are conditionally independent on $X_{t}$, and $(X_{s+t})_{s \ge 0} \sim \PP(\lambda)$ started from $X_{t}$. \textbf{rewrite this}.
+    \end{theorem}
+  }
+  \column{0.5}
+  \block{Continuous-time Markov chains}{
+    In general with continuous stochastic processes, we are most interested in right-continuous minimal processes. If a process explodes, and is set to $\infty$ after the explosion, then it is called minimal.
+
+    \begin{definition}
+    \ A $Q$-matrix or generator is a matrix $Q = (q_{ij})$ for $i,j \in \mathbb{S}$ a countable state space, such that
+    \begin{enumerate}[label=\roman*.]
+            \item for $i \in \mathbb{S}$, $q_{ii} \in \leftopen{\infty}{0}$,
+            \item for $i, j \in \mathbb{S}$, $i \neq j$, $q_{ij} \in \rightopen{0}{\infty}$, and
+      \item for $i \in \mathbb{S}$, $\displaystyle \sum_{j \in \mathbb{S}} q_{ij} = 0$.
+    \end{enumerate}
+    We often write $q_{i} := -q_{ii}$.
+    \end{definition}
+    \hphantom{}
+
+    We construct from this a stochastic matrix $\Pi = (\pi_{ij})$ such that for $q_{i} \neq 0$, $j \in \mathbb{S}$,
+    \begin{align*}
+      \pi_{ij} := (1-\delta_{ij}) \frac{q_{ij}}{q_{i}}
+    \end{align*}
+    and for $q_{i} = 0$, $j \in \mathbb{S}$,
+    \begin{align*}
+      \pi_{ij} = \delta_{ij}.
+    \end{align*}
+    \hphantom{}
+
+
+    \begin{definition}[Jump chain]
+    \ A minimal right-continuous process $(X_{t})$ is a continuous time Markov chain with initial distribution $\nu$ and $Q$-matrix $Q$, $(X_{t}) \sim \Markov(\nu, Q),$ if
+    \begin{enumerate}[label=\roman*.]
+            \item $(Y_{n})$ is a discrete Markov chain with initial distribution $\nu$, transition matrix $\Pi$;
+            \item conditional on $Y_{0} = i_{0}, Y_{1} = i_{i}, \dots, Y_{n-1} = i_{n-1}$, the holding times $Z_{1},Z_{2},\dots,Z_{n-1}$ are independent exponential random variables distributed with parameters $q_{i_{0}},q_{i_{1}},\dots,q_{i_{n-1}}$; and
+      \item with $T_{n} := \sum_{k=1}^{n} Z_{k}$,
+            \begin{align*}
+              X_{t} = \begin{cases}
+                Y_{n} & \text{if } T_{n} \le t < T_{n+1} \\
+                \infty & \text{otherwise}.
+                \end{cases}
+            \end{align*}
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+
+
+  }
+\end{columns}
+
+\end{document}

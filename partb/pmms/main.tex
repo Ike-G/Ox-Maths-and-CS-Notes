@@ -6,6 +6,7 @@
 \makeatother
 \usepackage{amsmath}
 % \usepackage{eucal}
+\usepackage{bm}
 \usepackage{mathrsfs}
 \usepackage{amssymb}
 \usepackage{dsfont}
@@ -170,6 +171,8 @@
     \end{definition}
     \hphantom{}
 
+    Note that this statement is equivalent to taking $f$ as a random variable in $(f(\Omega), \{A \cap f(\Omega) : A \in \mathcal{E}\})$. \\
+
     We get immediately that random variables can be composed as one would expect. We can also use random variables to define new $\sigma$-algebras. Note that $(\Omega, \{f^{-1}(A) : A \in \mathcal{E}\})$ is a $\sigma$-algebra. \\
 
     \begin{definition}[Generated $\sigma$-algebra]
@@ -178,6 +181,17 @@
     \hphantom{}
 
     This is initially a slightly intimidating definition, but the intuition is just that we need our $\sigma(f_{i} : i \in I) = \sigma(f_{i}^{-1}(A) : A \in \mathcal{E}, i \in I)$. \\
+
+    The following result is critical for our understanding of the measurability of random variables on these $\sigma$-algebras. \\
+
+    \begin{theorem}[$\sigma(X)$-measurability as functional dependence]
+    \ With $X : (\Omega, \mathcal{F}) \to (E, \mathcal{E})$, $Y : (\Omega, \mathcal{F}) \to (\mathbb{R}, \mathcal{B}(\mathbb{R}))$ random variables, $Y$ is $\sigma(X)$-measurable if and only if $Y = f \circ X$ for some random variable $f : (E, \mathcal{E}) \to (\mathbb{R}, \mathcal{B}(\mathbb{R}))$.
+    \end{theorem}
+    \hphantom{}
+
+    To construct this we use a standard method of beginning with simple functions, and then using the density of $\mathcal{E}$-simple functions in $\mathcal{E}$-measurable functions under the pointwise topology, we can construct $f$ in general. \\
+
+    Noting that if $X_{1},\dots,X_{n}$ are measurable on $(\Omega,\mathcal{F})$, $(X_{1},\dots,X_{n})$ is also measurable (start with showing the measurability property on the normal $\pi$-system generating $\mathcal{B}(\mathbb{R}^{n})$, then use $\pi$-$\lambda$ systems lemma), this statement generalises much further than this, to include sequences of random variables as well. \\
 
     \begin{theorem}[Monotone Class Theorem]
       \ Let $\mathcal{H}$ be a class of bounded functions from $\Omega \to \mathbb{R}$ such that
@@ -208,11 +222,18 @@
       \mathbb{E}\big[Y \chi_{G}\big] = \mathbb{E}\big[X \chi_{G}\big].
     \end{align*}
     \end{definition}
-    The key aspect of this statement can be rewritten as
+    Both aspects of this statement are key. $\mathcal{G}$-measurability entails that our conditional expectation is a random variable whose value provides no more information about $\mathcal{F}$ than is precisely contained in $\mathcal{G}$. That this random variable actually represents the expectation of $X$ subject to additional information is then represented by the equality of expectations on events in $\mathcal{G}$, often rewritten as:
     \begin{align*}
       \int_{G} \mathbb{E}\big[X \,|\, \mathcal{G}\big] \, \mathrm{d}\mathbb{P} = \int_{G} X \, \mathrm{d}\mathbb{P},
     \end{align*}
     which allows us to carry over all of our normal integration properties to conditional expectations. \\
+
+    In particular, note that for random variables $Y_{1},\dots,Y_{n}$, $\mathbb{E}\big[X \,|\, \sigma(Y_{1},\dots,Y_{n})\big] = F(Y_{1},\dots,Y_{n})$ for some measurable $F : \mathbb{R}^{n} \to \mathbb{R}$, by representing measurability as functional dependence. \\
+
+    In order to retain our normal definition, one can see that for an event $A \in \mathcal{F}$, $\mathbb{E}\big[X \,|\, \sigma(A)\big]$ may be modified on a null set to be constant on the sets $\{A,A^{c}\}$. This allows us, in applied settings, to select arbitrarily for each $A \in \mathcal{F}$ some $\omega \in A$ so that
+    \begin{align*}
+      \mathbb{E}\big[X \,|\, A\big] = \mathbb{E}\big[X \,|\, \sigma(A)\big](\omega).
+    \end{align*}
 
     \begin{theorem}
     \ The conditional expectation of $X$ given $\mathcal{G}$ exists, denoted $\mathbb{E}\big[X \,|\, \mathcal{G}\big]$, and if $Z$ is also the conditional expectation of $X$ given $\mathcal{G}$, then
@@ -221,7 +242,7 @@
     \end{align*}
     \end{theorem}
 
-    \textbf{Come back to the proof of this.} \\
+    While the uniqueness proof is relatively straightforward, the existence proof requires some methods from functional analysis. In particular, we prove the statement for $L^{2}(\Omega, \mathcal{F}, \mathbb{P})$, on noting that this space is Hilbert, and $L^{2}(\Omega, \mathcal{G}, \mathbb{P})$ is a closed subspace, allowing us to write any $X \in \mathcal{L}^{2}(\Omega, \mathcal{F}, \mathbb{P})$ as $X = Y + Z$ with $Y \in \mathcal{L}^{2}(\Omega, \mathcal{G}, \mathbb{P})^{\perp}$, $Z \in \mathcal{L}^{2}(\Omega, \mathcal{G},\mathbb{P})$. We then extend this proof to $L^{1}$ by clamping the positive and negative parts of $X$ by $n$, and demonstrating by extending the MCT to conditionals that we can then define $Z$. \\
 
     Note importantly how conditional expectations behave with respect to measurability. If we have $X$ a $\mathcal{G}$-measurable random variable, then
     \begin{align*}
@@ -786,6 +807,16 @@
       \end{align*}
     \end{theorem}
     \hphantom{}
+
+    The proof of this utilises the relation for $x,m,y \in I$, $x < m < y$,
+    \begin{align*}
+      f(m) \le \frac{y-m}{y-x}f(x)+\frac{m-x}{y-x}f(y),
+    \end{align*}
+    or equivalently,
+    \begin{align*}
+      \frac{f(m)-f(x)}{m-x} \le \frac{f(y)-f(m)}{m-y}.
+    \end{align*}
+    Thus we get an analogous property to $f''(x) \ge 0$ (if $f$ were twice-differentiable), that there is $a \in \mathbb{R}$ such that $f(x) \ge f(m) + a(x-m)$. Thus $f(X) \ge f(\mathbb{E}\big[X\big]) + a(X-\mathbb{E}\big[X\big])$, so $\mathbb{E}\big[f(X)\big] \ge f(\mathbb{E}\big[X\big])$.
     }
 
     For considering the $\mathcal{L}^{p}$ spaces, we define $\Vert \cdot \Vert_{p} := \left(\mathbb{E}[|X|^{p}]\right)^{1/p}$. We can note immediately that for $0 \le p \le q$, $\mathcal{L}^{q} \subseteq \mathcal{L}^{p}$. \\
@@ -900,7 +931,7 @@
     This theorem is quite an important one, as we essentially just expand the definition of a martingale (and, via decomposition, super- and submartingales). The intuition should be that if $(X_{n})$ is a process stopping at $\rho$, but we only observe it up to $\tau$, the properties of the martingale should allow us to calculate the expected value of $X_{\rho}$ as $X_{\tau}$. Importantly, we also generalise that a martingale's expectation is constant, even if stopping at a random time (as long as the time is bounded). \\
 
     We can also get a generalisation beyond just bounded stopping times:
-    \begin{corollary}
+    \begin{corollary}[Variants of Doob's optional stopping theorem]
       \ Let $(X_{n})$ be a martingale, $\tau$ an a.s. finite stopping time. If either $\{X_{n} : n \ge 0\}$ is UI, or $\mathbb{E}\big[\tau\big] < \infty$ and the sequence $\displaystyle        \left(\mathbb{E}\big[|X_{n+1}-X_{n}| \,\big|\, \mathcal{F}_{n}\big]\right)$ is bounded, then
       \begin{align*}
         \mathbb{E}\big[X_{\tau} \chi_{\tau < \infty}\big] = \mathbb{E}\big[X_{0}\big].
@@ -911,25 +942,29 @@
     \begin{theorem}[Doob's maximal inequality]
       \ Let $(X_{n})$ be a submartingale. Then, for $\lambda > 0$,
       \begin{align*}
-        Y^{\lambda}_{n} := (X_{n}-\lambda)\chi_{\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}}
+        Y^{\lambda}_{n} := (X_{n}-\lambda)\chi_{\{\max_{k \le n} X_{k} \ge \lambda\}}
       \end{align*}
       is a submartingale, and for $n \ge 1$,
       \begin{align*}
-        \lambda \mathbb{P}\left(\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}\right) \le \mathbb{E}\big[X_{n} \chi_{\bigcup_{k=1}^{n} \{X_{k} \ge \lambda\}}\big] \le \mathbb{E}\big[|X_{n}|\big].
+        \lambda \mathbb{P}\left(\max_{k \le n} X_{k} \ge \lambda\right) \le \mathbb{E}\big[X_{n} \chi_{\{\max_{k \le n} X_{k} \ge \lambda\}}\big] \le \mathbb{E}\big[|X_{n}|\big].
       \end{align*}
     \end{theorem}
 
-    Essentially, we expect $(X_{n})$ to grow, but only so quickly. This should (I think?) follow from considering the hitting time of $\rightopen{\lambda}{\infty}$. We then get that if $(X_{n})$ is a martingale in $\mathcal{L}^{p}$,
+    Essentially, we expect $(X_{n})$ to grow, but only so quickly. To see this, we construct $Y^{\lambda}_{n}$ in terms of $(X_{n}-X_{\tau})\chi_{\tau \ge n}$ and $(X_{\tau} - \lambda)\chi_{\tau \ge n}$, where $\tau$ is the hitting time of $\rightopen{\lambda}{\infty}$. We can then take expectations and use usual properties. \\
+
+    A useful corollary is that for $(X_{n})$ a martingale in $\mathcal{L}^{p}$, by applying the above to $(|X_{n}|^{p})$,
     \begin{align*}
-      \mathbb{P}\left(\bigcup_{k = 1}^{n} \{|X_{k}| \ge \lambda \}\right) \le \frac{\mathbb{E}\big[|X_{n}|^{p}\big]}{\lambda^{p}}.
+      \mathbb{P}\left(\max_{k \le n} |X_{k}| \ge \lambda \right) \le \frac{\mathbb{E}\big[|X_{n}|^{p}\big]}{\lambda^{p}}.
     \end{align*}
-    \begin{theorem}[Doob's $\mathcal{L}^{p}$ inequality]
+    \begin{theorem}[Doob's $L^{p}$ inequality]
       \ Let $(X_{n})$ be a non-negative submartingale in $\mathcal{L}^{p}$ for $p \ge 1$. Then $\displaystyle \max_{k \le n} X_{k} \in \mathcal{L}^{p}$ and
       \begin{align*}
         \mathbb{E}\big[X^{p}_{n}\big] \le \mathbb{E}\left[\max_{k \le n} X_{k}^{p}\right] \le \left(\frac{p}{p-1}\right)^{p}\mathbb{E}\big[X^{p}_{n}\big].
       \end{align*}
     \end{theorem}
     \hphantom{}
+
+    This holds by recalling that for $U,V$ positive random variables, if $u\mathbb{P}(U \ge u) \le \mathbb{E}\big[V \chi_{U \ge u}\big]$, then with $p > 1$, $\mathbb{E}\big[U^{p}\big] \le (p/(p-1))^{p} \mathbb{E}\big[V^{p}\big]$. \\
 
     As a weaker result, we can also obtain for a supermartingale that
     \begin{align*}
@@ -982,7 +1017,9 @@
     \end{theorem}
     \hphantom{}
 
-    We can see this from applying the upcrossing lemma in conjunction with our previous lemma. \\
+    We can see this from applying the upcrossing lemma in conjunction with our previous lemma. Additionally, we can extend the result to $\mathcal{L}^{p}$ using H\"{o}lder's inequality. \\
+
+    This is one of the most critical theorems in relation to martingales, which in many ways justifies the attention paid to them. A martingale with bounded expectation will converge with probability $1$. A specific case utilising this (often used in birth-death process models) is given below. \\
 
     \begin{definition}[Galton-Watson branching process]
     \ Let $(X_{n,r})$ be an array of i.i.d. random variables. $(Z_{n})$ is a Galton-Watson branching process if $Z_{0} = 1$, and for $n \ge 1$,
@@ -1006,6 +1043,8 @@
     \hphantom{}
 
     Note that these conditions require slightly more than the forward convergence theorem, because boundedness in $\mathcal{L}^{1}$ doesn't require that the $X_{n}$ themselves have a uniform bound (only that their absolute expectation does). In the other direction, we can use the forward convergence theorem to prove (part of) this statement however, in conjunction with Vitali's convergence theorem. \\
+
+    This theorem is essentially an extension of the forward convergence theorem to convergence in $\mathcal{L}^{p}$ (as well as a.s. convergence to an element of $\mathcal{L}^{p}$, which is already given). \\
 
     We find that the optional sampling theorem, as well as the maximal and $\mathcal{L}^{p}$ inequalities all have stronger variants for UI martingales:
     \begin{theorem}
@@ -1052,7 +1091,50 @@
       \end{theorem}
       \hphantom{}
 
-      \textbf{Prove, and finish non-examinable material in Chapter 9}
+      This theorem rests on defining $S_{n}/n$ as a backwards martingale with respect to the backwards filtration $\sigma(S_{-n},S_{-n+1},\dots) = \sigma(S_{-n},X_{-n+1},\dots)$, and using this to encode the independence of $S_{n}/n$ on the permutation of $\{X_{1},\dots,X_{n}\}$. We formalise this more generally as below: \\
+
+      \begin{definition}[Exchangeability]
+      \ The random variables $X_{1},\dots,X_{n}$ are exchangeable if $(X_{\varphi(1)},\dots,X_{\varphi(n)})$ has the same probability distribution for each permutation $\varphi \in S_{n}$ (with apologies for overloaded notation).
+      \end{definition}
+      \hphantom{}
+
+      For exchangeable random variables $X_{1},\dots,X_{n}$, we can define for $\varphi \in S_{n}$ a probability measure $\mathbb{P}'$ such that for $A \in \mathcal{F}$,
+      \begin{align*}
+        \mathbb{P}_{\varphi}(A) = \mathbb{P}(\bm{X}^{-1}(\varphi\bm{X}(A))).
+      \end{align*}
+      We see that this is a measure, and notably that by exchangeability $\mathbb{P}_{\varphi} \ge \mathbb{P}$ generally, and $\restr{\mathbb{P}_{\varphi}}{\sigma(\bm{X})} = \restr{\mathbb{P}}{\sigma(\bm{X})}$. \\
+
+      \begin{definition}[Doob's backward martingale]
+        \ With $(X_{1},\dots,X_{n})$ the results of $n$ successive samples without replacement from a set $A \subseteq \mathbb{R}$ with $|A| \ge n$, $(Z_{k})$ defined for $k \in \{1,\dots,n\}$ by
+        \begin{align*}
+          Z_{k} = \frac{S_{n+1-k}}{n+1-k}
+        \end{align*}
+        is Doob's backward martingale.
+      \end{definition}
+      \hphantom{}
+
+      To show that this is a backwards martingale (ending at $n$, rather than $0$) on $\mathcal{F}_{k} = \sigma(S_{n+1-k},\dots,S_{n})$ for $k \in \{1,\dots,n\}$ requires some work. We need to demonstrate that for $i, j \le n+1-k$, $\mathbb{E}\big[X_{i} \,|\, \mathcal{F}_{k}\big] = \mathbb{E}\big[X_{j} \,|\, \mathcal{F}_{k}]$. To do this, we just need to show the relation on the $\pi$-system:
+      \begin{align*}
+        \mathcal{A} = \left\{\bigcap_{r=n+1-k}^{n} S_{r}^{-1}(E_{r}) : E_{r} \in \mathcal{B}(\mathbb{R}) \right\}.
+      \end{align*}
+      We have that for $A = \bigcap_{r=n+1-k}^{n} S_{r}^{-1}(E_{r}) \in \mathcal{A}$, $i,j \le n+1-k$,
+      \begin{align*}
+        \mathbb{E}\big[X_{i}\chi_{A}\big] &= \mathbb{E}\left[X_{i} \prod_{r=n+1-k}^{n} \chi_{E_{r}}(S_{r})\right] \\
+                                          &= \mathbb{E}\left[X_{i} \prod_{r=n+1-k}^{n} \chi_{E_{r}}\left(\sum_{s = 1}^{r} X_{s}\right)\right] \\
+            \text{\{by $\sigma(\bm{X})$-measurability\}} \quad &= \mathbb{E}_{(i\,j)}\left[X_{i} \prod_{r=n+1-k}^{n} \chi_{E_{r}}\left(\sum_{s = 1}^{r} X_{s}\right)\right] \\
+            &= \mathbb{E}_{(i\,j)}\left[X_{i} \prod_{r=n+1-k}^{n} \chi_{E_{r}}\left(\sum_{s = 1}^{r} X_{s(i\, j)}\right)\right] \\
+           \text{\{by definition of $\mathbb{P}_{(i\,j)}$\}}\quad &= \mathbb{E}\left[X_{j} \prod_{r=n+1-k}^{n} \chi_{E_{r}}\left(\sum_{s=1}^{r}X_{s}\right)\right] \\
+        &= \mathbb{E}\big[X_{j} \chi_{A}\big]
+      \end{align*}
+
+      Consequently, we then see the following:
+
+      \begin{align*}
+        \mathbb{E}\big[Z_{k+1} \,|\, \mathcal{F}_{k}\big] &= \frac{1}{n-k}\sum_{i=1}^{n-k}\mathbb{E}\big[X_{i} \,|\, \mathcal{F}_{k}\big] \\
+                                                          &= \mathbb{E}\big[X_{1}\,|\, \mathcal{F}_{k}\big]  \\
+        &= Z_{k}.
+      \end{align*}
+      The key aspect of this is that by defining the filtration backwards (and thus getting a backwards martingale), we can capture the exchangeability property to define a martingale.
     }
 
   }
