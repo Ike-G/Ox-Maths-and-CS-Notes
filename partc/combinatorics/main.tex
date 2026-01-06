@@ -1,0 +1,445 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1000mm, paperheight=2200mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\renewcommand{\P}{\mathbb{P}}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Combinatorics}
+\author{Ike Glassbrook}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.5}
+  \block{Chains, antichains, shadows}{
+    Noting that a complete matching of a bipartite graph from $X$ to $Y$ is a vertex disjoint collection of edges such that we cover $X$.
+
+    \begin{theorem}[Hall's theorem]
+    \ $G = (X \cup Y, E)$ a bipartite graph has a complete matching from $X$ to $Y$ if and only if for all $S \subseteq X$, $|\Gamma(S)| \ge |S|$.
+    \end{theorem}
+    \hphantom{}
+
+    We then claim that there is a partition of $\mathcal{P}(n)$ into ${n \choose \floor{n/2}}$ chains, following as we can find matchings from layer to layer when viewed as $Q_n$, and there are ${n \choose \floor{n/2}}$ elements in the centre allowing us to choose that number of such chains through the layers. Thus we can then prove Sperner's lemma: \\
+
+    \begin{theorem}[Sperner's lemma]
+    \ An antichain in $\mathcal{P}(n)$ has size at most ${n \choose \floor{n/2}}$.
+    \end{theorem}
+    \hphantom{}
+
+    This is clear as a chain and an antichain meet on at most one element, so partitioning $\mathcal{P}(n)$ into some number of chains means having an antichain with more elements would mean it shares two elements with a chain. \\
+
+    \begin{theorem}[LYM Inequality]
+    \ Let $\mc{F} \subseteq \mc{P}(n)$ be an antichain. Then
+    \begin{align*}
+      \sum_{i=0}^n \frac{|\mc{F} \cap [n]^{(i)}|}{{n \choose i}} \le 1,
+    \end{align*}
+    and we have equality iff $\mathcal{F} = [n]^{(i)}$ for some $i \in [n]$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{definition}
+    \ With $\mathcal{F} \subseteq X^{(k)}$ a $k$-uniform family on $X$, the lower shadow $\partial \mc{F}$ of $\mc{F}$ is $\displaystyle \bigcup_{A \in \mc{F}} A^{(k-1)}$.
+    \end{definition}
+    \hphantom{}
+
+    Essentially, to form a shadow on a $k$-uniform family $\mc{F}$, from each $A \in \mc{F}$ we pick $k-1$ elements. \\
+
+    This is proven using a local version with $\mathcal{F} \subseteq [n]^{(r)}$, that
+    \begin{align*}
+      {n \choose r} |\partial \mc{F}| \ge {n \choose r-1} |\mc{F}|,
+    \end{align*}
+    shown via double counting of edges in $Q_n$, noting that each element in $\mathcal{F}$ contains $k$ sets of size $k-1$, and each element in $\partial \mathcal{F}$ is contained by $\le n - (k-1)$ elements in $\mathcal{F}$, so $(n - k + 1) |\partial \mc{F}| \ge k |\mc{F}|$. Equality occurs $\mc{F} = [n]^{(k)}$ or $\mc{F} = \varnothing$. \textbf{Understand proof a bit better.} \\
+
+    As a result, if $\mc{F}$ is an antichain in $\mc{P}(n)$, $|\mc{F}| \le {n \choose \floor{n/2}}$ with equality for $\mc{F} = [n]^{(k)}$, $k \in \{\floor{n/2}, \ceil{n/2}\}$. \\
+
+    \begin{theorem}[Dilworth's theorem]
+    \ Let $(P, \le)$ be a finite poset. The minimum number of chains needed to cover $P$ is the maximum size of an antichain.
+    \end{theorem}
+    \hphantom{}
+
+    One direction of this is clear: the minimum number of chains needed to cover $P$ is certainly not less than the maximum size of an antichain, because then we would have an antichain of maximum size which contains more than one element in one of the covering chains, giving a contradiction. \\
+
+    The other direction is less clear: we need to show that we can construct a covering of $P$ with a chain for each element of a maximum-size antichain. The intuition here is that we should be able to take a maximum size antichain, and generate chains by trawling for elements above and below each element of the antichain. If this doesn't generate a covering, we have an element $x$ which isn't at the top or bottom of any generated chain. $x$ must be comparable with some element of the antichain $y$, and thus we just select the first element (closest to $y$) of the chain generated by $y$ with which $x$ is not comparable ... \\
+
+    The above explanation requires some work, but in principle captures how this should operate. We also have a dual to this theorem:
+
+    \begin{theorem}[Mirsky's theorem]
+    \ Let $(P, \le)$ be a finite poset. The minimum number of antichains needed to cover $P$ is the maximum size of a chain.
+    \end{theorem}
+    \hphantom{}
+
+    To prove this, we calculate the height of a maximal chain starting at each element $v \in P$, and note that we can get antichains by selecting the elements with a particular height, for each possible height. \\
+
+    \begin{theorem}[Erd\"{o}s]
+    \ With $\bm{x} \in \mathbb{R}^n$ s.t. $x_i \ge 1$ for all $i \in [n]$. For every $\alpha \in \mathbb{R}$, there are at most ${n \choose \floor{n/2}}$ subsets $I \subseteq [n]$ such that $\sum_{i \in I} x_i \in \rightopen{\alpha, \alpha+1}$.
+    \end{theorem}
+    \hphantom{}
+
+    By using Sperner's lemma, we see that if more such subsets existed, we would have one containing the other, and thus violating the required property. \\
+
+    Indeed we can extend this theorem to the case $|x_i| \ge 1$, noting that replacing $+x_i$ with $-x_i$ just switches around whether we're making an `include' or `don't include' decision, translating the collection of possible sums. \\
+
+    We want to generalise this a bit more, and in order to do this we introduce the concept of chain symmetry -- we say that a chain in $\mc{P}(n)$ is symmetric if each link adds one element, and if the smallest and largest sets in the chain have gross cardinality $n$. Indeed we can partition $\mc{P}(n)$ into symmetric chains by induction. Critically, as every symmetric chain must contain an element in $[n]^{(\floor{n/2})}$, thus there are ${n \choose \floor{n/2}}$ chains in such a decomposition.\\
+
+    \begin{theorem}
+    \ Let $k, n \ge 1$, suppose that $\bm{X} = [\bm{x}_1, \dots, \bm{x}_n] \in \mathbb{R}^{k \times n}$ s.t. $||\bm{x}_i ||_2 \ge 1$ for all $i$. With $K \subseteq \mathbb{R}^k$ s.t. $\mathrm{diam}(K) < 1$, there are at most ${n \choose \floor{n/2}}$ subsets $I \subseteq [n]$ s.t. $\sum_{i \in I} x_i \in K$.
+    \end{theorem}
+    \hphantom{}
+
+    It is sufficient to show that we can partition $\mc{P}(n)$ into ${n \choose \floor{n/2}}$ sets $D_1, \dots, D_{n \choose \floor{n/2}}$ which are `sparse', meaning that for $A, B \in D_i$, $|| \sum_{i \in A} \bm{x}_i - \sum_{j \in B} \bm{x}_j || \ge 1$. If such a partition exists then we must only be able to select one valid set from each collection in the partition, and the result is proven. \\
+
+    To prove this, we find a symmetric partition $\mc{P}(n)$ into sparse families by induction. For a symmetric partition $\mc{F}_1, \dots, \mc{F}_m$, order the elements of $\mc{F}_i$ as $A_1, \dots, A_t$ where $\langle x_{A_1}, x_n \rangle \le \dots \langle x_{A_t}, x_n \rangle$, and we hope to then generate new chains for which the sets more aligned with $x_n$ are at the top (and thus $x_n + x_{A_t}$ is kept far from the other sets). We do this and find straightforwardly that with the same procedure to generate a symmetric partition in the first place subject to this particular reordering, we get the desired result. \\
+
+
+    We would like to get a more precise understanding of the relative cardinalities of $r$-uniform sets and their shadows. We get an immediate inequality via LYM, but want to understand where we get closer to and further from the equality. To do this, we define lexicographic and colexicographic order: \\
+
+    In \emph{lex}, for $A, B \in [n]^{(r)}$, $A <_{\mathrm{lex}} B$ if $A \neq B$ and $\min(A \triangle B) \in A$. Thus in lex order, the place of a set in an order is primarily determined by its lowest element (and then its next lowest, and on and on). \\
+
+    In \emph{colex}, for $A, B \in [n]^{(r)}$, $A <_{\mathrm{colex}} B$ if $A \neq B$ and $\max(A \triangle B) \in B$. Thus in colex order, the place of a set in an order is primarily determined by its highest element (and then its next highest, and on and on). \\
+
+    \begin{theorem}[Kruskal-Katona]
+    \ Let $\mc{F} \subseteq [n]^{(r)}$, $\mc{A}$ be the family of the first $|\mc{F}|$ elements of $[n]^{(r)}$ in colex order. Then $|\partial \mc{F}| \ge |\partial \mc{A}|$.
+    \end{theorem}
+    \hphantom{}
+
+    Essentially, the claim is that colex order creates the most overlap in the shadow, thus minimising its size. To show this takes some time, but fundamentally we do this by reducing $\mc{F}$ to a family which is an initial segment of colex, and demonstrate that at each step $|\partial \mc{F}'| \le |\partial \mc{F}|$. Intuitively, our goal is to swap large elements for small elements, to get ourselves towards colex. \\
+
+    We define a compression operator to swap in $i$ instead of $j$ and $j$ instead of $i$ wherever this is coherent, and to leave all other sets in $\mc{F}$ untouched otherwise. We refer to this as a left compression where $i < j$, and conjecture that left compressions should not increase the shadow.
+    \begin{align*}
+      C_{ij}(A) &= \begin{cases}
+        (A \setminus j) \cup i & \text{if }i \not\in A, j \in A \\
+        A & \text{otherwise}
+                 \end{cases} \\
+      C_{ij}(\mc{F}) &= \{C_{ij}(A) : A \in \mc{F}\} \cup \{A \in \mc{F} : C_{ij}(A) \in \mc{F}\}.
+    \end{align*}
+
+    Indeed, the shadow of $C_{ij}(\mathcal{F})$ is no larger than the shadow of $\mc{F}$, and there is a family $\mc{A}$ which is a fixed point of all left-compressions (which we call left-compressed). Unfortunately, not every left-compressed family is in colex form, as $\{12, 13, 14\}$ is left-compressed but contains $14$, which we can't get rid of e.g. via $C_{34}$ because we get it back from $13$. Indeed we want to be able to convert this into $\{12, 13, 23\}$, but this is impossible without doing two steps simultaneously. \\
+
+    Thus we want to replace $i$ and $j$ with disjoint sets $U, V \in \mc{P}(n)$, $|U| = |V|$, and technical details allow us to get the compression as desired.
+  }
+\block{Combinatorial Nullstellensatz}{
+    \begin{theorem}[Combinatorial Nullstellensatz]
+      \ Let $\mathbb{F}$ be a field, $f \in \mathbb{F}[x_1, \dots, x_n]$ a polynomial of degree $t$, with $t_1, \dots, t_n$ such that $\sum_{i=1}^n t_i = t$ and $\prod_{i=1}^n x_i^{t_i}$ has non-zero coefficient in $f$. \\
+
+      If there are sets $S_1, \dots, S_n$ in $\mathbb{F}$ each with $|S_i| \ge t_i + 1$, then there is $\bm{s} \in \prod_{i=1}^n S_i$ such that $f(\bm{s}) \neq 0$.
+    \end{theorem}
+    \hphantom{}
+
+    The proof is by induction. For $t = 1$, $f$ is linear in an argument, and the statement is immediate. Assuming that there are $S_1, \dots, S_n$ in $\mathbb{F}$ with $|S_i| \ge t_i + 1$, and taking $s_1 \in S_1$,
+    \begin{align*}
+      f(x_1, \dots, x_n) &= (x_1 - s_1)g(x_1, \dots, x_n) + h(x_2, \dots, x_n)
+    \end{align*}
+    where $g$ is a polynomial of degree $t-1$ with monomial $x_1^{t_1-1}\prod_{i=2}^nx_i^{t_i}$, and $h \in \mathbb{F}[x_2, \dots, x_n]$ with degree $t$. Immediately, for $(s_2, \dots, s_n) \in \prod_{i=2}^n S_i$, $f(s_1, s_2, \dots, s_n) = h(s_2, \dots, s_n)$. Furthermore, by the inductive hypothesis there is some $(s_1', \dots, s_n') \in (S_1 \setminus \{s_1\}) \times \prod_{i=2}^n S_i$ such that $g(s_1', \dots, s_n') \neq 0$, so
+    \begin{align*}
+      f(s_1', \dots, s_n') &= (s_1' - s_1)g(s_1', \dots, s_n') + h(s_2', \dots, s_n') \\
+      &= (s_1' - s_1)g(s_1', \dots, s_n') + f(s_1, s_2', \dots, s_n')
+    \end{align*}
+    and thus $f(s_1', \dots, s_n') \neq f(s_1, s_2', \dots, s_n')$, so at least one of these is non-zero. \\
+
+    This is naturally an incredibly wide-reaching theorem. The key idea is that given a problem, we want to construct a polynomial with informative zeros, and then take a subset of its domain big enough to guarantee a non-zero value, which indicates that we've exited our initial case. \\
+
+    \begin{theorem}
+      \ With $H_1, \dots, H_m$ a family of hyperplanes in $\mathbb{R}^n$, and
+      \begin{align*}
+        \left|\{0, 1\}^n \cap \bigcup_{i=1}^m H_i\right| = 2^n -1.
+      \end{align*}
+      Then $m \ge n$.
+    \end{theorem}
+    \hphantom{}
+
+    To prove this, construct a polynomial $P(\bm{x})$ for $\bm{x} \in \mathbb{R}^n$, which is zero on $\{0, 1\}^n$ if $\bm{x}$ is contained in a hyperplane and non-zero, or equal to zero. This can be easily constructed with degree $n \lor m$, and if $m < n$, the combinatorial nullstellensatz gives us that there is $\bm{s} \in \{0,1\}^n$ such that $P(\bm{s}) \neq 0$, so thus there must be a point not contained in a hyperplane. \\
+
+    \begin{theorem}[Cauchy-Davenport]
+    \ If $p$ is prime and $A, B \subseteq \mathbb{Z}_p$, then
+    \begin{align*}
+      |A + B| \ge \min \{p, |A|+|B|-1\}.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    The claim is almost immediate for $|A|+|B| > p$, as we just need to show that $A + B = \mathbb{Z}_p$. In the case $|A| + |B| \le p$, we want to claim a contradiction if $|A+B| \le |A|+|B|-2$, by constructing a polynomial of degree $|A|+|B|-2$, zero on $A \times B$. Yet combinatorial nullstellensatz should give an element on which the polynomial is nonzero, and this gives us a contradiction.
+    }
+  \column{0.5}
+  \block{Intersections and traces}{
+    We say that $\mc{A} \subseteq \mc{P}(n)$ is intersecting if $A \cap B \neq 0$ for $A, B \in \mc{A}$. It's immediately clear that $|\mc{A}| \le 2^{n-1}$. \\
+
+    \begin{theorem}[Erd\"{o}s-Ko-Rado]
+    \ For $r \le n/2$, $\mc{A} \subseteq [n]^{(r)}$ intersecting implies that $|\mc{A}| \le {n-1 \choose r-1}$.
+    \end{theorem}
+    \hphantom{}
+
+    There are two separate proofs for this: the first involves Katona's circle method, and the second using the Kruskal-Katona theorem. \\
+
+    \begin{theorem}[Liggett's theorem]
+    \ With $\bm{Y} \overset{\mathrm{i.i.d.}}{\sim} \mathrm{Ber}(p)^n$, $\bm{\alpha} \ge 0$, $\sum \alpha_i = 1$,
+    \begin{align*}
+      \P\left(\sum_i \alpha_i Y_i \ge 1/2\right) \ge p.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this theorem follows by applying EKR to $\{A \subseteq [n]^{(k)} : \sum_{i \in A} \alpha_i > 1/2\}$. \\
+
+    \begin{theorem}[Two Families Theorem]
+    \ Let $A_1, \dots, A_k$, $B_1, \dots, B_k$ be finite sets such that each $(A_i, B_i)$ pair is disjoint, but no other $(A_i, B_j)$ pair is disjoint. Then
+    \begin{align*}
+      \sum_{i=1}^k {|A_i| + |B_i| \choose |A_i|}^{-1} \le 1.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Observe immediately that each summand is equal to the probability that we choose the $(A_i, B_i)$ partition of $A_i \cup B_i$.
+
+    \innerblock{VC-dimension}{
+      \begin{definition}[Trace]
+      \ For $\mc{F} \subseteq \mc{P}(X)$, $S \subseteq X$, the trace of $\mc{F}$ on $S$ is
+      \begin{align*}
+        \restr{\mc{F}}{S} := \{F \cap S : F \in \mc{F}\}
+      \end{align*}
+      and $\mathrm{tr}_{\mc{F}}(S) = \big|\restr{\mc{F}}{S}\big|$. \\
+
+      We say that $S$ is shattered by $\mc{F}$ if $\restr{\mc{F}}{S} = \mc{P}(S)$, and define the VC-dimension of $\mc{F}$ as
+      \begin{align*}
+        \max\{|S| : S \subseteq X \text{is shattered by }\mc{F}\}.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      To give some intuition: as a result of this, we're mainly concerned with being able to divide up a finite set $S$ of elements by the various sets in $\mc{F}$. For example, the VC-dimension of the set of half-spaces in $\mathbb{R}^2$ is 3, because it's not possible to draw 4 points on a plane without there being two lines between distinct pairs which intersect, and thus any half plane containing two of these opposite points must also contain their line, and thus the intersection, including a third point. \\
+
+      \begin{theorem}[Shauer-Shelah]
+      \ If $\mc{A} \subseteq \mc{P}(n)$ has VC-dimension at most $d$,
+      \begin{align*}
+        |\mc{A}| \le \left|[n]^{(\le d)}\right|
+      \end{align*}
+      \end{theorem}
+
+      The intuition is that to shatter a set in $[n]^{(d+1)}$, it's sufficient to just have $> \left|[n]^{(\le d)}\right|$ sets in your system, because at a certain point we have to capture at least one $[n]^{(d+1)}$ set fully. \\
+
+      \begin{theorem}[Kleitman's theorem]
+      \ Let $\mc{A}, \mc{B} \subseteq \mc{P}(n)$ be downsets. Then
+      \begin{align*}
+        |\mc{A} \cap \mc{B}| \ge 2^{-n}|\mc{A}||\mc{B}|
+      \end{align*}
+    \end{theorem}
+
+    The intuition for this should be that $|\mc{A} \cap \mc{B}| / 2^n \ge |\mc{A}|/2^n \cdot |\mc{B}| / 2^n$, and thus that downsets must intersect considerably (in particular, that if we include each element in $[n]$ with probability $1/2$, $\mu(A \cap B) \ge \mu(A)\mu(B)$). This has an important application in problem sheet 3, and more generally has applications wherever we want to bound the cardinality of families which are likely to agree considerably due to intersection properties. \\
+
+    \begin{definition}
+    \ $\mc{A} \subseteq \mc{P}(n)$ is $t$-intersecting if $|A \cap B| \ge t$ for all $A, B \in \mc{A}$.
+    \end{definition}
+    \hphantom{}
+
+    Note that a system is $1$-intersecting iff it is intersecting, and if $s \le t$, $t$-intersecting implies $s$-intersecting. \\
+
+
+    \begin{theorem}[Generalised Erd\"os-Ko-Rado]
+      With $1 < t \le k$ integers, there is an integer $n_0$ such that for $n > n_0$, $\mc{A} \subseteq [n]^{(k)}$ is $t$-intersecting implies
+      \begin{align*}
+        |\mc{A}| \le {n-t \choose k-t}
+      \end{align*}
+      with equality iff $\mc{A} = \{A \in [n]^{(k)} : T \subseteq A\}$ for some $T \in [n]^{(t)}$.
+    \end{theorem}
+    \hphantom{}
+
+    This is a generalisation of the Erd\"os-Ko-Rado theorem for large $n$. The point of this is to give us even stronger bounds on sets which we know are `very intersecting'. Note that for any $(t+1)$-intersecting system, we can replace one element within any set with another, and this gives us a set which is $t$ intersecting with all others, thus we can assume the existence of $A, B \in \mc{A}$ with $|A \cap B| = t$ for $\mc{A}$ maximal. We can then argue that for $n$ large enough, $A \cap B \subseteq C$ for all $C \in \mc{A}$.  \\
+
+    It turns out we get a distinctly tight bound when the sense of $t$-intersection is strict:
+      \begin{theorem}[Fisher's inequality]
+      \ Let $k \ge 1$. If $\mc{A} \subseteq \mc{P}(n)$ satisfies $|A \cap B| = k$ for all distinct $A, B \in \mc{A}$, then $|\mc{A}| \le n$.
+      \end{theorem}
+      \hphantom{}
+
+      This follows from a new type of argument which we continue to use in this section: to identify sets with their characteristic function (a vector in $\mathbb{F}_2^n$), and then use properties of linear independent sets. \\
+
+      \begin{theorem}[Oddtown theorem]
+      \ Let $\mc{A} \subseteq \mc{P}(n)$ be a family such that $|A|$ is odd for $A \in \mc{A}$ and $|A \cap B|$ is even for all distinct $A, B \in \mc{A}$. Then $|\mc{A}| \le n$.
+      \end{theorem}
+      \hphantom{}
+
+      Working over $\mathbb{F}^n_2$, $\langle \chi_A, \chi_B \rangle = |A \cap B| = \chi_{A = B}$ (as we're working modulo 2), and thus we can claim that the set $\{\chi_A : A \in \mc{A}\}$ is linearly independent, as $\langle \sum_{A \in \mc{A}} \lambda_A \chi_A, \chi_B \rangle = \lambda_B = 0$ for all $B$ if the initial sum is zero. Thus $|\mc{A}| \le n$. \\
+
+      \begin{theorem}[Modular Frankl-Wilson theorem]
+        \ Let $p$ be prime, $S \subseteq \{0, 1, \dots, p-1\}$, and $\mc{A} \subseteq \mc{P}(n)$ satisfies
+        \begin{itemize}
+          \item $|A| \notin S \,\mathrm{mod}\, p$ for all $A \in \mc{A}$, and
+          \item $|A \cap B| \in S \,\mathrm{mod}\, p$ for all $A, B \in \mc{A}$ distinct.
+        \end{itemize}
+        Then
+        \begin{align*}
+          |\mc{A}| \le \sum_{i=0}^{|S|} {n \choose i}.
+        \end{align*}
+      \end{theorem}
+
+      The proof of this involves once again working in $\mathbb{F}_p^n$. For $A \in \mc{A}$, define
+      \begin{align*}
+        f_A(x) = \prod_{s \in S} \left(\sum_{i \in A} x_i - s\right)
+      \end{align*}
+      Now on the basis that we only want to evaluate our polynomials on characteristic vectors, we can `multilinearise' them, replacing each power $x^k$ by $x$ in order to squeeze down the dimension of the space within which we're working. We then get a set of linearly independent multilinear polynomials of degree at most $|S|$, and as this is spanned by the monomials $\{\prod_{i \in A} x_i : |A| \le |S|\}$, the result follows by the same principle just by calculating the dimension. \\
+
+      \begin{theorem}[Frankl-Wilson theorem]
+      \ Let $\mc{A} \subseteq \mc{P}(n)$ be $S$-intersecting (for $A, B \in \mc{A}$ distinct, $|A \cap B| \in S$). Then
+      \begin{align*}
+        |\mc{A}| \le \sum_{i=0}^{|S|} {n \choose i}
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      A reduced form of this with the assumption $|A| \not\in S$ for $A \in \mc{A}$ is immediate from the above, and we don't prove the more general version. \\
+
+      \begin{theorem}[Ray-Chaudhuri-Wilson]
+        \ Let $\mc{A} \subseteq [n]^{(k)}$ be $S$-intersecting with $S \subseteq \{0, \dots, k-1\}$. Then
+        \begin{align*}
+          |\mc{A}| \le {n \choose |S|}.
+        \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      In this sense, the above theorems can be ordered roughly in strength for demonstrating that an intersecting family must be small.
+      \begin{align*}
+        \text{RCW} \sim \text{Fisher} \succ \text{M-FW} \succ \text{G-EKR} \sim \text{FW}.
+      \end{align*}
+      Note that the oddtown theorem is merely a specific case of Modular Frankl-Wilson. \\
+
+      We now consider a key application of the above theorems, which is the counterexample to Borsuk's conjecture.
+
+      \begin{theorem}[Kahn-Kalai]
+        \ Let $k(d)$ be the smallest integer such that every subset of $\mathbb{R}^d$ of diameter $1$ can be partitioned into $k(d)$ sets of smaller diameter. Then there is $c > 1$ such that
+        \begin{align*}
+          k(d) \ge c^{\sqrt{d}}
+        \end{align*}
+        for infinitely many $d$.
+      \end{theorem}
+      \hphantom{}
+
+      Our overarching goal within this proof is to construct, with $d$ an increasing function of $p$, a set $K \subseteq \mathbb{R}^d$ corresponding to a set of graphs, such that if $L \subseteq K$ has a smaller diameter, by the nature of the identification the graph of $L$ takes up a bounded fraction of the graph of $K$ (which we can then use to bound below the number of such $L$s we need to divide $K$ up). \\
+
+      To do this, take $d = {4p \choose 2}$, and with the natural identification of $\{0, 1\}^d$ with subsets of $E(K_{4p})$, write for $A \in [4p]^{(2p)}$, $E_A$ as the complete bipartite graph connecting $A$ and $A^c$, $\mc{F} := \{E_A : A \in [4p]^{(2p)}\}$. We then define our $K \subseteq \mathbb{R}^d$ as the natural identification of $\mc{F}$, and note that for $A, B \in [4p]^{(2p)}$, $||v_{E_A} - v_{E_B}||^2 = |E_A| + |E_B| - 2|E_A \cap E_B|$, so thus any $L \subseteq K$ with smaller diameter, for $A, B$ distinct in $\mc{A}$ the set of subgraphs corresponding to $L$, $|E_A \cap E_B|$ cannot be minimal (occurring iff $|A \cap B| = p$), and thus we get our result from the lemma, that
+      \begin{align*}
+        |\mc{F}|/|\mc{A}| &\ge \frac{1}{6}{4p \choose 2p}/{4p \choose p-1}
+      \end{align*}
+      and thus covering $K$ requires this number of sets, which one can see is asymptotically exponential in $p$, which is itself asymptotically equivalent to $\sqrt d$. \\
+
+      \begin{lemma}
+      \ Let $p$ be a prime and $\mc{A} \subseteq [4p]^{(2p)}$. If there is no distinct pair $A, B \in \mc{A}$ with $|A \cap B| = p$, then $|\mc{A}| \le 4{4p \choose p-1}$.
+      \end{lemma}
+      \hphantom{}
+
+      Take $x \in [4p]$ which occurs in at least half the sets in $\mc{A}$ (see existence by a probabilistic argument). Note that for distinct $A, B \in \mc{A}$ both containing $x$, $|A \cap B| \in \{1, \dots, p-1\} \,\mathrm{mod}\, p$, and $|A| = 2p \not\in \{1, \dots, p-1\} \,\mathrm{mod}\, p$, so applying M-FW gives
+      \begin{align*}
+        \frac{1}{2}|\mc{A}| \le |\{A \in \mc{A} : x \in A\}| \le \sum_{i=0}^{p-1} {4p \choose i} \le 2{4p \choose p-1}
+      \end{align*}
+      where the last equality is from rearrangement with the inequality ${4p \choose i-1} \le {4p \choose i}/2$, and thus $|\mc{A}| \le 4{4p \choose p-1}$ (indeed we can also get $|\mc{A}| \le 3{4p \choose p-1}$ by the same method, but this is unnecessary).
+
+    }
+  }
+
+\end{columns}
+\end{document}

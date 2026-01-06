@@ -138,7 +138,9 @@
     \end{theorem}
     \hphantom{}
 
-    \textbf{Prove, and consider moving this}
+    \textbf{Prove, and consider moving this} \\
+
+    With $\alpha = 1/k$ for $k \ge 2$, we can demonstrate that for $f : U \to V$ holomorphic, $f'(z_0) = 0$ implies that it is not injective. This is because $f(z) - f(z_0) = (z-z_0)^k g(z)$, and taking $|z - z_0| < \varepsilon$ so $|g(z) - g(z_0)| < |g(z_0)|$ we can then find a holomorphic function $\varphi : B(z_0, \varepsilon) \to V$ so $\varphi(z)^k \equiv \restr{g}{B(z_0, \varepsilon)}$, and thus $f(z) - f(z_0) = ((z-z_0)\varphi(z))^k$. Via the inverse function theorem applied to $z \mapsto (z-z_0)\varphi(z)$, it's then clear by the open mapping theorem that taking $w, w'$ two distinct $k$th roots of $\xi$, $f(z) - f(z_0) = \xi$ is solved by multiple $z$.
   }
 \block{Integration}{
   \begin{definition}[Functions from intervals]
@@ -282,6 +284,8 @@
   \hphantom{}
 
   For $f : U \to \mathbb{C}$ conformal, take $z_{0} \in U$, $\gamma_{1}, \gamma_{2}$ paths in $U$ which meet at $z_{0} = \gamma_{1}(0) = \gamma_{2}(0)$. We denote the angle between the paths at this point as $\theta = \arg \gamma_{2}'(0) / \gamma_{1}'(0)$. Thus $\varphi = \arg (f\gamma_{2})'(0) / (f\gamma_{1})'(0) = \arg f'(z_{0})\gamma_{2}'(0) / f'(z_{0}) \gamma_{1}'(0) = \theta$ so $f$ is angle preserving. \\
+
+  Note that if $f : U \to V$ is biholomorphic (its inverse is holomorphic) then we must have that $f$ is conformal. \\
 
   The three most important examples of conformal maps for this course are Mobius transformations, power maps (for $0 \notin U$), and exponents. To construct Mobius transformations to manipulate sets conformally as desired, note the invariance of the cross-ratio under Mobius transformations giving us the following:
   \begin{align*}
@@ -702,6 +706,13 @@
   \hphantom{}
 
   If $f(z_{0}) = w_{0}$ for some $z_{0} \in V$, then $g(z) = f(z) - w_{0}$ has a zero at $z_{0}$, which is isolated. Take a disc around $z_{0}$, and $|g(z)| \ge \delta > 0$ on this disc provided it is close enough \textbf{Finish this - it's an application of rouche's thm. Can also do it via the inverse function theorem, writing $f(z) = (z(\hat{f}(z))^{1/k})^{k}$.}
+
+  \begin{theorem}
+  \ Let $f : U \to V$ be holomorphic on a neighbourhood of $z_0 \in U$, with $f'(z_0) \neq 0$. Then there exist neighbourhoods of $z_0$ and $f(z_0)$, $U' \subseteq U$ and $V' \subseteq V$ respectively such that $f : V' \to U'$ is holomorphic, and $f^{-1}(f(z_0)) = 1/f'(z_0)$.
+  \end{theorem}
+  \hphantom{}
+
+  Write $f(z) - f(z_0) = (z-z_0)g(z)$ with $g(z_0) \neq 0$, and we want to show that for $w$ close to $f(z_0)$, $f(z) - w$ has exactly one zero for a small enough neighbourhood around $z_0$. To do this, with $\ell(z) := (z-z_0)g(z_0)$ and $h(z) := (z-z_0)g(z)$, we use Rouch\'{e}'s theorem on $\ell - (f(z) - w)$ and $h-\ell$ giving that if for $|z - z_0| = r$, $|h(z) - \ell(z)| < |\ell(z)|$, then $\ell$ and $h$ have the same number of zeros in $B(z_0,r)$. This is clear just via continuity, and as $\ell - $ has just one zero, thus $h(z) = f(z) - f(z_0)$ has one zero. Thus $(f(z) - f(z_0)) - (w - f(z_0))$ \textbf{This argument is weird ugh}
   }
 \end{columns}
 \end{document}

@@ -1,0 +1,504 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1200mm, paperheight=3000mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand\Eb[1]{\mathbb{E}\big[#1\big]}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Probability on Graphs and Lattices}
+\author{Ike Glassbrook}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.5}
+  \block{Uniform spanning trees}{
+    \begin{definition}
+    \ Let $G = (V, E)$ be a finite connected graph, $\mathcal{T}$ be the set of spanning trees of $G$. A random tree $\mathcal{T}$ is a uniform spanning tree (UST) if it is uniform on $\mathcal{T}$:
+    \begin{align*}
+      \mathbb{P}(T = t) = 1/|\mathcal{T}| \quad \text{for } t \in \mathcal{T}.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    This provides us with a first distribution on a random tree, although at this point it's slightly abstract, as we have no real way of simulating a UST at the moment if $|\mathcal{T}|$ is very large (and indeed we expect it often to be incredibly large). \\
+
+   \begin{definition}[SRWs]
+   \ A \emph{simple random walk} (SRW) $(X_n)$ on a locally finite (all degrees finite) connected graph $G = (V, E)$ is a Markov chain with state-space $V$ and transition probabilities
+   \begin{align*}
+   p_{v, w} = \begin{cases}
+   1/\degree_G(v) & \text{if } \{v, w\} \in E \\
+   0 & \text{otherwise}
+   \end{cases}
+   \end{align*}
+   \end{definition}
+\hphantom{}
+
+Motivated by this, we can define the hitting time of a particular vertex $\tau_v$, the return time of a vertex $\tau^+_v$, and (new!) the \emph{cover time} of $G$, $t_{\mathrm{cov}} = \sup_{v \in V} \tau_v$. As standard, just because the cover time is infinite does not mean that the graph is not recurrent.
+
+We have a very well-behaved SRW for finite connected graphs, as our DBEs are satisfied for $\pi_v \propto \degree_G(v)$ -- \textbf{consider the case where $E = \infty$, as even locally finite graphs seem to indicate difficulties}. \\
+
+  \begin{definition}[Aldous-Broder algorithm]
+  \ For a connected recurrent graph $G$, an SRW $(X_n)$ ran from $X_0 \in V$, we define a random tree $T$ by
+  \begin{align*}
+    E(T) = \left\{\{X_{\tau_v - 1}, X_{\tau_v}\} : v \in V \setminus \{X_0\}\right\}.
+  \end{align*}
+  \end{definition}
+  \hphantom{}
+
+  \begin{theorem}
+  \ Aldous-Broder samples a UST.
+  \end{theorem}
+  \hphantom{}
+
+  In order to demonstrate that this random tree is a UST on $G$ if $G$ is finite, we take the eternal random walk $(X_n)$, and construct a Markov chain by taking $(T_n, X_n)$ the spanning tree generated by A-B. By including the root of the tree we can concretely infer the hitting times on each vertex, as all edges are discovered moving away from the root. Consequently $\sigma((T_n, X_n), (T_{n-1}, X_{n-1}), \dots) = \sigma(T_n, X_n, X_{n-1}, \dots)$, and so as $T_{n+1}$ is independent of $\sigma(X_{n-1}, \dots)$ conditional on $T_n$, $X_n$, and $X_{n+1}$, and $(X_n)$ is itself Markov we acquire the desired Markov property. We then reverse this process, observing that this reversal has a stationary distribution with degree in terms of the root, and $T_{n}$ is $\sigma(X_n, X_{n+1}, T_{n+1})$ measurable. On this logic we then see that DBEs are solved by a distribution which is uniform in the unrooted tree and has the root and unrooted tree independent, and so consequently by conditioning on the root (which is assumed to have law according to the stationary distribution) the tree sampled by A-B is uniform.\\
+
+  \begin{definition}[Loop erasure]
+  \ With $\gamma = (x_0, x_1, \dots, x_n)$ a finite, possibly self-intersecting path in a graph $G$, we define $\ell_v = \max \{0 \le m \le n : x_m = v\}$, and inductively defining $v_0 = x_0$, $v_{i+1} = x_{\ell_{v_i} + 1}$ we have the loop-erasure $\gamma' = (v_0, v_1, \dots, v_k)$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{definition}[Wilson's algorithm]
+    \ Given a finite connected graph $G$ with $|V| = n$, let $(v_0, v_1, \dots, v_{n-1})$ be an enumeration of the vertices. We define a sequence of random trees $\{v_0\} = T_0 \subset T_1 \subset \cdots$ by repeating the following process until $V(T_n) = V$: \\
+
+    Independently of previous steps, let $j$ be the smallest label in $\{1, \dots, n-1\}$ such that $v_j \not\in V(T_i)$. Let $\tau_{T_i}$ be the hitting time of $T_i$ for a random walk on $G$ starting at $v_j$, and let $\gamma = (X_0, \dots, X_{\tau_{T_i}})$. We then add the loop-erasure of $\gamma$ to $T_i$ in order to form $T_{i+1}$.
+  \end{definition}
+  \hphantom{}
+
+  \begin{theorem}
+  \ Wilson's algorithm samples a UST.
+  \end{theorem}
+  \hphantom{}
+
+  Fundamentally, this algorithm can be seen as sampling an edge uniformly out of each vertex minus one vertex $v_0$, with additional tuning to ensure that what we build is a tree directed towards $v_0$, and not a graph with directed cycles (which is also a possibility in this framework). \\
+
+  To do this, we require a particular construction. Considering for each $v_i \in V \setminus \{v_0\}$ a sequence $(w_i^{(1)}, w_i^{(2)}, \dots) \subseteq \mathrm{Adj}_G(v_i)$, we construct recursively a walk $(x_n)$, where if $x_k = v_i$,
+  \begin{align*}
+    x_{k+1} = \begin{cases}
+      v_0 & \text{if } i = 0 \\
+      w_i^{(\#\{j \le k \,:\, x_j = v_i\})} & \text{otherwise}.
+      \end{cases}
+  \end{align*}
+  In other words, $w_i^{(l)}$ is where we go from vertex $v_i$ on having visited it on the $l$th occasion. We can conceive of the loop-erasure process as recovering the path $(x_n)$ subject to ``loop-popping'' by `popping' the first $w_i$ from the stack of instructions if $v_i$ is involved in a cycle in the process $(x_n)$. Thus we want to eventually pop enough instructions such that the edge set defined by $(w_i^{(1)})$ contains no cycles, and our concern is whether this rejection sampling allows us to maintain uniformity of the sample. \\
+
+  \begin{lemma}[Cycle popping lemma]
+  \ For any choice of $(w^{(k)}_i)_{k \ge 1, i \in \{1, \dots, n-1\}}$, and any order of cycle-popping, the number of cycles popped $N$ is the same, and if $N < \infty$, the tree generated $t$ is the same.
+  \end{lemma}
+  \hphantom{}
+
+  If we then say that each $w_i^{(l)}$ is an i.i.d. choice from the vertices adjacent to $v_i$, then the probability that we get a particular tree \textbf{finish this} \\
+
+  Any spanning tree must have $|V|-1$ edges, as any more and we would have a cycle, any less we would not be able to form distinct paths to each vertex in the graph. Consequently we would expect that one edge being in a graph makes it less likely for another vertex to be in the graph (negative association). We can make this precise:
+  \hspace{1em}
+  \begin{enumerate}[label=(\alph*)]
+          \item \ For any distinct pair $e, e'$ in $E(G)$,
+          \begin{align*}
+            \mathbb{P}(e \in E(T) \,|\, e' \in E(T)) \le \mathbb{P}(e \in E(T))
+          \end{align*}
+          and more generally with $A$, $B$ disjoint acyclic collections of edges, $\mathbb{P}(B \subseteq E(T) \,|\, A \subseteq E(T)) \le \mathbb{P}(B \subseteq E(T))$.
+          \item Let $H$ be a connected subgraph of $G$, $T_H$ a UST on $H$. Then for $A \subseteq E(H)$,
+          \begin{align*}
+            \mathbb{P}(A \subseteq E(T_H)) \ge \mathbb{P}(A \subseteq E(T))
+          \end{align*}
+  \end{enumerate}
+  \innerblock{Infinite Graphs}{
+    We have no immediate conception from the work already done for what a uniform spanning tree might look like on an infinite graph, as once the set of spanning trees becomes infinite we have no means of picking one uniformly. Indeed for any infinite connected graph, if it has a cycle then the set of spanning trees is infinite (although if the graph is already a tree then there is only one such tree). \\
+
+    \begin{definition}
+    \ Let $G$ be an infinite connected graph. An exhaustion $(G_n)$ of $G$ is a sequence of finite connected graphs induced by the increasing sequence $V_1 \subset V_2 \subset \cdots \subset \bigcup_{n \ge 1} V_n = V(G)$.
+    \end{definition}
+    \hphantom{}
+
+    Let $A \subseteq E(G)$ be any finite collection of edges. Then $\mathbb{P}(A \subseteq E(T_n)) \ge \mathbb{P}(A \subseteq E(T_{n+1}))$, and monotonicity implies that there is a limit allowing us to conjecture the existence of an infinite random `tree' with distribution properties according to the limit distribution. \\
+
+    Our probability space on random trees can be constructed relatively easily with $\Omega(G) = \{0, 1\}^{E(G)}$, so each $\omega$ defines the edges included. We then say that $\mu_n$ a sequence of probability measures on $(\Omega(G), \mathcal{B}(\Omega(G)))$ if $\mu_n(\mathcal{C}) \to \mu(\mathcal{C})$ for all cylinder events $\mathcal{C}_{A, B} = \{\omega \in \Omega(G) : \omega^{-1}(\{0\}) \subseteq A, \omega^{-1}(\{1\}) \subseteq B\}$ for $A, B \subseteq E(G)$ finite. \\
+
+    Our goal now is to show that with measures $\mu_{T_n}$ on the sequence of USTs $(T_n)$ with respect to $(G_n)$, we get a measure $\mu^F$ as the weak limit, and indeed that this limit is independent of the choice of exhaustion. \textbf{Argue this}. \\
+
+    The graph with measure $\mu^F$ has no cycles, and has no finite components, with probability 1. It is also invariant under graph automorphisms, which follows from seeing that the limit is independent of the exhaustion choice. \\
+
+    \begin{definition}
+      \ For $G$ an infinite graph, $(G_n)$ an exhaustion, let $\partial G_n \subseteq V_n$ be the set of boundary vertices (those connected to $V \setminus V_n$), and the wired subgraph (counting edge multiplicity)
+      \begin{align*}
+        G_n^W = (V_n \cup \{w_n\}, \{\{u, v\} : u, v \in V_n\} \cup \{\{u, w_n\} : u \in \partial V_n\}).
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    We then define $T^{W}_n$ as the UST on $G^W_n$, and let $\mu_{T_n}^W$ be the measure on this tree ignoring the new wires. \\
+
+    \begin{claim}
+    \ If $G$ is an infinite connected graph, exhaustion $(G_n)$, if $A \subseteq E(G)$ is finite then
+    \begin{align*}
+      \mu_{T_n}^W(\mathcal{C}_A) \le \mu_{T_{n+1}}^W(\mathcal{C}_A)
+    \end{align*}
+    \end{claim}
+    Proof found in Grimmett, Proability on Graphs, but non-examinable. \\
+
+    An immediate result is that the limit exists, and that the measure is dominated by the measure on FUSF of the same graph. \\
+
+    Critically, our question as it relates to infinite graphs is whether we can extend Aldous-Broder and Wilson's algorithm to define a UST in their case. Immediately, given recurrence, both algorithms are well-defined. We then intend to use the wired subgraph in order to approximate Wilson's algorithm on the infinite graph.
+  }
+  }
+
+  \block{Percolation}{
+    We denote by $\P_p$ the product measure on $\Omega_G$ with probability $p$ that independency each edge is open. \\
+
+    \begin{definition}
+    \ For $\omega \in \Omega_G$, $x, y \in V(G)$, $x \leftrightarrow y$ if there is a path of open edges between $x$ and $y$, and we define the cluster of $x$ as $C(x) = \{y \in V(G) : x \leftrightarrow y\}$. When the cluster is infinite, we say that there is a percolation, or that $x$ percolates.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Vertex transitivity]
+    \ A graph is vertex transitive if for all $x, y \in V(G)$, there is a graph automorphism $\varphi$ such that $\varphi(x) = y$.
+    \end{definition}
+    \hphantom{}
+
+    For vertex transitive $G$, the each cluster is identically distributed. Consequently, we generally just use $G = \mathbb{Z}^d$. \\
+    \begin{definition}
+    \ The percolation probability is $\theta(p) := \P_p(0 \leftrightarrow \infty)$
+    \end{definition}
+    \hphantom{}
+
+    Our goal is then to study $\theta$, and in particular to understand the critical probability $p_c = \sup \theta^{-1}(\{0\})$. It is known that $\theta$ is right continuous, and that $\theta$ is continuous away from $p_c$, and indeed that $p_c(2) = 1/2$, but most problems are unsolved for $d \ge 3$. \\
+
+    \begin{definition}[Planar graph]
+    \ A graph which can be drawn in the plane without edge crossings.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Dual graph]
+    \ Obtained by assigning a vertex to each face of a planar graph, and an edge between each adjacent faces.
+    \end{definition}
+    \hphantom{}
+
+    We wish to claim that for $d \ge 2$, there exist $0 < p < p' < 1$ such that $0 = \theta(p) < \theta(p')$. In order to claim this, we would like to compare the probability that the cluster around $0$ is finite with the probability that there exists an open cycle in the dual graph around $0$, and we do this through finding an upper bound on the number of cycles of length $n$ around $0$ in $\mathbb{Z}^2_{\mathrm{dual}}$, which allows us to see that $\P_p(|C(0)| < \infty) \to 0$ as $p \to 1$. \\
+
+    Noting that the property of there existing an infinite cluster is a tail event in edges, by Kolmogorov's theorem we can see that if $\theta(p) > 0$, thus there exists an infinite cluster almost surely. \\
+
+    \begin{theorem}[Harris inequality]
+    \ Let $A, B \subseteq \Omega_G$ be increasing events. Then with $f, g : \Omega_G \to \mathbb{R}$ bounded increasing r.v.s,
+    \begin{align*}
+      \E_p\big[fg\big] \ge \E_p\big[f\big] \E_p \big[g\big].
+    \end{align*}
+    \end{theorem}
+
+    Note in particular the application with characteristic functions on events. \\
+
+    We can prove this via induction on the set of edges in which each of $f$ and $g$ are measurable. See firstly that with $f(\omega) = f_1(\omega(e_1))$, $g(\omega) = g_1(\omega(e_1))$, analysing $(f_1(a) - f_1(b))(g_1(a)-g_1(b)) \ge 0$ gives us our result. Then, note that we can write
+    \begin{align*}
+      \E_p\big[fg\big] &= \E_p\big[\E_p\big[fg \,|\, \omega(e_1), \dots, \omega(e_{k-1})\big]\big]
+    \end{align*}
+    and the inner expectation is, if $f$ and $g$ are $\omega(e_1), \dots, \omega(e_k)$ measurable, a function of $\omega(e_k)$, and we apply our result from $n = 1$ to get the desired inequality. \\
+
+    We then see that we get a UI martingale from $f_k = \E_p\big[f \,|\, \omega(e_1), \dots, \omega(e_k)\big]$. In fact we should just be able to retrieve the result just from the integrability of $f$ and $g$, but for the most part our applications are for the probabilities of intersections of events, and thus we get boundedness immediately. \\
+
+    Indeed we can observe more generally with possibly non-transitive infinite connected graphs, that while the percolation probability $\theta^x(p)$ is no longer constant in vertices, the critical probability $p_c$ remains constant in vertices. Thus our theory is more general. \\
+
+    \begin{definition}[Witness set]
+    \ Given $A \subseteq \Omega_G$, $\omega \in A$, we say that $I(\omega) \subseteq E(G)$ is a witness set of $A$ for $\omega$ if for all $\omega' \in \Omega_G$ such that $\restr{\omega}{I(\omega)} \equiv \restr{\omega'}{I(\omega)}$, $\omega' \in A$.
+    \end{definition}
+    \hphantom{}
+
+    Intuition: a witness set on $A$ for $\omega$ is a set of edges such that $A$ contains all such samples which `witness' the particular state of those edges laid out by $\omega$. \\
+
+    \begin{definition}
+    \ Given $A, B \subseteq \Omega_G$, the disjoint occurrence of $A$ and $B$ is
+    \begin{align*}
+      A \circ B := \left\{\omega \in A \cap B : \text{there exist disjoint witness sets } I(\omega)\text{ of } A, J(\omega) \text{ of } B\right\}
+    \end{align*}
+    \end{definition}
+
+    Intuition: $A \circ B$ is the event in $A \cap B$
+
+    \begin{lemma}[BK Inequality]
+      With $A, B \subseteq \Omega_G$ increasing events, each depending on only finitely many edges,
+      \begin{align*}
+        \P_p(A \circ B) \le \P_p(A) \P_p(B).
+      \end{align*}
+    \end{lemma}
+
+    \begin{theorem}
+    \ With $\Lambda(n) = \overline{B}^{\infty}(n) \subseteq \mathbb{Z}^d$, $p \in (0, p_c)$, there is a constant $\gamma = \gamma(p) > 0$ such that
+    \begin{align*}
+      \P_p(0 \leftrightarrow \partial \Lambda(n)) \le e^{-\gamma n}.
+    \end{align*}
+    \end{theorem}
+
+    Essentially, the probability that we hit $\partial \Lambda(n)$ decays exponentially when $p$ is subcritical (although clearly is $1$ for $p$ supercritical). Note however we also have a lower bound on this probability as $p^n$. \\
+
+    Indeed, we see from this that the mean cluster size around $0$ is finite. \\
+
+    \begin{lemma}
+    \ Let $A \in \mc{B}_G$ be an event. For $\varepsilon > 0$, there is $B \in \mc{B}_G$ that depends on only finitely many edges and such that $\P_p(A \triangle B) < \varepsilon$.
+    \end{lemma}
+    \hphantom{}
+
+    Consequently, we can show that an event invariant under automorphisms of $\mathbb{Z}^d$ must have trivial probability. We claim then that there is $k : [0, 1] \to \mathbb{N} \cup \{\infty\}$ such that $\P_p(N_\infty = k(p)) = 1$, where $N_\infty$ is the number of infinite clusters.
+
+    \begin{theorem}
+    \ $k[0, 1] \subseteq \{0, 1\}$.
+    \end{theorem}
+    \hphantom{}
+
+    This is an improvement of a proof stated in this course that $k[0, 1] \subseteq \{0, 1, \infty\}$. \\
+
+    \innerblock{Critical probability in $\mathbb{Z}^2$}{
+      \begin{theorem}[Kesten (1980)]
+      \ In $\mathbb{Z}^2$, $p_c = 1/2$, and $\theta(1/2) = 0$.
+      \end{theorem}
+      \hphantom{}
+
+      In particular, we get a continuous phase transition. \\
+
+      We first argue that $p_c \le 1/2$, demonstrating that $\P_{1/2}(0 \leftrightarrow \partial \Lambda(n))$ does not decay exponentially. Write $J_n$ as a square grid of vertices side $n$, $J'_n$ the dual box which meshes with it, and $L_n$, $R_n$, $T_n$, $B_n$ as expected. We write $H_n = \{L_n \overset{J_n}{\leftrightarrow} R_n\}$, $V_n = \{T_n \overset{J'_n}{\leftrightarrow} B_n\}$, and since a dual edge is open iff the primal edge is closed, either one or the other must happen, but not both. \\
+
+      Consequently, we can bound $\P_{1/2}(0 \leftrightarrow \partial \Lambda(n)) \ge 1/(2n)$, which does not decay exponentially and thus $1/2$ cannot lie in the subcritical region. \\
+
+      We now demonstrate that $\theta(1/2) = 0$, by showing that assuming otherwise, we get infinite paths on the right and left side of $\Lambda(n)$, and the top and bottom sides of $\Lambda'(n)$ (in the dual) for $n$ large enough, and this means we cannot have a single connected cluster, which is a contradiction. Critically, we're repeatedly using the planarity of $\mathbb{Z}^2$ in this proof.
+    }
+  }
+  \column{0.5}
+  \block{Ising model}{
+    \begin{definition}[Gibb's measure]
+      \ Where
+      \begin{align*}
+        \mathcal{H}^{\omega}_{G, \beta, h}(\sigma) &= -\left(\beta\sum_{{i, j} \in E \cap G^{(2)}} \sigma_i \sigma_j + \beta\sum_{{i, j} \in G \times \mathbb{Z}^d} \sigma_i \omega_j + h\sum_{i \in G} \sigma_i\right) \\
+        Z^{\omega}_{G, \beta, h} &= \sum_{\sigma \in \Omega_G} e^{-\mathcal{H}_{G, \beta, h}^\omega(\sigma)}
+      \end{align*}
+      we define the Gibb's measure as
+      \begin{align*}
+      \mu^{\omega}_{G, \beta, h}(\sigma) = \frac{e^{-\mathcal{H}^\omega_{G, \beta, h}(\sigma)}}{\sum_{\sigma \in \Omega_G} Z^\omega_{G, \beta, h}}.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \textbf{Fill in up to Pott's model} \\
+
+    \begin{definition}[Potts model]
+      \ With $\omega \in [q]^V$:
+      \begin{align*}
+        \pi_{G; q; \beta}(\omega) = \frac{1}{Z^{\mathrm{Potts}}_{G; q, \beta}} \exp\left(\beta \sum_{(i, j) \in E} \chi_{\omega_i = \omega_j}\right)
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Random cluster model]
+    \ With $\omega \in \{0, 1\}^E$, $k(\omega)$ the number of connected components in the configuration $\omega$, $q \in (0, \infty)$, $p \in (0, 1)$:
+    \begin{align*}
+      \phi_{p, q}(\omega) &= \frac{1}{Z^{\mathrm{RC}}_{G; p, q}} q^{k(\omega)} \prod_{e \in E} p^{\omega(e)} (1-p)^{1 - \omega(e)} \\
+      &= \frac{1}{Z^{\mathrm{RC}}_{G; p, q}} q^{k(\omega)} p^{|\omega^{-1}(1)|} (1-p)^{|\omega^{-1}(0)|}
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    We can then couple these models: generate $\omega \in \{0, 1\}^E$ according to $\phi_{p, q}$ with $p = 1 - e^{-\beta}$, and then assign a colour from $[q]$ to each component $C$ of $\omega$, thus inducing a configuration $\sigma \in [q]^V$. \\
+
+    \begin{theorem}
+    \ $\sigma$ is distributed according to $\pi_{G; q, \beta}$.
+    \end{theorem}
+    \hphantom{}
+
+    Just by writing out the probability of generating $\sigma$ under $\phi_{p, q}$, the result follows from algebra. \\
+
+    Consequently, we see that the random cluster model is a generalisation of the Potts model, itself a generalisation of the Ising model.
+  }
+  \block{Mixing times}{
+    We consider now an irreducible and aperiodic discrete-time Markov chain $(X_n)$. \\
+
+    \begin{definition}
+      \ With $\mu, \nu$ both measures on a sigma-algebra $(S, \mc{P}(S))$, the total variation distance between $\mu$ and $\nu$ is
+      \begin{align*}
+        |\mu - \nu|_{\mathrm{TV}} = \max_{A \subseteq S} |\mu(A) - \nu(A)|
+      \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    This is a metric, with which we can define the proximity of a markov chain to stationarity:
+    \begin{align*}
+      d(n) = \max_{x \in S} |P^n_s - \pi |_{\mathrm{TV}}
+    \end{align*}
+    where $\pi$ is the stationary distribution of $(X_n)$, $P^n_x(y) = \P(X_n = y \,|\, X_0 = x)$.
+
+    \begin{definition}
+    \ The $\varepsilon$-mixing time for $\varepsilon > 0$ is
+    \begin{align*}
+      t_{\mathrm{mix}}(\varepsilon) = \min \{ n \ge 0 \,|\, d(n) \le \varepsilon\}
+    \end{align*}
+    \end{definition}
+
+    Note $\varepsilon \ge 1$ gives trivial results, so we often put $\varepsilon = 1/4$ arbitrarily. \\
+
+    \begin{lemma}
+    \ Let $\mu, \nu$ be probability measures on $S$ finite. Then
+    \begin{align*}
+      | \mu - \nu |_{\mathrm{TV}} = \inf \{\P(X \neq Y) \,|\, \P \circ X^{-1} \equiv \mu, \P \circ Y^{-1} \equiv \nu\}
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    \begin{lemma}
+    \begin{align*}
+      d(n) \le \max_{x, y \in S} |P^n_x - P^n_y|_{\mathrm{TV}}
+    \end{align*}
+    \end{lemma}
+
+    \begin{theorem}
+    \ The coupling lemma remains valid for any metric $\delta$ on $S$ satisfying
+    \begin{align*}
+    \delta(x, y) \ge \chi_{x \neq y}
+    \end{align*}
+    Moreover, with $\delta_K(\mu, \nu) := \inf \{\Eb{\delta(X, Y)} \,|\, \P \circ X^{-1} \equiv \mu, \P \circ Y^{-1} \equiv \nu\}$, $\delta_K$ is a metric on the space of probability distributions on $S$.
+    \end{theorem}
+    \hphantom{}
+
+    Observe here that $\delta_K \ge \delta_{\mathrm{TV}}$. \\
+
+    \begin{theorem}
+    \ If $\alpha > 0$ such that for $x, y \in E(H)$, $\delta_K(P'_x, P'_y) \le e^{-\alpha}$, then
+    \begin{align*}
+      d(n) \le e^{-\alpha n} \max_{x, y \in S} d_H(x, y).
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Thus $t_{\mathrm{mix}}(\varepsilon) \le \frac{\log (d_H(x, y)) - \log \varepsilon}{\alpha}$.
+
+    \innerblock{Glauber dynamics}{
+      Consider the finite-volume Gibbs measure $\mu$ for $h = 0$, $G$ a finite subgraph of $\mathbb{Z}^d$, where we identify $V = [n]$. We want to understand how to practically sample from this distribution. \\
+
+      Our approach is a Markov chain Monte Carlo method. We design a Markov chain on $\Omega_G$, and define
+      \begin{align*}
+        P(x, y) = \begin{cases}
+          \frac{1}{n}\mu\left(\sigma_i = +1 \,|\, \bigcap_{j \in [n] \setminus \{i\}}\sigma_j = x_j\right) & \text{if }y_i = +1 \text{ and for }j \neq i\text{, }y_j = x_j \\
+          \frac{1}{n}\mu\left(\sigma_i = -1 \,|\, \bigcap_{j \in [n] \setminus \{i\}} \sigma_j = x_j\right) & \text{if }y_i = -1 \text{ and for }j \neq i\text{, }y_j = x_j \\
+          0 & \text{otherwise}.
+          \end{cases}
+      \end{align*}
+
+      This gives us an irreducible and aperiodic Markov chain. \\
+
+      \begin{theorem}
+      \ There is a $\beta' > 0$ depending only on $d$ such that for $\beta \in \leftopen{0}{\beta'}$, the mixing time of Glauber dynamics satisfies $t_{\mathrm{mix}} = O(n \log n)$.
+      \end{theorem}
+
+      The proof of this relies on the path coupling theorem. That is, we must show that there is some $\alpha > 0$ such that for all edges $(x, y)$ in a graph on $[n]$ (which we'll take to be according to the Hamming distance, so $x \sim y$ if it differs at exactly one site), there is a coupling $(X, Y)$ with marginals $(P^1_x, P^1_y)$ such that $\Eb{d(X, Y)} \le e^{-\alpha} d(x, y)$.
+      \begin{align*}
+        \Eb{d(X, Y)}
+      \end{align*}
+
+
+
+
+    }`
+  }
+\end{columns}
+\end{document}

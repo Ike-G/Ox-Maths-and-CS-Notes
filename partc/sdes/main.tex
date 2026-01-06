@@ -1,0 +1,318 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1200mm, paperheight=2000mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand{\diff}{\mathrm{d}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand\E[1]{\mathbb{E}\left[ #1 \right]}
+\newcommand{\mc}{\mathcal}
+\newcommand\qvar[1]{\langle #1 \rangle}
+\newcommand\Eb[1]{\mathbb{E}\big[ #1 \big]}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Stochastic Differential Equations}
+\author{Ike Glassbrook}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.5}
+  \block{It\^o calculus}{
+    \begin{theorem}
+    \ Let $(X_t)$ be a super-martingale on $(\Omega, \mathcal{F}, (\mathcal{F}_t), \mathbb{P})$, $D \subseteq \rightopen{0}{\infty}$ countable:
+    \begin{itemize}
+      \item \ The process of right limits $\displaystyle Z_t = \lim_{\substack{s \in D \\ s \downarrow t}} X_s$ of $(X_t)$ in $D$ is well-defined a.s., is $\mathcal{F}_t^+$-measurable, and has left limits a.s..
+            \item \ $\mathbb{E}\big[Z_t \,|\, \mathcal{F}_t\big] \le X_t$ a.s..
+            \item \ $(Z_t)$ is a super-martingale a.s. on $(\Omega, \mathcal{F}, (\mathcal{F}_t^+), \mathbb{P})$.
+    \end{itemize}
+    \end{theorem}
+    \hphantom{}
+
+    Note that $(Z_t)$ can still differ somewhat from $(X_t)$ if $(X_t)$ is not a martingale (and in particular, if $t \mapsto \Eb{X_t}$ is not right-continuous), as we possibly don't have that $(Z_t)$ is a modification of $(X_t)$. \\
+
+    \begin{definition}[Usual conditions]
+    \ A filtration $(\mathcal{F}_t)$ satisfies the usual conditions if $(\Omega, \mathcal{F}, \mathbb{P})$ is a complete probability space, $(\mathcal{F}_t)$ is right-continuous, and $\mathbb{P}^{-1}(\{0\}) \subseteq \mathcal{F}_t$ for all $t \ge 0$.
+    \end{definition}
+    \hphantom{}
+
+    \begin{definition}[Local martingales]
+    \ $(M_t)$ is a local martingale if it is right-continuous (to ensure we can talk about $M_T$ for $T$ a stopping time), and there is a sequence $(T_n)$ of stopping times such that $T_n \to \infty$ as $n \to \infty$ a.s., and $(M_t^{T_n})$ is a martingale for all $n \ge 1$.
+    \end{definition}
+    \hphantom{}
+
+    Right-continuity is necessary here to ensure that $X_T \chi_{T < \infty}$ is $\mathcal{F}_T$-measurable, because otherwise we may have stopping times which provide information that is strictly known in the future, and consequently the value of the stopped random variable is conditional on the future. For an example, take $T = \inf \{t : X_t = 1\}$, and if $X_t$ \textbf{Finish}\\
+
+    A continuous local martingale stopped at hitting times is a martingale, since \textbf{fill}.  \\
+
+    A continuous local martingale stopped at deterministic times is a martingale, since \textbf{fill}. \\
+
+    \begin{theorem}[It\^o's formula]
+    \
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this formula is derived almost entirely via the Stone-Weierstrass theorem stating that polynomials on compact sets $K \subseteq \mathbb{R}^n$ are dense in $C(K)$. Consequently, it should be emphasised that, contrary to how the proof is often stated, we do not require that $f \in C^2(\mathbb{R})$, but merely $C^2(K)$ where $K$ is of sufficient size to be well-defined in the context of the formula.
+
+    \begin{theorem}
+      \ Let $X$ be a continuous local martingale starting at $0$, $T > 0$:
+      \begin{itemize}
+              \item for $p > 1$
+              \begin{align*}
+                (4p)^{-p} \E \langle X \rangle^p_T \le \E |\sup_{t \le T} X_t |^{2p} \le (2ep^2)^p \E \langle X \rangle^p_T
+              \end{align*}
+              \item for $p = 1$
+              \begin{align*}
+                \E \langle X \rangle_T \le \E |\sup_{t \le T} X_t|^2 \le 4 \E \langle X \rangle_T
+              \end{align*}
+              \item For $0 < p < 1$
+              \begin{align*}
+                p^{2p}\E \langle X \rangle^p_T \le \E |\sup_{t \le T} X_t|^{2p} \le \left(\frac{16}{p}\right)^{p} \E \langle X \rangle^p_T
+              \end{align*}
+      \end{itemize}
+    \end{theorem}
+    \hphantom{}
+  }
+  \block{Stochastic Differential Equations}{
+    \begin{lemma}
+    \ Let $X_t = M_t + A_t$ with $M$ a continuous local martingale, $A$ an adapted continuous process with finite total variation, $X_0 = 0$. Then the equation
+    \begin{align*}
+      \diff Z_t = Z_t \diff X_t, \quad Z_0 = 1
+    \end{align*}
+    is solved by
+    \begin{align*}
+      \mathcal{E}(X)_t = \exp\left(X_t - \frac{1}{2} \langle M \rangle_t\right).
+    \end{align*}
+    \end{lemma}
+
+    \begin{theorem}[Novikov]
+    \ Let $(M_t)$ be a continuous local martingale with $M_0 = 0$. If
+    \begin{align*}
+      \E\left[\exp \left(\frac{1}{2} \langle M \rangle_T\right)\right]
+    \end{align*}
+    then $\mc{E}(M)$ is a martingale up to time $T$.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{theorem}[Girsanov's theorem]
+    \ Let $(M_t)$ be a continuous local martingale on $(\Omega, \mathcal{F}, \mc{F}_t, \P)$ up to time $T$. Then
+    \begin{align*}
+      X_t = M_t - \int_0^t \frac{\diff \langle M, Z \rangle_s}{Z_s}
+    \end{align*}
+    is a continuous local martingale on $(\Omega, \mc{F}, \mc{F}_t, \mathbb{Q})$ up to time $T$.
+    \end{theorem}
+    \hphantom{}
+
+    Note we require that $\mathbb{Q} \ll \P$ in order for this quantity to be defined. \\
+
+    Equivalently, $M_t - \langle M, L \rangle_t$ is a continuous local martingale with respect to $\mathbb{Q}$, where $(L_t)$ satisfies
+    \begin{align*}
+      \diff L_t = \frac{\diff Z_t}{Z_t}
+    \end{align*}
+    where $Z_t = \restr{\frac{\diff \mathbb{Q}}{\diff \mathbb{P}}}{\mathcal{F}_t}$. \\
+
+    In practise we get $Z_t$ a supermartingale, and so we need $Z_t$ to be positive to get equivalence. \\
+
+    The point of this theorem is to say that when we change our measure for one not so different (strictly absolutely continuous with respect to), we maintain the class of semimartingales. Every semimartingale with respect to $\mathbb{P}$ is also a semimartingale with respect to $\mathbb{Q}$, with an added drift. \\
+
+    \begin{theorem}[Martingale representation theorem]
+    \ Let $(M_t)$ be a square-integrable martingale on $(\Omega, \mc{F}, (\mc{F}_t), \P)$. Then there is a square-integrable process $(F_t)$ such that
+    \begin{align*}
+      M_t = \Eb{M_0} + \int_0^t F_s \, \diff B_s
+    \end{align*}
+    a.s. for any $t \ge 0$. In particular, any martingale with respect to the Brownian filtration $(\mc{F}_t)$ has a continuous version.
+    \end{theorem}
+    \hphantom{}
+
+    \begin{definition}
+    \ An adapted continuous $\mathbb{R}^N$-valued stochastic process $(X_t)$ on $(\Omega, \mc{F}, (\mc{F}_t), \P)$ is a weak solution of
+    \begin{align*}
+      \diff X_t^j = \sum_{i = 1}^n f^j_i(t, X_t) \, \diff B_t^i + f_0^j(t, X_t) \, \diff t \quad j \in \{1, \dots, N\}
+    \end{align*}
+    if there is a Brownian motion $(B_t)$ in $\mathbb{R}^N$ adapted to $(\mc{F}_t)$ such that
+    \begin{align*}
+      X_t^j - X^j_0 = \sum_{i=1}^n \int_0^t f_i^j(s, X_s) \, \diff B_t^i + \int_0^t f_0^j(s, X_s) \, \diff s.
+    \end{align*}
+
+    It is a strong solution if we have the same, but $(\mc{F}_t)$ is the natural filtration of the Brownian motion.
+    \end{definition}
+    \hphantom{}
+
+    \innerblock{Martingale problem}{
+      In some cases, we want to convert the problem of finding a weak solution of an SDE where for $i \in [d]$,
+      \begin{align*}
+        \diff X_t^i = \sum_{k=1}^d \sigma^i_k(X_t) \diff B_t^k + b^i(X_t) \diff t,
+      \end{align*}
+      into a problem of determining if a functional of $X$ is a local martingale. \\
+
+      To do this, note that for any $f \in C^2(\mathbb{R}^d)$,
+      \begin{align*}
+        \diff f(X_t) &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \diff X_t^i + \frac{1}{2}\sum_{i = 1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j} \diff \langle X^i, X^j \rangle_t \\
+                     &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \left(\sum_{k=1}^d \sigma^i_k(X_t) \diff B_t^k + b^i(X_t) \diff t\right) + \frac{1}{2}\sum_{i = 1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j}(X_t) \left(\sum_{k=1}^d \sigma_k^i(X_t) \sigma^j_k(X_t) \diff t\right) \\
+                     &= \sum_{i = 1}^d \sum_{k=1}^d \frac{\partial f}{\partial x^i}(X_t) \sigma^i_k(X_t) \diff B_t^k + Lf(X_t) \diff t
+      \end{align*}
+      where
+      \begin{align*}
+        Lf(x) = \sum_{i=1}^d b^i(x) \frac{\partial f}{\partial x^i}(x) + \frac{1}{2} \sum_{i=1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j}(x) \sum_{k=1}^d \sigma^i_k(x) \sigma^j_k(x)
+      \end{align*}
+      and thus defining $M^{[f]}_t$ to solve, with $M_0^{[f]} = 0$,
+      \begin{align*}
+        \diff M_t^{[f]} &= \diff f(X_t) - Lf(X_t) \diff t
+      \end{align*}
+      we get
+      \begin{align*}
+        \diff M_t^{[f]} &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \sum_{k=1}^d \sigma_k^i(X_t) \diff B_t^k
+      \end{align*}
+      and thus $M_t$ is a continuous local martingale. \\
+
+      We then say that a process $(X_t)$ on $(\Omega, \mathcal{F}, (\mathcal{F}_t), \mathbb{P})$ solves the $L$-martingale problem if for $f \in C^2(\mathbb{R}^d)$,
+      \begin{align*}
+        M_t^{[f]} = f(X_t) - f(X_0) - \int_0^t Lf(X_s) \diff s
+      \end{align*}
+      is a continuous local martingale. Indeed this occurs if and only if the same $(X_t)$ is a solution to the corresponding SDE. \\
+
+      An advantage of this formulation is that we don't require a definition of Brownian motion, and thus this approach can be generalised to manifolds.
+    }
+  }
+  \column{0.5}
+  \block{Local times}{
+    We now seek to find cases where we can generalise the functions $f$ for which It\^o's formula applies. Indeed it is possible to show that if $f$ is convex and $X$ is a continuous semimartingale, then $f(X)$ is again a semimartingale with a similar formula, known as the generalised It\^o's formula. \\
+
+    To show this is essentially a task of prelims and part A analysis using a mollifier $\alpha \in C^\infty_0(\mathbb{R})$ with $\int_0^\infty \alpha(s) \, \mathrm{d}s = 1$. Writing $f_{\varepsilon} = f \ast \alpha_{\varepsilon}$ where $\alpha_{\varepsilon}(s) = \frac{1}{\varepsilon}\alpha(s/\varepsilon)$, one can then take limits in probability on It\^o's formula to get an adapted continuous process for any continuous semimartingale $X$,
+    \begin{align*}
+      L_t^a = \frac{1}{2} \left(|X_t - a| - |X_0 - a| - \int_0^t \mathrm{sgn}(X_s - a) \, \diff X_s\right).
+    \end{align*}
+    This is a definition of the local time of $X$ at $a$. \\
+
+    \textbf{Fill in - mainly need to figure out how we show that $f(X_t)$ is a semimartingale.} \\
+
+    \begin{theorem}[Skorohod's equation]
+      \ If $y \in C\rightopen{0}{\infty}$ is a continuous path in $\mathbb{R}$ with $y(0) \ge 0$, $\displaystyle k(t) = \left(\inf_{0 \le s \le t} y(s)\right)^-$, then $k$ is the unique continuous non-decreasing function on $\rightopen{0}{\infty}$:
+      \begin{itemize}
+              \item \ beginning at $0$;
+              \item \ such that $y + k \ge 0$;
+              \item \ and which increases only on $(y + k)^{-1}(\{0\})$, so $\displaystyle \int_0^\infty \chi_{(y+k)^{-1}(0, \infty)}(t) \, \diff k(t)$.
+      \end{itemize}
+    \end{theorem}
+    \hphantom{}
+
+    This proof is just a matter of deterministic analysis. \\
+
+    The consequence for our purposes comes from noting the relation to Tanaka's formula. $2L_t^a$ in this case reflects exactly the definition of $k$ in relation to
+    \begin{align*}
+    y(t) = \int_0^t \mathrm{sgn}(X_s - a) \ \diff X_s + |X_0 - a|
+    \end{align*}
+    Thus we get
+
+    \begin{align*}
+      L_t^a = \frac{1}{2} \left(|X_0 - a| + \inf_{0 \le s \le t} \int_0^s \mathrm{sgn}(X_r - a) \ \diff X_r\right)^-
+    \end{align*}
+
+
+  }
+\end{columns}
+\end{document}
