@@ -1,0 +1,975 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1800mm, paperheight=3200mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\newcommand{\Exp}{\ensuremath{\mathrm{Exp}}}
+\renewcommand\P[1]{\mathbb{P}\left(#1\right)}
+\newcommand\Pj{\mathbb{P}}
+\newcommand\Ej{\mathbb{E}}
+\newcommand\Eb[1]{\mathbb{E}\big[#1\big]}
+\newcommand\E[1]{\mathbb{E}\left[#1\right]}
+\let\textd\d
+\renewcommand{\d}{%
+  \ifmmode
+    \mathrm{d}%
+  \else
+    \textd%
+  \fi
+}
+\newcommand\diff[2]{\ensuremath{\frac{\d #1}{\d #2}}}
+\newcommand\kdiff[3]{\ensuremath{\frac{\d^{#1} #2}{\d #3^{#1}}}}
+\newcommand\evaldiff[3]{\ensuremath{\left. \frac{\d #1}{\d #2} \right|_{#3}}}
+\newcommand\evalkdiff[4]{\ensuremath{\left. \frac{\d^{#1} #2}{\d #3^{#1}}\right|_{#4}}}
+\newcommand\pdiff[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand\pkdiff[3]{\ensuremath{\frac{\partial^{#1} #2}{\partial #3^{#1}}}}
+\newcommand\evalpdiff[3]{\ensuremath{\left. \frac{\partial #1}{\partial #2} \right|_{#3}}}
+\newcommand\evalpkdiff[4]{\ensuremath{\left. \frac{\partial^{#1} #2}{\partial #3^{#1}} \right|_{#4}}}
+%\newcommand\d{\ensuremath{\mathrm{d}}}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\makeatletter
+\newcommand\@courseauthor{}
+\newcommand\courseauthor[1]{\def\@courseauthor{#1}}
+\makeatother
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, Notes written by \@author, based on the course and lecture notes of \@courseauthor}}
+
+% Title, Author, Institute
+\title{Stochastic Analysis and PDEs}
+\author{Ike Glassbrook}
+\courseauthor{Alison Etheridge, Ilya Chevyrev, and Harald Oberhauser, 2021}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.25}
+  \block{Feller semigroups and the Hille Yosida theorem}{
+    \begin{definition}[Markov process]
+    \ A Markov process $(X_t)$ on $(\Omega, (\mc{F}_t), \mc{F}, \Pj)$ with state space $(E, \mc{E})$ is an $E$-valued stochastic process adapted to $(\mc{F}_t)$, defined in distribution by a family of kernels $(P_t : E \times \mc{E} \to [0,1])$ to satisfy
+    \begin{align}
+      \mathbb{E}^x\big[ f(X_{s+t}) \,|\, \mc{F}_s\big] &= \int_E f(y) \, P_t(X_s, \d y).
+    \end{align}
+    where
+    \begin{enumerate}[label=(\roman*), wide=0pt]
+            \item \ for $t \ge 0$, $x \in E$, $P_t(x, \cdot)$ is a measure on $\mc{E}$ satisfying $P_t(x, E) \le 1$ ($\,\Pj \circ X_t^{-1}$ is a probability measure);
+            \item \ for $t \ge 0$, $\Gamma \in \mc{E}$, $P_t(\cdot, \Gamma)$ is $\mc{E}$ measurable ($\,\Pj(X_t^{-1}(\Gamma) \,|\, \sigma(X_0))$ is a random variable where $X_0(\Omega) = E$);
+            \item \ for $s, t \ge 0$, $x \in E$, $\Gamma \in \mc{E}$,
+            \begin{align}
+              P_{t+s}(x, \Gamma) = \int_{E} P_s(x, \d y) P_t(y, \Gamma)
+            \end{align}
+            (Chapman-Kolmogorov equations).
+    \end{enumerate}
+    \end{definition}
+    The intuition for this is that $\Pj^x(X_t^{-1}(\cdot)) = P_t(x, \cdot)$. Note that we can have $P_t(x, E) < 1$ if $(X_t)$ can be sent to some graveyard state outside of $E$. \\
+
+    This generalises the notion of a pure jump process, which is the case where a particle at $x$ waits $\Exp(q_x)$ before moving according to a measure $\mu(x, \cdot)$, so $P_t(x, \{x\}) = 1 - q_xt + o(t)$, $P_t(x, B) = q_{x} \mu(x, B)t + o(t)$. \\
+
+    \begin{definition}
+    \ A linear operator $A : V \to W$ is closed if its graph $\{(x, Tx) : x \in X\}$ is closed.
+    \end{definition}
+    \hphantom{}
+
+    Note that by the closed graph theorem, if $V$ and $W$ are both Banach, thus $A$ is a bounded linear operator. More generally, closure gives us that if for $(x_n) \subseteq V$, $x_n \to x$ and $Ax_n \to y$, then $x \in V$ and $Ax = y$. \\
+
+    \begin{definition}[Strongly continuous contraction semigroup]
+    \ A family of bounded operators $(T_t : t \in [0,\infty])$ on a Banach space $C$ is a strongly continuous contraction semigroup if
+    \begin{itemize}[label=$\cdot$]
+            \item \ $T_0 = \mathrm{Id}$;
+            \item \ for $s, t \ge 0$, $T_s T_t = T_{s+t}$;
+            \item \ for $t \ge 0$, $\Vert T_t \Vert \le 1$;
+            \item \ for $z \in C$, $t \mapsto T_t z$ is continuous.
+    \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    Note that $\Vert T_t \Vert$ is a non-increasing function in $t$, but $T_t$ itself is not necessarily continuous in $t$. With $(T_t f)(x) = f(x+t)$ for $f \in C^b\rightopen{0}{\infty}$, $\Vert T_t - I \Vert = 2$ for $t > 0$. Additionally, note in particular that we're exclusively talking about operators $T : C \to C$, meaning often we need to consider an extra step in claiming that $T_t z \in C$. \\
+
+    \begin{definition}[Feller semigroup]
+    \ Let $(E, \mc{E})$ be a complete, compact (or locally compact), and separable Hausdorff space. A strongly continuous contraction semigroup on $C(E)$ (or $C_0(E)$, continuous functions tending to zero at $\infty$, if only locally compact) where
+    \begin{enumerate}[label=(\roman*), wide=0pt]
+            \item \ $T_t 1 = 1$ (so $\mathbb{E}^x [1] = 1$), and
+            \item \ $T_t f \ge 0$ for non-negative $f \in C(E)$ (our measure is non-negative)
+    \end{enumerate}
+    is a Feller semigroup.
+    \end{definition}
+    \hphantom{}
+
+    Conditions (i) and (ii) are necessary to ensure that the semigroup is Markov, although the SCCS condition is \emph{not} strictly necessary. Rather, having $(T_t)$ be SCCS grants us slightly more continuity than we might need (in particular, ensuring that when right-continuous, and adapted to a right-continuous filtration, the process satisfies the strong Markov property). Common examples of non-Feller, but nonetheless Markovian, semigroups are usually constructed either by violating the continuity of $T_tf$ in time $t$ (consider the kernel $P_t(x, A) = \chi_A(x) \chi_{\{0\}}(t) + \chi_A(0) \chi_{(0,\infty)}(t)$, which instantaneously goes to $0$ from any other location), or in space $x$ (consider a pure jump process on $\mathbb{R}$ which jumps to $1$ at rate $1$ from $\rightopen{0}{\infty}$, but is static for $(-\infty, 0)$). \\
+
+    \begin{theorem}
+    \ If $(T_t)$ is a Feller semigroup on $C(E)$, then there exists a unique Markov process $(X_t)$ taking values in c\`adl\`ag paths on $E$ with law such that for all $f \in C(E)$, $x \in E$, $t \ge 0$,
+    \begin{align*}
+      (T_t f)(x) = \mathbb{E}^x \big[f(X_t)\big].
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    This is a very natural result which we should want, and the intuition should just be that we can construct $P_t(x, \cdot)$ by approximating $\chi_\cdot$ with functions in $C(E)$, and this gives us our desired distribution. \\
+
+    \begin{lemma}
+    \ Let $(T_t)$ be a strongly continuous contraction semigroup on a Banach space $C$, and for $t > 0$,
+    \begin{align*}
+      A_t := \frac{T_t - I}{t}.
+    \end{align*}
+    With $Az := \lim_{t \to 0} A_t z$ wherever this exists, labelled the infinitesimal generator. Then the domain of $A$ is dense in $C$, $A$ is a closed operator, and
+    \begin{align*}
+      \diff{T_tz}{t} &= AT_tz = T_t Az.
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    What this should be read as roughly is that $\mathbb{E}^{x}\big[f(X_t)\big] = (T_tf)(x) = e^{(AT_t) f(x)}$. \\
+
+    We see furthermore that the resolvent operator $R_{\lambda} = (\lambda \mathrm{Id} - A)^{-1}$ (which is analytic if the domain of $A$ is closed) can be characterised for all $z \in C$ as,
+    \begin{align*}
+      R_{\lambda}z &= \int_0^{\infty} e^{-\lambda t} T_tz \, \d t.
+    \end{align*}
+
+    \innerblock{Hille-Yosida}{
+      \begin{definition}[Markov pregenerator]
+      \ A linear operator $A$ on $C(E)$ with domain $D \subseteq C(E)$ is said to be a Markov pregenerator if
+      \begin{enumerate}[wide=0pt, label=(\roman*)]
+              \item \ $1 \in D$, $A1 = 0$;
+              \item \ $\overline{D} = C(E)$;
+        \item \ and for $f \in D$, $\lambda \ge 0$,
+              \begin{align*}
+              \min_{\zeta \in E} f(\zeta) \ge \min_{\zeta \in E} (\mathrm{Id} - \lambda A)f(\zeta).
+            \end{align*}
+      \end{enumerate}
+      \end{definition}
+      \hphantom{}
+
+      For intuition, a Markov pregenerator is meant to be a differential operator, with $(Af)(x) = \lim_{t \to 0} \mathbb{E}^x \big[f(X_t) - f(X_0)\big]/t$. Thus (i) defines the constancy law for differentials, (ii) ensures that this is defineable for enough well-behaved functions, and (iii) says that if $f$ is minimised at $\zeta^*$, $Af(\zeta^*) \ge 0$ (although we must consider this in the more general sense due to this possibly being ill-defined -- it's better to read as `near minima, $Af$ is non-negative'). \\
+
+
+      A sufficient condition for (iii) is that if $f \in D$ is minimised at $\eta$, then $Af(\eta) \ge 0$ (noting that such a point exists by continuity and compactness). \\
+
+
+       \coloredbox{An important note for much of the algebra in this section is that using (iii) on $\pm f$ shows us that $\Vert f \Vert \le \Vert (\mathrm{Id} - \lambda A) f \Vert$. In particular, it shows us that $\mathrm{Id} - \lambda A$ is injective.}
+      
+      \begin{definition}[Elliptic operator]
+        \  A second order differential operator
+        \begin{align*}
+          L(u) = \sum_{i,j = 1}^d a_{ij}(x) \frac{\partial^2 u}{\partial x_i \partial x_j} + \sum_{i=1}^d b_i(x) \pdiff{u}{x_i} - c(x) u
+        \end{align*}
+        is elliptic at $x$ if $A(x) = (a_{ij}(x))$ is positive definite, and is uniformly elliptic if eigenvalues of $A$ are bounded below by $\mu > 0$.
+      \end{definition}
+      \hphantom{}
+
+      As will be discussed further in relation to Feynman-Kac, we can understand the solution to $L(u) = \partial_t u$ as representing a diffusion with a drift against $b$, and particles removed at rate $c$. Thus taking $L(u) = 0$ corresponds to the steady state of such a process. \\
+
+      \begin{lemma}
+    \ Let $L$ be an elliptic operator with $c(x) \ge 0$, $Lu \ge 0$ in some domain $E \subseteq \mathbb{R}^d$. If $u$ takes a non-negative maximum in $\mathrm{int}(E)$, then $u$ is constant.
+      \end{lemma}
+      \hphantom{}
+
+      This is an analogous result to the idea that if $f'' \ge 0$, $f$ can only take a maximum if it is constant. In the physical scenario considered above, it can be understood as saying that if there's a non-negative maximum, then the diffusion term must have already done all of its work in spreading out the particles, as each of the other terms must be non-positive.  \\
+
+      \begin{lemma}
+    \ With $A$ the generator of a Feller semigroup acting on functions on $E \subseteq \mathbb{R}^d$, if $Af \ge 0$ in $E$ and $f$ takes a non-negative maximum inside $E$, then $f$ is constant.
+      \end{lemma}
+      \hphantom{}
+
+      That this then holds for infinitesimal generators of Feller semigroups is relatively natural, in the sense that stochastic processes can be understood in terms of the evolving measure $(P_t(x, \cdot))$, and in particular we can never \emph{add more probability to the system}. Consequently, for any point mass probability $\delta_x$ on $E$ at $t = 0$, as time evolves this mass will never become any more concentrated. To argue more concretely: we're never going to have $P_t(x, \cdot) = 2\delta_x$, it will only ever spread out the probability mass, and in this sense the Feller process is inherently diffusive (even if this requires a moment's thought to square it with examples of absorbing Markov processes). \\
+
+      \begin{lemma}
+    \ Let $A$ be a linear operator on $C(E)$. Then there exists a closure $\overline{A}$ (the smallest closed extension of $A$), which is again a Markov pregenerator.
+      \end{lemma}
+      \hphantom{}
+
+      If $A$ is a closed Markov pregenerator, then for $\lambda > 0$, $(\mathrm{Id} - \lambda A)(C(E))$ is closed. \\
+
+      \begin{definition}[Markov generator]
+    \ A Markov generator is a closed Markov pregenerator $A$ for which $\mathrm{Id} - \lambda A$ is surjective for all $\lambda \ge 0$.
+      \end{definition}
+      \hphantom{}
+
+       The point of this is to ensure that the resolvent is well-defined on $C(E)$. In other words, due to the characterisation $\lambda R_{\lambda}f(x) = \Ej_x[f(X_{Z})]$ where $Z \sim \mathrm{Exp}(\lambda)$, this ensures that the expectation viewed at random times is a well-defined quantity continuous in $x$ for continuous $f$. \\
+
+      \begin{lemma}
+      \label{lmm:partial-implies-full}
+      \ A closed Markov pregenerator for which $\mathrm{Id} - \lambda A$ is surjective for $\lambda \in [0, \lambda_0]$ for some $\lambda_0 > 0$ is a generator.
+      \end{lemma}
+      \hphantom{}
+
+      To see this, we note that $\mathrm{Id} - \lambda A$ is bijective on this set (as we know it to be injective from a previous remark). Thus $(\mathrm{Id} - \lambda A)^{-1}$ is a well-defined surjective linear operator, so with the following characterisation
+      \begin{align*}
+      \mathrm{Id} - \mu A &= \left(1 - \frac{\mu}{\lambda_0}\right) \mathrm{Id} + \frac{\mu}{\lambda_0} (\mathrm{Id} - \lambda_0 A) \\
+      &= \frac{\mu}{\lambda_0} \left(\mathrm{Id} - \left(1 - \frac{\lambda_0}{\mu}\right)(\mathrm{Id} - \lambda_0 A)^{-1}\right) \left(\mathrm{Id} - \lambda_0 A\right),
+      \end{align*}
+      it remains only to show that the first factor is surjective, which can be done by a Neumann series if $\Vert (\mathrm{Id} - \lambda_0 A)^{-1} \Vert < \left(1 - \frac{\lambda_0}{\mu}\right)^{-1}$. Recall again that $\Vert \mathrm{Id} - \lambda_0 A \Vert \ge 1$, and from this the result follows. \\
+
+      \begin{lemma}
+      \ A bounded Markov pregenerator $A$ for which $D = C(E)$ is a generator.
+      \end{lemma}
+      \hphantom{}
+
+      By the closed graph theorem (seen in Functional Analysis II), $\Gamma(A) := \{(f, Af) : f \in C(E)\}$ is closed (so $A$ is closed) iff $A$ is a bounded linear operator. Thus $A$ is closed, and $\Vert A^{-1} \Vert > 0$ so for $\lambda \le \Vert A^{-1} \Vert$, $\mathrm{Id} - \lambda A$ is invertible by Neumann series, and thus surjective. By lemma~\ref{lmm:partial-implies-full} we get the result.  \\
+      
+
+      \begin{theorem}[Hille-Yosida theorem]
+    \ There is a one-to-one correspondence between Markov generators on $C(E)$ and Feller semigroups on $C(E)$, where $A$ is the infinitesimal generator of $(T_t)$.
+    \begin{itemize}[label=$\cdot$]
+      \item \ For $f \in C(E)$, $t \ge 0$,
+            \begin{align*}
+              \left(\mathrm{Id} - \frac{t}{n}A\right)^{-n} \to T_t f
+            \end{align*}
+            as $n \to \infty$.
+        \item \ If $Af$ exists, $AT_t f$ exists, and $\displaystyle \diff{T_t f}{t} = AT_t f = T_t A f$.
+            \item \ For $g \in C(E)$, $\lambda \ge 0$, $(\mathrm{Id} - \lambda A) f = g$ is solved by
+            \begin{align*}
+              f = \frac{R_{1/\lambda}g}{\lambda}.
+            \end{align*}
+    \end{itemize}
+      \end{theorem}
+      \hphantom{}
+
+      The core of this theorem (at least, the part that has not already been stated above), is the first remark, that given a Markov generator, we can recover a Feller semigroup. In particular, this ensures that the map between Feller semigroups and Markov generators is one-to-one, so we can be happy that each Markov generator gives rise to a unique generator in this case. Note that with weaker conditions removing continuity properties of $(T_t)$, we are able to find many examples of distinct semigroups giving rise to the same generator (at which point the generator framework is no longer useful, as far as I'm aware). \\
+
+      \begin{definition}
+    \ With $A$ a Markov generator on $C(E)$, a linear subspace $\mc{D} \subseteq \{f \in C(E) : Af \!\text{ exists}\}$ is a core for $A$ if $A = \overline{\left(\restr{A}{\mc{D}}\right)}$.
+      \end{definition}
+      \hphantom{}
+
+      We can use this notion as a kind of basis set on which to make sure approximating generators give agreeing limits, to then determine with the following result, semigroups using approximations. \\
+
+      \begin{theorem}[Trotter-Kurtz]
+     \ If $(A_n)$, $A$ are the generators of Feller semigroups $(T_t^{(n)})$ and $(T_t)$ respectively, and there is a core $\mc{D}$ for $A$ such that for $f \in \mc{D}$, $A_nf$ is defined for all $n \ge 1$ and $A_n \overset{\mc{D} \!\text{ p.w.}}{\to} A$, then
+     \begin{align*}
+       T^{(n)}_tf \to T_t f
+     \end{align*}
+     as $n \to \infty$, uniformly for $t$ in compact sets.
+      \end{theorem}
+      \hphantom{}
+
+      \begin{theorem}
+    \ If $A$ is the generator of a Feller semigroup, $F, G : \rightopen{0}{\infty} \to C(E)$ satisfying
+    \begin{itemize}[label=$\cdot$]
+            \item \ $AF(t)$ is defined for $t \ge 0$;
+            \item \ $G$ is continuous; and
+            \item \ for $t \ge 0$, \begin{align*}
+              \diff{F}{t} = AF(t) + G(t)
+            \end{align*}
+    \end{itemize}
+    then
+    \begin{align*}
+      F(t) = T_t F(0) + \int_0^t T_{t-s} G(s) \,\d s
+    \end{align*}
+      \end{theorem}
+
+      This final result is then a useful solution to a first order differential equation in terms of an infinitesimal generator. See that $G \equiv 0$ can be shown with a bit of work by applying $T_t$ through the derivative (and the general proof is not so much more complex). \\
+
+      This is our first example of being able to solve a PDE using a stochastic process.
+    }
+  }
+  \column{0.25}
+  \block{Martingale Problems}{
+    \begin{definition}[Martingale problem]
+    \ Suppose that $A$ is a Markov pregenerator and $(\mu, E, \mc{E})$ is a probability space (for the initial state). A probability measure $\Pj$ on $D\rightopen{0}{\infty}$, the set of c\'adl\'ag functions $f : \rightopen{0}{\infty} \to E$, solves the martingale problem $(A, \mu)$ if
+    \begin{enumerate}[label=\roman*)]
+            \item $\Pj(\{\zeta \in D\rightopen{0}{\infty} : \zeta(0) \in \Gamma\}) = \mu(\Gamma)$ for $\Gamma \in \mc{E}$
+      \item For all $f \in \mc{D}(A)$,
+           \begin{align*}
+             f(X_t) - \int_0^t Af(X_s) \, \d s
+           \end{align*}
+            is a local martingale with respect to $(\Pj, (\mc{F}_t), \mc{F}_{\infty})$ where
+            \begin{align*}
+              \mc{F}_t = \sigma(\{\zeta \mapsto \zeta(s) : s \in [0,t]\}).
+            \end{align*}
+    \end{enumerate}
+    \end{definition}
+    \hphantom{}
+
+    The intuition for this is that
+    \begin{align*}
+      \Eb{\d f(X_t) \,|\, \mc{F}_t} = Af(X_t) \, \d t.
+    \end{align*}
+    To give a general example of processes for which we can gain intuition, take $\mc{D}(A) = \{f \in C^2\rightopen{0}{\infty} : f''(0) = cf'(0)\}$, $Af = \frac{1}{2} f''$ (the generator of Brownian motion). We see that
+    \begin{align*}
+      \Eb{\d f(X_t) \,|\, \mc{F}_t} = \begin{cases}
+        \frac{c}{2} f'(0) \,\d t & \text{if } X_t = 0 \\
+        \frac{1}{2} f''(X_t) \,\d t & \text{otherwise}.
+        \end{cases}
+    \end{align*}
+    Thus we have this general behaviour that away from the boundary, $(X_t)$ is a Brownian motion -- it is a diffusive process which is repelled from taking values maximising or minimising $f$, while is more stable on linear regions of $f$. \emph{At the boundary}, we have behaviour modulated by $c$ however. If $c$ is low, we get stickiness -- once we hit the boundary, there is little that pushes $X_t$ to leave (indeed if $c = 0$, $(X_t)$ is absorbed, and it seems $c < 0$ may give no solution). For $c$ large however, $(X_t)$ is encouraged to move in the direction of $f$ at $0$, and thus we tend towards reflection. \\
+
+    \begin{theorem}
+    \ If $E$ is compact and separable, and $A$ is a Markov pregenerator for which the closure is a Markov generator, then for $x \in E$, the unique Feller process which corresponds to $\overline{A}$ is the unique solution to the martingale problem $(A, \delta_x)$.
+    \end{theorem}
+    \hphantom{}
+
+    To see that the measure induced by the Feller process $\Pj^x$ is a solution to the martingale problem, we can apply the equivalence of the forward backward equations, and in general that Feller processes are relatively easy to work with. The regularity conditions are mainly key here for ensuring that we can use Fubini-Tonelli and FTC. \\
+
+    The uniqueness is not examinable, but the proof follows by uniqueness of Laplace transforms. \\
+
+    \innerblock{Stochastic Differential Equations}{
+    \begin{theorem}[Yamada-Watanabe theorem]
+    \ With $\sigma, b$ measurable functions. If pathwise uniqueness holds for
+    \begin{align*}
+      \d X_t = \sigma(X_t) \d B_t + b(X_t) \d t
+    \end{align*}
+    and there exists a solution $(X, B)$, then there is also uniqueness in law. In particular, the solution is strong.
+    \end{theorem}
+    \hphantom{}
+
+    In fact the theorem gives the more general implication that in all cases, path-wise uniqueness implies uniqueness in law. Consequently, as pathwise uniqueness implies that if $(X, B)$, $(\widetilde{X}, B)$ both solve the SDE, then $X = \widetilde{X}$ almost surely, thus each path of $X$ can a.s. be written as a function of $B$. Thus $X$ must be a strong solution. \\
+
+    \begin{definition}[Martingale problem $\bm{M}(a,b)$]
+      A process $(X_t)$ with values in $\mathbb{R}^d$, together with $(\Omega, \mc{F}, (\mc{F}_t), \Pj)$ solves the martingale problem $\bm{M}(a,b)$ if for $i,j \in [d]$, $t \ge 0$,
+      \begin{align*}
+        M^i_t = X^i_t - \int_0^t b_i(X_s) \,\d s
+      \end{align*}
+      and
+      \begin{align*}
+        M^i_t M^j_t - \int_0^t a_{ij} (X_s) \,\d s
+      \end{align*}
+      are local martingales.
+    \end{definition}
+    \hphantom{}
+
+    \textbf{Question: can we reformulate this as the original martingale problem?} \\
+
+    \begin{theorem}
+      Let $a = \sigma \sigma^{\top}$, $(X, \Omega, \mc{F}, (\mc{F}_t), \Pj)$ be a solution to $\bm{M}(a, b)$. Then there is a $(\mc{F}_t)$-Brownian motion $(B_t)$ in $\mathbb{R}^d$ on an enlarged probability space such that $(X, B)$ solves $E(\sigma, b)$.
+    \end{theorem}
+    \hphantom{}
+
+    Proof is straightforward for $d = 1$. \\
+
+    \textbf{Question: when can we allow $\bm{a}$s which are not positive semidefinite?} \\
+
+    \begin{lemma}
+      \ A solution to the martingale problem for
+      \begin{align*}
+        Af(x) = \frac{1}{2} \sum_{i,j} a_{ij}(x) \frac{\partial^2 f}{\partial x_i \partial x_j}(x) + \sum_i b_i(x) \pdiff{f}{x_i}(x)
+      \end{align*}
+      is a solution to the martingale problem $\bm{M}(a, b)$.
+    \end{lemma}
+    \hphantom{}
+
+    To show this, note that with $\pi_i(x) = x_i$, $\pi_{ij}(x) = x_i x_j$, $A\pi_i = b_i$, $A\pi_{ij} = a_{ij} + x_jb_i + x_ib_j$, so for any solution
+    \begin{align*}
+      X^i_t - \int_0^t b_i(X_s) \,\d s
+    \end{align*}
+    and
+    \begin{align*}
+      &M^i_tM^j_t - \int_0^t (X^j_s - X^j_t) b_i(X_s) \,\d s - \int_0^t (X^i_s - X^i_t) b_j(X_s) \,\d s\\
+      &- \int_0^t b_i(X_s) \,\d s \int_0^t b_j(X_s) \,\d s - \int_0^t a_{ij}(X_s) \,\d s
+    \end{align*}
+    are local martingales, and we then need to demonstrate that this additional unwanted term is a local martingale.
+
+
+    }
+  }
+  \block{Diffusion approximation}{
+    \textbf{Note (made prior to the 2026 exam):} the last exams which referenced this section at all were 2019 and 2020 (I believe when the course was taught by Alison). Both focused on applying the techniques studied here, but without going into so much depth as to the technical details of the tools (of which, as you can see, there are many). Do prioritise making sure that you have a basic understanding of this section, but don't overprioritise it over other areas. \\ 
+    
+    \begin{definition}[Weak convergence (Weak* convergence for functional analysts)]
+    \ With $(\mu_n)$ a sequence of probability distributions on $S$, $\mu_n \to \mu$ weakly if for all continuous bounded functions $f : S \to \mathbb{R}$,
+    \begin{align*}
+      \int_S f \,\d\mu_n \to \int_S f \,\d \mu.
+    \end{align*}
+    If $\mu_n$ is the law of a random variable $X_n$, $\mu$ of $X$, then $X_n \to X$ in distribution/law.
+    \end{definition}
+    \hphantom{}
+
+    \begin{theorem}[Portmanteau]
+    \ With $(X^{(n)})$ a sequence of random variables in $S$, TFAE:
+    \begin{enumerate}[label=(\roman*)]
+            \item \ $X^{(n)} \to X$ in distribution
+            \item \ For any closed $K \subseteq S$, $\displaystyle \limsup_{n \to \infty} \Pj(X^{(n)} \in K) \le \Pj(X \in K)$
+      \item \ For any open $O \subseteq S$, $\displaystyle \liminf_{n \to \infty} \Pj(X^{(n)} \in O) \ge \Pj(X \in O)$
+            \item \ For all Borel sets $A$ such that $\Pj(X \in \partial A) = 0$, $\P{X^{(n)} \in A} \to \P{X \in A}$.
+            \item \ For bounded $f$, if $X$ a.s. lies at a point where $f$ is continuous, then $\E{f(X^{(n)})} \to \E{f(X)}$ as $n \to \infty$.
+    \end{enumerate}
+    \end{theorem}
+
+    \begin{theorem}[Skorokhod Representation Theorem]
+    \ If $(S, d)$ is a complete, separable metric space, and $\mu_n \to \mu$ weakly, then there exist random variables $Y^{(n)}$ on $[0, 1]$ such that $Y^{(n)} \overset{\mathrm{dist}}{=} \mu_n$ and $Y^{(n)} \to Y \overset{\mathrm{dist}}{=} \mu$ $\Pj$-a.s..
+    \end{theorem}
+    \hphantom{}
+
+    \begin{definition}[Tightness]
+    \ Let $(S, d)$ be a metric space. A family $M \subseteq \mc{P}(S)$ is said to be tight if for $\varepsilon > 0$, there is a compact $K_{\varepsilon} \subseteq S$ such that for $\mu \in M$, $\mu(K_{\varepsilon}) > 1 - \varepsilon$.
+    \end{definition}
+    \hphantom{}
+
+    Tightness is a particularly useful property, because it implies that the closure of $M$ (in the topology of weak convergence) is sequentially compact. Consequently, if we have a sequence of $Y^{(n)}$ such that $(\Pj \circ (Y^{(n)})^{-1})$ defines a collection of tight measures, then we have a subsequence which converges to a measure $\mu$. \\
+
+    The metric that we use for stochastic processes is the Skorokhod topology
+    \begin{definition}
+    \ Let $(E, d)$ be a metric space, $(\eta_n)$, $\eta$ lying in the set of c\`adl\`ag functions from $\rightopen{0}{\infty}$ to $E$. Then $\eta_n \to \eta$ in the Skorokhod topology iff for $t_n \to t$ in $\rightopen{0}{\infty}$,
+    \begin{itemize}[label=$\cdot$]
+    \item \ $\min \{d(\eta_n(t_n), \eta(t)), d(\eta_n(t_n), \eta(t-))\} \to 0$ as $n \to \infty$ (the processes are close in space, forgiving any discontinuities),
+    \item \ if $d(\eta_n(t), \eta(t)) \to 0$ as $n \to \infty$, then with $s_n \ge t_n$, $s_n \to t$,
+    \begin{align*}
+    d(\eta_n(s_n), \eta(t)) \to 0
+    \end{align*}
+    as $n \to \infty$ (the process grows to be right continuous), and
+    \item \ if $d(\eta_n(t), \eta(t)) \to 0$ as $n \to \infty$, then with $s_n \le t_n$, $s_n \to t$,
+    \begin{align*}
+    d(\eta_n(s_n), \eta(t-)) \to 0
+    \end{align*}
+    as $n \to \infty$ (the process grows to have left limits).
+    \end{itemize}
+    \end{definition}
+    \hphantom{}
+
+    We then have a series of results which, in different ways, give us tightness of particular sequences of random variables. \\
+
+    Etheri and Kurtz gives us precompactness with a slightly weaker condition than tightness, that for any $\varepsilon$ and time $t$, there is a compact $\gamma$ such that $X^{(n)}_t$. Aldous gives us that tight marginals plus a sequence of stopping times at which the $\delta$ time differences of $Y^{(n)}$ are uniformly small gives tightness, and thus precompactness. Aldous-Rebolledo provides an analogous condition as Aldous, but for semimartingales (the same statement, but applied to both the finite variation part and the quadratic variation). Then theorem 4.11 gives us that tightness occurs iff $X^{(n)}$ is regular in the sense of $X_0^{(n)}$ having uniformly small tails, and uniformly small spatial oscillations in $\delta$-long time windows. \\
+
+    The critical work is then, for a particular approximation, to look at how its generators behave. \\
+
+    \begin{theorem}[Diffusion approximation]
+      \ Let $X$ be a diffusion which solves the martingale problem $M(a, b)$, and define for $t \in [0,1]$, $h > 0$,
+      \begin{align*}
+        X^{(h)}_t := Y^{(h)}_{\floor{t/h}}
+      \end{align*}
+      where $Y^{(h)}$ are discrete-time Markov chains, each with transition kernel $P^{(h)}_t(x, \cdot)$. We define their approximate diffusion parameters as 
+      \begin{align*}
+        a^{(h)}_{ij}(x) &= \frac{1}{h}\int_{\overline{B}(x, 1)} (y_i - x_i)(y_j - x_j) P^{(h)}_h(x, \mathrm{d}y) \\
+        b^{(h)}_i(x) &= \frac{1}{h} \int_{\overline{B}(x, 1)} (y_i - x_i) P^{(h)}_h(x, \mathrm{d}y).
+      \end{align*}
+      We define also the $\varepsilon$-escape rate
+      \begin{align*}
+        \Delta^{(h)}_{\varepsilon}(x) = \frac{1}{h} P_h(x, B(x, \varepsilon)^c).
+      \end{align*}
+      If we have the following for every $R, \varepsilon > 0$
+      \begin{enumerate}[label=(\roman*)]
+              \item \ $\displaystyle \lim_{h \to 0} \sup_{x \in B(0, R)} |a^{(h)}_{ij}(x) - a_{ij}(x)| = 0$,
+              \item \ $\displaystyle \lim_{h \to 0} \sup_{x \in B(0, R)} |b_i^{(h)}(x) - b_i(x)| = 0$, and
+              \item \ $\displaystyle \lim_{h \to 0} \sup_{x \in B(0, R)} \Delta_{\varepsilon}^{(h)}(x) = 0$.
+      \end{enumerate}
+      Then if $X^{(h)}_0 \to x_0$, then $X^{(h)} \to X$ as processes on $[0, 1]$ weakly in the space of c\`adl\`ag functions. In particular, the linear interpolations of $Y^{(h)}$ converge weakly in the space of continuous functions.
+    \end{theorem}
+    \hphantom{}
+
+    The key idea of this proof is that if we have tightness of a collection of measures, then that collection is precompact if the metric space is complete (Cauchy sequences converge) and separable (there exists a countable dense subset). Both apply to $\mathbb{R}^n$, and many other spaces. \\
+
+    Once we have precompactness of the measures on approximations $(X^{(n)}_t)$ of diffusions $(X_t)$, we know that there exists a convergent subsequence. We then argue that the generator of each approximation converges to the true generator. With this, we may demonstrate that the limit of $f(X^h_t) - \int_0^t L^h f (X^h_s) \mathrm{d} s$ is a martingale, and then by uniqueness of the solution to the martingale problem we have our result.
+  }
+  \block{Duality}{
+    The key use of duality is for demonstrating the uniqueness of processes, as it allows the one-dimensional distributions of a process to be represented in terms of the distributions of its dual. As a Feller process is determined by its one-dimensional distributions, this determines it fully. \\
+
+    \begin{theorem}
+    \ Let $E_1, E_2$ be metric spaces, $\Pj$, $\mathbb{Q}$ probability distributions on the c\`adl\`ag functions from $\rightopen{0}{\infty}$ to $E_1$, $E_2$ respectively. If there exist $f, g : E_1 \times E_2 \to \mathbb{R}$ which are bounded and continuous in each argument such that for any $x \in E_1$, $y \in E_2$
+    \begin{align*}
+      f(X_t, y) - \int_0^t g(X_s, y) \mathrm{d}s
+    \end{align*}
+    is a $\Pj$-martingale and
+    \begin{align*}
+      f(x, Y_t) - \int_0^t g(x, Y_s) \mathrm{d}s
+    \end{align*}
+    is a $\mathbb{Q}$-martingale, then
+    \begin{align*}
+      \Ej^{\Pj}_{x}\left[f(X_t, y)\right] &= \Ej^{\mathbb{Q}}_y\left[f(x, Y_t)\right].
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    In practice it's easier to consider both as being defined on the same space. The proof is via differentiating the quantity $\E{f(X_s, Y_{t-s})}$ in $s$. \\
+
+    Equivalently, the conditions may be better written as
+    \begin{align*}
+      A_X f(\cdot, y) = A_Y f(x, \cdot).
+    \end{align*}
+    Duality is significant as a means of proving uniqueness, due to the following lemma: 
+
+    \begin{lemma}
+    \ Take $A$ a Markov pregenerator on a compact separable space $E$ such that, independently of the initial distribution, any two solutions $X, \widetilde{X}$ to the martingale problem with generator $A$ have the same one-dimensional distributions. Then these solutions have the same finite-dimensional distributions.
+    \end{lemma}
+    \hphantom{}
+
+    Significantly, it is possible to generalise duality for this purpose, to the following relation
+    \begin{align*}
+      A_X f(\cdot, y) (x) + \alpha(x) f(x, y) = A_Y f(x, \cdot) (y) + \beta(y) f(x, y)
+    \end{align*}
+    which gives (subject to integrability)
+    \begin{align*}
+      \E{f(X_t, y) \exp\left(\int_0^t \alpha(X_s) \mathrm{d}s\right)} = \E{f(x, Y_t) \exp\left(\int_0^t \beta(Y_s) \mathrm{d}s\right)}.
+    \end{align*}
+    The example given in this course is of duality between Wright-Fisher diffusion and Kingman's coalescent. The former is the process $X$ on $\mathbb{R}$ solving
+    \begin{align*}
+      \mathrm{d}X_t = \sqrt{X_t (1-X_t)} \mathrm{d}B_t
+    \end{align*}
+    while the latter is a reaction process on $\mathbb{N}$ where, for a population of elements $A$, at rate $1$ the reaction $2A \to A$ occurs (that is, two particles combine into one). This therefore has generator
+    \begin{align*}
+      L_K f (n) = {n \choose 2} (f(x, n-1) - f(x, n)).
+    \end{align*}
+    It can be observed that $(x, n) \mapsto x^n$ is an appropriate duality function.
+    }
+  \column{0.25}
+  \block{Speed and Scale}{
+
+    It is known by Dambis-Dubins-Schwarz that any continuous local martingale can be represented as a Brownian motion time-scaled by its quadratic variation. A diffusion is in general not a continuous local martingale, but rather a semimartingale, but we would still like to reach a normal-form in this way. One method of doing this would be to decompose the semimartingale $X_t = M_t + A_t$, where $M_t$ is a continuous local martingale and thus $M_t = X_0 + B_{\langle M \rangle_t}$. In this way the quadratic variation $\langle M \rangle_t$ helps explain the rate of the local martingale part, but is unhelpful for the macroscopic behaviour of the process. \\
+
+    The theory of speed and scale provides an alternative, whereby we first scale the process to give us a continuous local martingale $S(X_t)$, and then take its quadratic variation to give $S(X_t) = B_{\langle S(X) \rangle_t}$. \\
+
+    It's straightforward enough to see how we might define $S$, given we just want to zero the drift term in $L_{S(X)}$:
+    \begin{align*}
+      L_{S(X)}f(y) &= \restr{\diff{}{t} \E{f(S(X_t)) \,\middle|\, S(X_0) = y}}{t = 0} \\
+                   &= L_X (f \circ S)(S^{-1}(y)) \\
+                   &= \frac{1}{2} \sigma^2(S^{-1}(y)) (f \circ S)''(S^{-1}(y)) + \mu(S^{-1}(y)) (f \circ S)'(S^{-1}(y)) \\
+                   &= \frac{1}{2} \sigma^2(S^{-1}(y)) (S'(S^{-1}(y)))^2 \kdiff{2}{f}{y} \\
+                   &+ \left( \frac{1}{2} \sigma^2(S^{-1}(y)) S''(S^{-1}(y)) + \mu(S^{-1}(y)) S'(S^{-1}(y)) \right) \diff{f}{y} \\
+      &= \frac{1}{2} \sigma^2(S^{-1}(y))(S'(S^{-1}(y)))^2 \kdiff{2}{f}{y} + L_{X}(S)(S^{-1}(y)) \diff{f}{y}.
+    \end{align*}
+    We therefore define $S$ as a strictly increasing solution to $L_XS = 0$. \\
+
+    \begin{definition}[Scale function]
+    \ For a diffusion $(X_t)$ on $(a, b)$ with drift $\mu$ and variance $\sigma^2$, the scale function is defined as
+    \begin{align*}
+      S(x) = \int_{x_0}^x \exp \left(-\int_{\eta}^y \frac{2 \mu(z)}{\sigma^2(z)} \mathrm{d}z\right) \mathrm{d}y.
+    \end{align*}
+    for arbitrarily fixed $x_0$, $\eta$ in $(a, b)$.
+    \end{definition}
+    \hphantom{}
+
+    Note now that
+    \begin{align*}
+      \langle S(X) \rangle_t &= \left\langle \int_0^{\cdot} \sigma(X_s) S'(X_s) \mathrm{d}B_s \right\rangle_t \\
+                             &= \int_0^t \sigma^2(X_s) S'(X_s)^2 \mathrm{d}s.
+    \end{align*}
+    In particular, the $\langle S(X)\rangle_t$ clock ticks at rate $\sigma^2(\xi) S'(\xi)^2$ when $X_t = \xi$. To understand the time spent per tick of $\langle S(X) \rangle_t$ in each point over $(x_1, x_2)$, we write
+    \begin{align*}
+      M(x_1, x_2) &= \int_{S(x_1)}^{S(x_2)} \frac{\mathrm{d}y}{\sigma^2(S^{-1}(y)) (S'(S^{-1}(y)))^2} \\
+      &= \int_{x_1}^{x_2} \frac{\mathrm{d}\xi}{\sigma^2(\xi) S'(\xi)}.
+    \end{align*}
+    Importantly, $\langle S(X) \rangle_t$ should not be confused for giving us the linear progression of the random variable -- such a notion doesn't really exist for infinite variation processes such as these. What it does instead is give us a quadratic progression, and so the purpose of this is to give an understanding of the time spent by the walk over an area in comparison to a Brownian motion. The definition here is slightly contrived, but makes more sense in the context of later results. \\
+
+    \begin{definition}[Speed measure]
+    \ We define the speed measure
+    \begin{align*}
+      M(x) &= \int_{x_0}^x \frac{1}{\sigma^2(\xi)} \exp\left(\int_{\eta}^{\xi} \frac{2\mu(z)}{\sigma^2(z)} \mathrm{d} z \right) \mathrm{d}\xi \\
+      &= \int_{x_0}^x \frac{\mathrm{d}\xi}{\sigma^2(\xi) S'(\xi)}.
+    \end{align*}
+    Again, $x_0$ and $\eta$ are arbitrarily selected.
+    \end{definition}
+
+    In this sense, $M(x_2) - M(x_1)$ corresponds to the average amount of time spent traversing $(x_1, x_2)$, while $S(x_2) - S(x_1)$ quantifies the size of the region $(x_1, x_2)$ as `curved' by the drift. There are two ideas at work here, arising from our inability to define `velocity' in any clean sense. \\
+
+    In one sense, we can have regions which are very large, so (with measure notation) $S(x_1, x_2)$ is large. In a \emph{different} sense, we can have regions in which the diffusion is very slow, so $M(x_1, x_2)$ is correspondingly also very large. \emph{These correspond to different things however}. A region may be large and the diffusion simultaneously quick in that region -- this doesn't correspond to cancellation of the two, but rather that the particle is very noisy, but the drift pulls it to the left side of the region. A region might also be very small, but the diffusion very slow -- this makes the region difficult to cross in a different way: the space is curved so that every forward move, however small, is accentuated (and backwards moves dampened) producing the upwards drift, but the particle has very little variation, and thus the jittering effect which brings it forward is only small. \\
+
+    With these defined, an immediate informative result is
+    \begin{align*}
+      Lf = \frac{1}{2} \diff{}{M} \left(\diff{f}{S}\right).
+    \end{align*}
+    \begin{definition}[Feller's boundary classification]
+    \ For a one-dimensional diffusion on the interval $[a, b]$, let
+    \begin{align*}
+      u(x) := \int_{x_0}^x M \mathrm{d}S \quad \quad v(x) := \int_{x_0}^x S \mathrm{d}M.
+    \end{align*}
+    Then the boundary at $b$ is classified as
+    \begin{center}
+    \begin{tabular}{c|cc}
+      & $u(b) < \infty$ & $u(b) = \infty$ \\
+      \hline
+      $v(b) < \infty$ & regular & entrance \\
+      $v(b) = \infty$ & exit & natural
+    \end{tabular} 
+    \end{center} 
+    Regular and exit boundaries are said to be accessible, while entrance and natural boundaries are called inaccessible.
+    \end{definition}
+    \hphantom{}
+
+    Note that by the characterisation of the generator in terms of the scale and speed, $v(X_t) - t/2$ is a local martingale, and thus $v(x)$ is finite at any point which $X_t$ hits in finite time. While not examinable, it turns out that there is a reasonable notion of an adjoint generator (on $L^2$ instead of $C(E)$), which corresponds to the time reversal of the original process. While not examinable, it is immediate that $u(X^{\mathrm{rev}}_t) - t/2$ is a local martingale, and thus we can have an intuition that $u(x)$ is the time it takes to exit from $x$ to $x_0$ (or any other arbitrary point -- hence it can be understood as an exit time, while $v$ is an entrance time). \\
+
+    We are happy to start processes at accessible boundaries, because we know it's possible to exit from them. \\
+
+    \innerblock{Green's functions}{
+      Consider the expression for $T^*$ the first exit time of $(a, b)$, $g$ Lipschitz:
+      \begin{align*}
+        w(x) = \E{\int_0^{T^*} g(X_s) \mathrm{d}s \,\middle|\, X_0 = x}.
+    \end{align*}
+    Applying the Markov property we can observe that $w$ is the solution to $Lw = -g$ with $w(a) = w(b) = 0$. Using our characterisation of $L$, we're able to derive the following:
+    \begin{theorem}
+    \ For $g$ continuous,
+    \begin{align*}
+      \E{\int_0^{T^*} g(X_s) \mathrm{d}s \,\middle|\, X_0 = x} = \int_a^b g(\xi) G(x, \xi) \mathrm{d}\xi 
+    \end{align*}
+    where for $x, \xi \in (a, b)$,
+    \begin{align*}
+      G(x, \xi) = 2\frac{m(\xi)}{S(b)-S(a)}\cdot\begin{cases}
+        (S(x)-S(a))(S(b)-S(\xi)) & \text{if $x < \xi$} \\
+        (S(b)-S(x))(S(\xi)-S(a)) & \text{if $x > \xi$}.
+    \end{cases}
+    \end{align*}
+    \end{theorem}
+    }
+
+    Going further, the theory of speed and scale allows us to calculate stationary distributions, and then to develop a version of DBEs. \\
+
+    \begin{definition}[Stationary distributions]
+    \ For $(X_t)$ a Markov process on a space $E$, a stationary distribution is a probability distribution $\psi$ such that if $X_0 \sim \psi$, then $X_t \sim \psi$ for $t \ge 0$.
+    \end{definition}
+    \hphantom{}
+
+    This is totally as before, but we now have a more general language to talk about it. We note that in particular, if $X$ has generator $\mc{L}$, then
+    \begin{align*}
+      \int_E \mc{L}f(x) \mathrm{d}\psi(x) = 0.
+    \end{align*}
+    Considering in particular one-dimensional diffusions, this lets us go further via IBP if we assume that $\psi$ is absolutely continuous with respect to the Lebesgue measure, and selecting $f$ such that $f$ and $f'$ vanish on $\partial E$:
+    \begin{align*}
+      \frac{1}{2} \kdiff{2}{}{x}(\sigma^2 \psi) - \diff{}{x}(\mu \psi) = 0.
+    \end{align*}
+    This must hold for $x \in E$. In fact, we can make progress to solve this expression, by integrating and then using $S'(x)$ as an integrating factor, we arrive at
+    \begin{align*}
+      \psi(x) = m(x) \left(c_1 S(x) + c_2\right)
+    \end{align*}
+    and finally if $\int_E m(x) \mathrm{d}x < \infty$,
+    \begin{align*}
+      \psi(x) = \frac{m(x)}{\int_E m(x) \mathrm{d}x}.
+    \end{align*}
+    \begin{definition}
+    \ We say that a diffusion is regular if for all $x \in \mathrm{int}(I)$, $y \in I$, the hitting time of $y$ from $x$ is finite with positive probability.
+    \end{definition}
+    \hphantom{}
+
+    In fact, having a stationary distribution is sufficient, in the natural scale, for $M$ to be finite: by Watanabe and Motoo 1958, a regular diffusion in natural scale has a stationary distribution given as above iff $M$ is finite. \\
+
+    In general (and certainly for our purposes) we can take this stationary distribution for granted, and just proceed to calculate it as such. \\
+
+    Recalling work in Markov chains, we now provide the continuous space analogue to the detailed balance equations. If for $x, y \in E$, $t \ge 0$, with $p_t(x, y) \mathrm{d}y = \P{X_t \in \mathrm{d}y \,|\, X_0 = x}$, 
+    \begin{align*}
+      \psi(x) p_t(x, y) = \psi(y) p_t(y, x)
+    \end{align*}
+    then we say that $(p_t)$, $\psi$ satisfy the detailed balance equations. Immediately, we may see that
+    \begin{align*}
+      \int_E f(x) \mc{L}g(x) \psi(x) \mathrm{d}x &= \diff{}{t} \int_E f(x) \int_E g(y) p_t(x, y) \mathrm{d}y \psi(x) \mathrm{d}x \\
+                                                 &= \diff{}{t} \int_E f(x) \int_E g(y) p_t(y, x) \psi(y) \mathrm{d}y \mathrm{d}x \\
+      &= \int_E g(y) \mc{L}f(y) \psi(y) \mathrm{d}x.
+    \end{align*}
+    Furthermore, it may be seen that this identity is satisfied in general for a diffusion with a stationary distribution. 
+  }
+  \column{0.25}
+  \block{Partial differential equations}{
+    For an open bounded domain $U \subseteq \mathbb{R}^d$, $\phi : \partial U \to \mathbb{R}$ continuous, we say that $u : \overline{U} \to \mathbb{R}$ solves the Dirichlet problem for boundary $\phi$ if
+    \begin{align*}
+      \Delta u = 0
+    \end{align*}
+    for $x \in U$, and $u = \phi$ for $x \in \partial U$. Irrespective of boundary conditions, a function which satisfies the differential condition is said to be harmonic on $U$. \\
+
+    Solutions to this in the discrete case have been seen in PMMs, where we define a SSRW $(X_n)$ on a finite graph $U$, and note that $u(v) = \E{\phi(X_{\tau_{\partial U}})}$ is harmonic. The matter here is to just extend such an idea. \\
+
+    We argue first of all that the hitting time of the boundary has exponential tails, which is clear by the Markov property and the finite diameter of $U$. If we have a solution $u$, then by It\^o, $u(B_t)$ is a continuous local martingale on $\rightopen{0}{\tau}$, and indeed stopping it once $|B_t|$ reaches the diameter of $U$ gives us a martingale. Thus $u(B^{\tau}_{t}) \to u(B_{\tau}) = \phi(B_{\tau})$ as $t \to \infty$, and by the martingale property, $u(x) = \E{u(B_0)} = \mathbb{E}_x\left[\phi(B_{\tau})\right]$. \\
+
+   \coloredbox{The notes take a slightly different route for localisation in comparison to the SDE, CMSC, and PMMs courses. Here, it is noted that for a stopped continuous local martingale $X_{t \land T}$, there exists a (random) time-change $\gamma : \rightopen{0}{\infty} \to \rightopen{0}{T}$ such that $X_{\gamma(t)}$ is a martingale. This works by (roughly) letting $\gamma$ interpolate between consecutive stopping times in the reducing sequence $(\tau_n)$, and then using a new filtration $\mc{F}_{\gamma(t)}$, applying optimal stopping. The main point of this is that $B_{\gamma(t)} \in U$, while $B_{t \land \tau} \in \overline{U}$ as soon as $t \ge \tau$ (where $u(B_{t \land \tau})$ may no longer be as nice and regular as before).}
+   \hphantom{}
+
+
+    A special, often used, case of this result is the problem with $U = (a, b) \in \mathbb{R}$. In this case, it is clear that $u''(x) = 0$ means $u(x) = \frac{b-x}{b-a} \phi(a) + \frac{x-a}{b-a} \phi(b)$, and thus with $\phi(x) = \delta_{a}(x)$,
+    \begin{align*}
+      \mathbb{P}(\tau_a < \tau_b) = \frac{b-x}{b-a}.
+    \end{align*}
+
+    \begin{definition}
+    \ We say that a Markov process $(X_t)$ with values in $\mathbb{R}^d$ is recurrent if for every $x \in \mathbb{R}^d$, $X$ revisits $x$ infinitely many times. We say it is neighbourhood recurrent if for every $x \in \mathbb{R}^d$, $\varepsilon > 0$, $X$ revisits $B(x, \varepsilon)$ infinitely many times. It is transient if it converges to infinity almost surely.
+    \end{definition}
+    \hphantom{}
+
+    It is known that Brownian motion is, for $d = 1$, recurrent, for $d = 2$, neighbourhood recurrent, and for $d \ge 3$, transient. The $d = 1$ case is immediate by taking $b \to \infty$ in $\mathbb{P}(\tau_a < \tau_b)$, and noting that $\tau_a \land \tau_b$ is a.s. finite, the hitting time of $a$ is bounded with probability at least $\P{\tau_a < \tau_b} \to 1$. By the Markov property and Borel-Cantelli we then get our result. \\
+
+    For $d \ge 2$, we construct $U$ as an annulus $B(x, R) \setminus \overline{B}(x, r)$, and let $\tau_r$, $\tau_R$ be the hitting times by $|B_t|$. When we assume radial symmetry (as our $\phi$ will be constant on each ring) the Dirichlet problem is solved by $u(x) = \psi(| x |)$ satisfying
+    \begin{align*}
+      \psi'' + \frac{d-1}{|x|} \psi' = 0.
+      \end{align*}
+    Solving this yields, with a case distinction for $d = 2$, the expressions
+    \begin{align*}
+    u(x) = \begin{cases}
+    c_1 \log |x| + c_2 & \text{if } d = 2 \\
+    c_1 | x |^{2-d} + c_2 & \text{otherwise.}
+    \end{cases}
+    \end{align*}
+    Thus defining $\phi(x) = 1$ on $\partial B(x, r)$, $0$ on $\partial B(x, R)$,
+    \begin{align*}
+    \Pj_{x}\left(\tau_r < \tau_R\right) = \begin{cases}
+    \displaystyle \frac{\log R - \log |x|}{\log R - \log r} & \text{if } d = 2 \\[1em]
+    \displaystyle \frac{|x|^{2-d} - R^{2-d}}{r^{2-d} - R^{2-d}} & \text{otherwise.}
+    \end{cases}
+    \end{align*}
+    We may use the proof strategy for $d = 1$ to see that for $d = 2$, by taking $R \to \infty$, $\tau_r$ is a.s. finite, and thus achieve neighbourhood recurrence. Furthermore, it may be seen that for $d = 2$, the hitting time of zero is infinite, as taking $r \to 0$ we get $\P{\tau_0 < \tau_R} = 0$, and $T_R \to \infty$ as $R \to \infty$ (as $B_t$ is a continuous process so has finite supremum at all $t \ge 0$). \\
+
+    More generally, the hitting time of any regular $d-1$ dimensional object is infinite for a $d$-dimensional Brownian motion. We call such sets which are hit with probability zero `polar sets'.  \\
+
+    On a separate point, say we run $B_t$ starting at $x \in B(0, 1)$ until it hits $\partial B(0, 1)$ at $\tau_1$. It turns out that we can find the distribution of $B_{\tau_1}$:
+
+    \begin{theorem}
+    \ For $A \in \mc{B}(\partial B_d(0, 1))$  for $d \ge 2$, then for $x \in B_d(0, 1)$,
+    \begin{align*}
+    \Pj_x\left(B_{\tau_1} \in A\right) = \int_{A} \frac{1 - |x|^2}{|x-y|^2} \mathrm{d}\pi(y)
+    \end{align*}
+    where $\pi$ is the uniform distribution on the unit sphere.
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this is from analysis of $\mathbb{E}_x\left[f(B_{\tau_1})\right]$ for $f \in C^{\infty}$, which requires solving the Dirichlet problem. It may be checked that $\frac{1-|x|^2}{|x-y|^d}$ is Harmonic for all $y \in \partial B(0, 1)$, and so by applying the Laplacian through the integral allows us to argue the solution. 
+
+    \innerblock{Poisson problem and occupation times}{
+      More generally, we now consider the question of occupation times, and note that we can phrase these in terms of the Poisson problem, a generalisation of the Dirichlet problem.
+      \begin{definition}
+      Let $U$ be open and bounded, $u : \overline{U} \to \mathbb{R}$ continuous, and twice differentiable on $U$, $g : U \to \mathbb{R}$ continuous. $u$ solves the Poisson problem for $g$ if $\restr{u}{\partial U} \equiv 0$ and on $U$,
+      \begin{align*}
+      \frac{1}{2} \Delta u = -g.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      For $g$ bounded, $u$ a bounded solution of the corresponding problem, then
+      \begin{align*}
+      u(x) = \mathbb{E}_x \left[\int_0^{\tau} g(B_t) \mathrm{d}t\right].
+      \end{align*}
+      Using It\^o's formula on $u(B_{t \land \tau})$ (a UI martingale) gives the result immediately. \\
+
+      \begin{theorem}
+      \ For $U \subseteq \mathbb{R}^d$ a bounded open domain, $x \in \mathbb{R}^d$, then for $d \le 2$,
+      \begin{align*}
+      \int_0^{\infty} \mathbf{1}_U(B_t) \mathrm{d}t = \infty
+      \end{align*}
+      while for $d \ge 3$,
+      \begin{align*}
+      \mathbb{E}_x\left[\int_0^{\infty} \mathbf{1}_U(B_t) \mathrm{d}t\right] < \infty
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      This result does not quite follow immediately from the one above -- rather we argue for it by working with balls, looking specifically at the entrance times of $U$ and the exit times of a larger domain $G$. We argue that these give regeneration times if $d \le 2$, and provided $B_t \in U$ for a positive amount of time with positive probability in between the entrance to $U$ and exit of the larger domain, then the total time must be infinite. \\ 
+
+      By Fubini, may write the second integral as
+      \begin{align*}
+        \int_{U} \int_0^{\infty} p_t(x, y) \mathrm{d}t \mathrm{d}y &=: \int_U G(x, y) \mathrm{d}y
+    \end{align*}
+
+    where we call $G$ the potential kernel. Note that for $d \le 2$, $G$ is immediately infinite, as
+    \begin{align*}
+      p_t(x, y) &= \frac{1}{(2\pi t)^{d/2}} \exp\left(-\frac{|x-y|^2}{2t}\right) \\
+      &\ge \frac{1}{2(2\pi t)^{d/2}}
+    \end{align*}
+    for $t$ large enough. Meanwhile, for $d \ge 3$ the opposite effect takes hold, and $G$ is finite. Indeed we can calculate via change of variables
+    \begin{align*}
+      G(x, y) &= \int_0^{\infty} \frac{1}{(2\pi t)^{d/2}} \exp\left(-\frac{|x-y|^2}{2t}\right) \mathrm{d}t \\
+      &= \frac{|x-y|^{2-d}}{2\pi^{d/2}} \Gamma(d/2 - 1).
+    \end{align*}
+    Consequently by bounding $U$ with a ball containing it centred at $x$, we see that the expectation is finite. \\
+
+    Knowing this, we're able to work further with the expected occupation measure, focusing in particular on the expected occupation of a set $A \subseteq U$ until $B_t$ leaves $U$ at time $\tau_{U^c}$.
+
+    \begin{theorem}
+    \ For $d \ge 3$, $U$ a bounded domain, define the harmonic measure by
+    \begin{align*}
+      \mu(x, \mathrm{d}z) = \mathbb{P}_x(B_{\tau_{U_c}} \in \mathrm{d}z)
+    \end{align*}
+    and then define the Green's function of $U$ for distinct $x, y \in U$ as
+    \begin{align*}
+      G_U(x, y) = G(x, y) - \int_{\partial U} G(z, y) \mu(x, \mathrm{d}z).
+    \end{align*}
+    Then, for $x \in U$, $A \in \mathcal{B}(U)$,
+    \begin{align*}
+      \mathbb{E}_x\left[\int_0^{\tau_{U^c}} \mathbf{1}_A(B_s) \mathrm{d}s\right] = \int_A G_U(x, y) \mathrm{d}y.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \begin{lemma}
+    \ Let $d \ge 3$, $\tau$ be the first exit time from $B(0, 1)$. Then for $x, y \in U$,
+    \begin{align*}
+      \int_{\partial U} \frac{1-|x|^2}{|x-z|^d} G(z, y) \pi(\mathrm{d}z) = \frac{\Gamma(d/2-1) |y|^{d-2}}{2\pi^{d/2} \left|x |y|^2 - y\right|^{d-2}}.
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+    }
+    \hphantom{}
+    \innerblock{Feynman-Kac}{
+      \begin{definition}
+      \ A function $u \in C^2(\rightopen{0}{\infty} \times \mathbb{R}^d)$ is said to satisfy the heat equation with dissipation rate $c : (0, \infty) \times \mathbb{R}^d \to \mathbb{R}$ if $u(0, x) = f(x)$ and
+      \begin{align*}
+      \pdiff{u}{t} = \frac{1}{2} \Delta u - c(t, x) u.
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      Once again, we resolve this by running a Brownian motion. The martingale we attempt to construct here is through reversing the process -- if we have $u(t, x)$ particle density at position $x$, time $t$, then we want to look at the possible prior paths of these particles. At time $t - s$, by reversing a Brownian motion (our assumed structure of such a particle), and removing particles at rate $c$, the number of particles at $u(x, t)$ which originated via the path $(B_{s-u})_{u \in [0,s]}$ is the local martingale
+      \begin{align*}
+      M_s = u(t -s, B_s) \exp\left(-\int_0^s c(t-r, B_r) \mathrm{d}r\right).
+      \end{align*}
+      That this is in fact a local martingale is immediate from calculation, giving us the following:
+      \begin{theorem}[Feynman-Kac formula]
+        If $c$ is bounded and $u$ is a solution of the heat equation bounded on every $[0, t] \times \mathbb{R}^d$, then $u$ is uniquely determined and
+        \begin{align*}
+          u(t, x) = \mathbb{E}_x\left[f(B_t) \exp\left(-\int_0^t c(t-r, B_r) \mathrm{d}r\right)\right].
+        \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Note that this is almost of the same form as in previous cases, but specifically due to the dissipation term $c(t, x)u$, we include a `survival probability' $\exp\left(-\int_0^t c(t-r, B_r) \mathrm{d}r\right)$ (corresponding to if particles at $x$ at time $t$ are removed with probability $c(t, x) \mathrm{d}t$). As in the heat equation, $u$ corresponds to a concentration/density of particles (which makes the notion of `survival' coherent, as ), in contrast to the Poisson problem, where it may be seen to correspond with a potential energy (so the cumulative work done against the system by the particle, where $-g$ measures the point mass density, so there is high potential in low mass areas, but low potential in high mass areas). In the former sense we're very explicitly working with Brownian paths as representing particles, while in the latter sense the paths are better understood as quantifying the accessibility of points in a domain from one another (in some sense, collecting rewards in the domain, so to evaluate the `energy' of its region). See `Connection between Brownian Motion and Potential Theory' by Anthony Knapp. \\
+
+
+    We present a `general' Feynman-Kac formula, which uses the potential-style formulation of `probing the environment for charge/mass' in order to give a general equivalence of a homogeneous PDEs to functionals of SDEs. In particular, we work with \emph{terminal conditions} in the PDE, which correspond more easily to the stochastic case (note that these may be straightforwardly converted to initial conditions by time reversal).
+      \begin{theorem}[General Feynman-Kac formula]
+        If $F$ solves $F(T, x) = \Phi(x)$, and for $t \in [0, T]$,
+        \begin{align*}
+          \pdiff{F}{t} + \mu(t, x) \pdiff{F}{x} + \frac{1}{2} \sigma^2(t, x) \pkdiff{2}{F}{x} = 0,
+        \end{align*}
+        then letting $(X_t)$ be the solution of
+        \begin{align*}
+          \mathrm{d}X_t = \mu(t, X_t) \mathrm{d}t + \sigma(t, X_t) \mathrm{d}W_t
+        \end{align*}
+        for $t \in [0, T]$, if
+        \begin{align*}
+          \int_0^T \E{\left(\sigma(t, X_t) \pdiff{F}{x}(t, X_t)\right)^2} \mathrm{d}t < \infty
+        \end{align*}
+        then
+        \begin{align*}
+          F(t, x) = \mathbb{E}\left[\Phi(X_T) \,\middle|\, X_t = x\right].
+        \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    The PDE here corresponds to the change of an observable property of particles moving with a $\mu(t, x)$ drift, with a negative diffusion $-\sigma^2(t, x)$ (corresponding to information about this particle system at its termination, meaning the earlier we consider the observable, the less is known). The SDE form then provides an interpretation of our information at a time before maturity, in terms of tracking individually observed positions. The earlier in time we look at a position, the more $(X_s)_{s \in [t, T]}$ can vary, and so $\Phi(X_T)$ is thus more variable. Furthermore, the drift ensures that particles observed at time $t$ are the same ones observed in the drift-added location at time $T$. \\
+
+    We may then convince ourselves that in a more general sense,
+    \begin{align*}
+      \pdiff{F}{t} + \mu(t, x) \pdiff{F}{x} + \frac12 \sigma^2(t, x) \pkdiff{2}{F}{x} - V(x, t)F + f(x, t) &= 0 \\
+      F(T, x) &= \Phi(x)
+    \end{align*}
+    is solved by (for $X$ satisfying the same SDE)
+    \begin{align*}
+      F(t, x) = \Ej\Bigg[&\Phi(X_T) \exp\left(-\int_t^T V(X_u, u) \mathrm{d}u\right) \\
+      & + \int_t^T f(X_r, r) \exp\left(-\int_t^r V(X_u, u) \mathrm{d}u\right) \mathrm{d}r \,\Bigg|\, X_t = x\Bigg]
+    \end{align*}
+    The point being that we decrease the observable property of the system at rate $f(x, t)$ at position $x$ 
+    }
+    \hphantom{}
+
+    \innerblock{Semilinear equations}{
+      \begin{definition}[BBM]
+        \ A branching Brownian motion is defined as a stochastic set (often thought of in terms of a measure). We start off with one individual Brownian motion, and the collection grows and dies over time. Each individual moves according to a Brownian motion independently of all others, until their exponential clock with parameter $V$ rings, at which point they birth a random number of children with PGF $\Phi$, which start Brownian motions at the site of the parent's death.
+    \end{definition}
+    \hphantom{}
+
+    We may think of a Brownian motion as a sum of dirac measures $\xi_t = \sum_{i \in A} \delta_{Y^i_t}$ where $A \subseteq \mathbb{N}$ is the stochastic set of alive BMs, and $Y^i_t$ is the location of the $i$th BM. Note in particular that we have both a Markov property, and a Branching property, that all branches are independent. \\
+
+    \begin{theorem}[PDE characterisation]
+    \ For $\psi : \mathbb{R}^d \to [0,1]$ a function for which $\Delta$ is defined,
+    \begin{align*}
+      \mathbb{E}_{\delta_x}\left[\prod_{i \in A} \psi(Y^i_t)\right] = v(t, x)
+    \end{align*}
+    where $v$ solves $v(0, x) = \psi(x)$,
+    \begin{align*}
+      \pdiff{v}{t} = \frac{1}{2} \Delta v + V(\Phi(v) - v).
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Note in particular the case $\Phi(v) = v^2$, where we get exact doubling at each death. This gives rise to the Fisher-KPP equation.
+    }
+
+  }
+
+
+
+\end{columns}
+\end{document}

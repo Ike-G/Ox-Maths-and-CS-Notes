@@ -1,0 +1,415 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1300mm, paperheight=1800mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\renewcommand\P[1]{\mathbb{P}\left(#1\right)}
+\newcommand\E[1]{\mathbb{E}\left[#1\right]}
+\newcommand\Eb[1]{\mathbb{E}\big[#1\big]}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\DeclareMathOperator{\GOE}{GOE}
+\DeclareMathOperator{\GUE}{GUE}
+\DeclareMathOperator{\CUE}{CUE}
+\DeclareMathOperator{\Wishart}{Wishart}
+\DeclareMathOperator{\Tr}{Tr}
+% \DeclareMathOperator{\exp}{exp}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+\newcommand\diff{\mathrm{d}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\makeatletter
+\newcommand\@courseauthor{}
+\newcommand\courseauthor[1]{\def\@courseauthor{#1}}
+\makeatother
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, Notes written by \@author, based on the course and lecture notes of \@courseauthor}}
+
+% Title, Author, Institute
+\title{Random Matrix Theory}
+\author{Ike Glassbrook}
+\courseauthor{Nick Jones}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.33}
+  \block{Wigner matrices}{
+      A Wigner matrix is a Hermitian ($M = M^*$) matrix where the off-diagonal entries are centred i.i.d. random variables with unit variance. We may also talk about a real Wigner matrix, which is exactly the same, but with entries strictly in $\mathbb{R}$. \\
+
+      These matrices are commonplace, \textbf{what are their properties}. \\
+
+      Critically, their empirical spectral measure satisfies the semicircle law:
+      \begin{theorem}[Semicircle law] \
+        For $(M_n)$ a sequence of $n \times n$ Wigner matrices, each with eigenvalues $\lambda^{(n)}_1, \dots, \lambda^{(n)}_n$, let the empirical spectral measure (ESM) of the normalised $M_n / \sqrt{n}$ matrix be
+        \begin{align*}
+          \mu_{M_n / \sqrt{n}} = \frac{1}{n} \sum_{i = 1}^n \delta_{\lambda^{(n)}_i / \sqrt{n}}.
+        \end{align*}
+        Then for every bounded continuous function $f : \mathbb{R} \to \mathbb{R}$,
+        \begin{align*}
+          \int f(x) \,\diff \mu_{M_n / \sqrt{n}}(x) &\to \frac{1}{2\pi}\int_{-2}^2 f(x)  \sqrt{4 - x^2}\,\diff x
+        \end{align*}
+        in expectation and almost surely.
+      \end{theorem}
+      \hphantom{}
+
+      The immediate corollary of this is that the random distribution $\mu_{M_n / \sqrt{n}}$ converges to the measure $\diff \sigma(x) := \frac{1}{2\pi} \sqrt{4 - x^2} \diff x$ (the semicircle law). Identifying the ESM as in a very significant way characterising any particular matrix, this gives a profound central limit-type theorem. \\
+
+      This result may be proven for the particular case of the GOE using a Stietljes transform. \\
+
+      \begin{definition}[Gaussian Orthogonal Ensemble]
+      \  $M = (M_{ij}) \sim \GOE(n)$ if, independently,
+        \begin{align*}
+          (M_{ij})_{1 \le i < j \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0,1) \\
+          (M_{ii})_{1 \le i \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0,2).
+        \end{align*}
+        Hence for $m = (m_{ij})$ a real matrix,
+        \begin{align*}
+          \P{M \in \diff m} &= \frac{1}{\sqrt{2^n (2\pi)^{n(n+1)/2}}} \exp\left(-\frac{1}{4} \Tr m^2\right).
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      \begin{definition}[Gaussian Unitary Ensemble]
+      \  $M = (M_{ij}) \sim \GUE(n)$ if, independently,
+        \begin{align*}
+          (\mathrm{Re}\, M_{ij})_{1 \le i < j \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0,1/2) \\
+          (\mathrm{Im}\, M_{ij})_{1 \le i < j \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0,1/2) \\
+          (M_{ii})_{1 \le i \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0,1).
+        \end{align*}
+        Hence for $m = (m_{ij})$ a real matrix,
+        \begin{align*}
+          \P{M \in \diff m} &= \frac{1}{\sqrt{2^n \pi^{n^2}}} \exp\left(-\frac{1}{2} \Tr m^2\right).
+        \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      The naming of these ensembles comes about from the properties that their distributions are independent up to conjugation by orthogonal and unitary matrices respectively, which is immediate by looking at the density functions. \\
+
+      In the particular case of these ensembles, we can describe their traces more explicitly, using independence, and in particular that $\E{X_i X_j} = \delta_{ij}$ for a sequence of independent normal r.v.s $(X_n)$.
+      \begin{theorem}
+      \ For $M \sim \GUE(n)$, $m \in \mathbb{N}$,
+      \begin{align*}
+        \frac{1}{n^{m + 1}} \E{\Tr M^{2m}} &= \sum_{g = 0}^{\infty} \tau_g(m) n^{-2g}
+      \end{align*}
+      where $\tau_g(m)$ is the number of genus-$g$ surfaces (the number of holes in the torus to which the surface is homeomorphic) obtained by gluing together pairs of edges of a $2m$-gon.
+      \end{theorem}
+      This theorem allows us to prove a result about $\tau_0(m)$ in particular by taking $n \to \infty$. \\
+
+      Looking at a closer scale, we can find for both GUE and GOE a joint PDF of the eigenvalues 
+      \begin{align*}
+        \rho_n(\lambda_1, \dots, \lambda_n) &= c^{(\beta)}_n \prod_{i < j} |\lambda_i - \lambda_j|^{\beta} \exp\left(-\frac{\beta}{4} \sum_{i = 1}^n \lambda_i\right)
+      \end{align*}
+      where $\beta = 1$ stands for the GOE, $\beta = 2$ for the GUE. The central idea to prove this is to use the spectral theorem for Hermitian matrices to identify a suitable change of basis. \\
+
+      In fact, we achieve an exact characterisation of the correlation functions in the GUE case:
+
+      \begin{theorem}
+      \label{thm:gue-correlation}
+      \ Where
+      \begin{align*}
+        K_n(x, y) = \frac{1}{\sqrt{2\pi}}\sum_{k = 1}^n \frac{1}{k!} p_k(x) p_k(y) e^{-\frac{1}{4}(x^2 + y^2)}
+      \end{align*}
+      is the Christoffel-Darboux kernel, and $(p_k)$ are the monic degree $k-1$ Hermite polynomials,
+      \begin{align*}
+        R^{(k)}_n(\lambda_1, \dots, \lambda_k) = \det \left(K_n(\lambda_i, \lambda_j)_{ij}\right).
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      Immediately we may recover the semicircle law by noting that
+      \begin{align*}
+        \E{\int_{-\infty}^{\infty} f(x) \, \diff \mu_{M_n / \sqrt{n}}(x)} &= \frac{1}{n} \sum_{k = 1}^n \E{f(\lambda_k / \sqrt{n})} \\
+                                                       &= \E{f(\lambda_1 / \sqrt{n})} \\
+                                                       &= \frac{1}{n} \int_{-\infty}^{\infty} f(x / \sqrt{n}) R^{(1)}_n(x) \, \diff x. \\
+        &= \frac{1}{\sqrt{n}} \int_{-\infty}^{\infty} f(u) R^{(1)}_n(\sqrt{n} u) \, \diff u.
+      \end{align*}
+      Thus as $n \to \infty$, as we already have a.s. convergence to a constant, thus 
+      \begin{align*}
+        \lim_{n \to \infty} \diff\mu_{M_n / \sqrt{n}}(x) = \lim_{n \to \infty}\frac{1}{\sqrt{n}} R^{(1)}_n(\sqrt{n}x) \,\diff x
+      \end{align*}
+      and indeed we observe the RHS tend to $\diff \sigma(x)$. \\
+
+      More importantly though, this discovery gives us far more leverage for finite $n$ in terms of the \emph{expected} density of eigenvalues. \\
+
+      \innerblock{Correlation function asymptotics}{
+        While we have previously rescaled our GUE such as to ensure that the region in which eigenvalues lie with high probability remains constant, we now want to rescale to understand the spacing between eigenvalues. As eigenvalues lie in a region of size $\Theta(\sqrt{n})$ and there are $n$ of them, thus the mean spacing is $\Theta(1/\sqrt{n})$, so we must rescale as such. \\
+
+        \begin{theorem}
+          \ With $K_n$ as previously, and normalising by the additional factor $\pi = \sigma(0)$ to consider primarily the centre of the semicircle,
+          \begin{align*}
+            \lim_{n \to \infty} \frac{\pi}{\sqrt{n}} K_n\left(\frac{\pi x}{\sqrt{n}}, \frac{\pi y}{\sqrt{n}}\right) = \frac{\sin (\pi(x-y))}{\pi(x-y)}.
+        \end{align*}
+        \end{theorem}
+        \hphantom{}
+
+        With this known,
+        \begin{align*}
+          \frac{\pi^2}{n} R^{(2)}_n\left(\frac{\pi}{\sqrt{n}}x, \frac{\pi}{\sqrt{n}}y\right) \to 1 - \left(\frac{\sin(\pi(x-y))}{\pi(x-y)}\right)^2
+        \end{align*}
+        as $n \to \infty$. This reflects the repulsion: the empirical measure of the event that any two eigenvalues are $\varepsilon$-close together decays at exactly the above rate, which is quadratic. This analysis holds across the semicircle, and we can use $\sigma(u)$ for arbitrary $u$ to perform the same analysis. \\
+
+        \textbf{Understand further what the normalisation actually means in practise.} \\
+
+        
+
+      }
+
+
+      
+}
+
+    \column{0.33}
+
+    \block{Circular Unitary Ensemble}{
+      \begin{definition}[Circular Unitary Ensemble]
+      \ The $\CUE(n)$ is the unique distribution on $n \times n$ unitary matrices which is invariant under left and right multiplication by unitary matrices.
+      \end{definition}
+      \hphantom{}
+
+      That this sense of invariance is stronger than for the GUE (left-right multiplication rather than conjugation) ends up not being so relevant for our purposes. Note that in either case we get measure invariance under conjugation, which is the important thing. \\
+
+      We do not investigate in particular the eigenvalues of matrices sampled from this distribution, but it is known that the ESM of a sequence $M_n \overset{\mathrm{i.i.d.}}{\sim} \CUE(n)$ tends to $U(S^1)$. \\
+
+      We \emph{do} take particular notice of the close-scale behaviour of the CUE eigenvalues. For this, the joint PDF of the arguments of the eigenvalues (noting that all must lie on the unit circle in $\mathbb{C}$)
+      \begin{align*}
+        \rho_n(\theta_1, \dots, \theta) &= \frac{1}{(2\pi)^n n!} \prod_{j < k} |e^{i\theta_j} - e^{i \theta_k}|^2.
+      \end{align*}
+
+      We can readily argue for a characterisation of the $k$-point correlation function in fact:
+
+      \begin{theorem}
+      For $k \ge 1$, the $k$-point correlation function of a $\CUE(n)$ is
+      \begin{align*}
+        R^{(k)}_n(e^{i\theta_1}, \dots, e^{i\theta_k}) = \det \left(S_n(\theta_i, \theta_j)\right)_{ij}
+      \end{align*}
+      where
+      \begin{align*}
+        S_n(x,y) = \frac{1}{2\pi} \sum_{p = -\frac{n-1}{2}}^{\frac{n-1}{2}} e^{ip(x - y)} = \frac{1}{2\pi} \frac{\sin(n(x-y)/2)}{\sin((x - y)/2)}.
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+    }
+
+    \block{Wishart Matrices}{
+      \begin{definition}[Wishart]
+        \label{def:wishart}
+      \ The real $\Wishart(n, p, \mc{C})$ is the measure on $p \times p$ matrices $M = YY^{\top}$ where for covariance $\mc{C} \in \mathbb{R}^{p \times p}$,
+      \begin{align*}
+        Y &= \begin{pmatrix}
+          \mid & \mid & \cdots & \mid \\
+          y_1 & y_2 & \cdots & y_n \\
+          \mid & \mid & \cdots & \mid
+          \end{pmatrix} \\
+        (y_i)_{1 \le i \le n} &\overset{\mathrm{i.i.d.}}{\sim} \mc{N}(0, \mc{C}).
+      \end{align*}
+      \end{definition}
+      \hphantom{}
+
+      The matrix $Y$ serves as an $n$-sample of a $p$-feature distribution, and $\frac{1}{n} M$ is a sample covariance matrix of the features, which we expect to have mean $\mc{C}$ (\textbf{is this true?}). \\
+
+      We can achieve an analogue result for Wishart matrices:
+      \begin{theorem}[Marchenko-Pastur]
+      \ For $(M_{n,p})$ a sequence of matrices distributed as per~\ref{def:wishart}, but where each entry of $Y$ is i.i.d., centred, and with unit variance (so possibly non-normal, but certainly standard normal if normal at all). Let the ESM of $M_{n, p} / n$ be defined by
+      \begin{align*}
+        \mu_{M_{n,p}/n} &:= \frac{1}{p}\sum_{j = 1}^p \delta_{\lambda^{(n, p)}_j / n}
+      \end{align*}
+      where $\lambda^{(n, p)}_1, \dots, \lambda^{(n, p)}_n$ are the eigenvalues of $M_{n, p}$. \\
+
+      If there exists a uniform bound on the moments of each entry of $Y$, then for any bounded continuous $f : \mathbb{R} \to \mathbb{R}$, with $p \to \infty$, $n \to \infty$ such that $p / n \to \gamma \in \leftopen{0}{1}$,
+      \begin{align*}
+        \int f(x) \,\diff\mu_{M_{n,p}/n}(x) \to \frac{1}{2\pi\gamma}\int_{a_-}^{a_+} \frac{\sqrt{(a_+ - x)(x - a_-)}}{x} \,\diff x
+      \end{align*}
+      where 
+      \begin{align*}
+        a_{\pm} &= (1 \pm \sqrt{\gamma})^2.
+      \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      The proof of this follows as for the semicircle law. \\
+
+      More generally we can consider the ensemble where each entry of the $n \times n$ matrix $M$ is i.i.d., centred, and with unit variance. In this case the ESM of $M / \sqrt{n}$ converges almost surely to $U(\{z \in \mathbb{C} : |z| \le 1\})$. This result is \emph{Girko's circular law}. We do not prove this however. \\
+
+      Still for the case of Wishart matrices, we can also calculate the eigenvalue joint PDF as
+      \begin{align*}
+        \rho_n(\lambda_1, \dots, \lambda_n) &= c^{(\mathrm{Wishart})}_{n,p} \prod_{i < j} |\lambda_i - \lambda_j| \prod_{k = 1}^p \lambda_k^{(n - p - 1)/2} \exp\left(-\frac{1}{2} \sum_{k = 1}^p \lambda_k\right)
+      \end{align*}
+
+      
+  }
+
+  \column{0.33}
+  \block{Useful tools}{
+    \begin{lemma}[Gaussian IBP]
+    \ For $Z \sim \mc{N}(0, 1)$, $g \in C^1(\mathbb{R})$, if both sides are well-defined then 
+    \begin{align*}
+      \E{Zg(Z)} &= \E{g'(Z)}.
+    \end{align*}
+    \end{lemma}
+    \hphantom{}
+
+    In the one-dimensional case as above, this is immediate and can be quickly rederived -- the point being to integrate $xe^{-x^2/2}$ and differentiate $g(x)$. In the multidimensional case it has further use particularly with determining the mean of otherwise opaque products. \\
+
+    \begin{definition}[Stieltjes transform]
+    \ For $\mu$ a probability measure on $\mathbb{R}$, the Stieltjes transform $g_{\mu} : \mathbb{C} \setminus \mathbb{R} \to \mathbb{C}$ is defined as
+    \begin{align*}
+      g_{\mu}(z) &= \int_{-\infty}^{\infty} \frac{\diff \mu(x)}{x-z}.
+    \end{align*}
+    \end{definition}
+    \hphantom{}
+
+    In particular, if the support of $\mu$ is bounded, then for $X \sim \mu$, for $z$ sufficiently large,
+    \begin{align*}
+      g_{\mu}(z) = -\frac{1}{z} \sum_{k = 0}^{\infty} \E{X^k}{z^k}.
+    \end{align*}
+    Furthermore, critically for any probability measure $\mu$ on $\mathbb{R}$, $\mu$ is determined uniquely by its Stieltjes transform, and we have
+    \begin{align*}
+      \mu[a, b] = \lim_{\eta \to 0} \frac{1}{\pi} \int_a^b  \mathrm{Im}\, g_{\mu}(x + i \eta) \, \diff x
+    \end{align*}
+    just using Fubini-Tonelli. \\
+
+    For our purposes, it may be used to provide an alternative proof of the semicircle law for the special case of the GOE. \\
+
+    \begin{definition}[Correlation function]
+    \ With $\rho_n(x_1, \dots, x_n)$ the symmetric joint PDF of eigenvalues of an $n \times n$ random matrix with real spectrum,
+    \begin{align*}
+      R^{(k)}_n(x_1, \dots, x_k) = \frac{n!}{(n-k)!} \int_{-\infty}^{\infty} \cdots \int_{-\infty}^{\infty} \rho_n(x_1, \dots, x_n) \, \diff x_{k+1} \cdots \diff x_n
+    \end{align*}
+    defines the $k$-point correlation function. Note that with $f : \mathbb{R}^k \to \mathbb{R}$,
+    \begin{align*}
+      \int_{-\infty}^{\infty} \cdots \int_{-\infty}^{\infty} f(x_1, \dots, x_k) R^{(k)}_n(x_1, \dots, x_k) \, \diff x_1 \cdots \diff x_k &= \E{\sum_{1 \le i_1 < \cdots < i_k \le n} f(X_{i_1}, \dots, X_{i_k})}.
+    \end{align*}
+    \end{definition}
+
+    \innerblock{Orthogonal polynomials}{
+      To determine the correlation function, we first identify that $\rho_n$ contains a term
+      \begin{align*}
+        \prod_{i < j} |\lambda_i - \lambda_j | = \begin{vmatrix}
+          1 & 1 & \cdots & 1 \\
+          \lambda_1 & \lambda_2 & \cdots & \lambda_n \\
+          \vdots & \vdots & \ddots & \vdots \\
+          \lambda_1^{n-1} & \lambda^{n-1}_2 & \cdots & \lambda^{n-1}_n
+        \end{vmatrix}.
+      \end{align*}
+      The RHS is the Vandermonde matrix, and the equivalence can be seen by noting that this matrix will be singular if any two $\lambda_i$ are equal (and indeed only if, as the determinant is of degree $n(n-1)/2$ using Leibniz' formula). \\
+
+      As the determinant is invariant under row operations, indeed we can apply any choice of $n$ polynomials $(p_k)$ (where $p_k$ is monic of degree $k-1$) to see that this determinant is equal to the determinant of the matrix $(p_i(\lambda_j))$. \\
+
+      Our goal is then to take polynomials with are orthogonal in $L^2(e^{-\lambda^2/2} \, \diff \lambda)$, in the hope that this will make repeated integrals easier to calculate. Such polynomials exist and are denoted the Hermite polynomials. We then see that
+      \begin{align*}
+        \rho_n(\lambda_1, \dots, \lambda_n) &\propto \det \left((p_i(\lambda_j) e^{-\frac{1}{4}\lambda_j^2})^{\top}_{ij}(p_i(\lambda_j) e^{-\frac{1}{4}\lambda_j^2})_{ij}\right) \\
+                                            &= \det \left(\sum_{k = 1}^{n} p_k(\lambda_i) p_k(\lambda_j) e^{-\frac{1}{4} (\lambda_i^2 + \lambda_j^2)}\right)_{ij} \\
+        &\propto \det \left(K_n(\lambda_i, \lambda_j)\right)_{ij},
+      \end{align*}
+      where $K_n(x, y)$ is the Christoffel-Darboux kernel (which we use for the ease of notation). Critically, we may see that via the orthogonality of our polynomials, it obeys the identity
+      \begin{align*}
+        \int_{-\infty}^{\infty} K_n(x, y) K_n(y, z) \, \diff y = K_n(x, z)
+      \end{align*}
+      which is critical to then allow our algebra to work through, giving us theorem~\ref{thm:gue-correlation}.
+
+    }
+
+  }
+
+\end{columns}
+\end{document}

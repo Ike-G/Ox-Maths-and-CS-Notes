@@ -1,0 +1,539 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=1700mm, paperheight=2300mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Po}{Po}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+\newcommand\Pj{\ensuremath{\mathbb{P}}}
+\renewcommand\P[1]{\ensuremath{\mathbb{P}\left(#1\right)}}
+\newcommand\Ej{\ensuremath{\mathbb{E}}}
+\newcommand\E[1]{\ensuremath{\mathbb{E}\left[#1\right]}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\makeatletter
+\newcommand\@courseauthor{}
+\newcommand\courseauthor[1]{\def\@courseauthor{#1}}
+\makeatother
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, Notes written by \@author, based on the course and lecture notes of \@courseauthor}}
+
+% Title, Author, Institute
+\title{Probabilistic Combinatorics}
+\author{Ike Glassbrook}
+\courseauthor{Paul Balister, 2026}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.25}
+  \block{Moment methods}{
+    The first and second moment methods are key to this course, derived from a couple basic probabilistic facts. Basically everything covered in this course will either be an application of the moment methods, or an improvement of them. \\
+
+    \coloredbox{
+    Consider a collection of events $\{A_1, \dots, A_n\}$. The first moment method is used to determine when it is possible for all of these events to not hold, using the union bound
+    \begin{align*}
+      \P{\bigcup_{i = 1}^n A_i} \le \sum_{i = 1}^n \P{A_i}.
+    \end{align*}
+    For the purpose of proving statements of the form ``there exists an $\omega$ such that no $A_i$ is true'', or equivalently ``there exists an $\omega$ such that all $A_i^c$ hold''.
+    }
+    \hphantom{}
+
+    For example, consider the Ramsey numbers.
+    
+    \begin{definition}
+    \ The Ramsey number $R(k, \ell)$ is the smallest $n \ge 0$ such that every red-blue-edge colouring of $K_n$ contains either a red $K_k$ or blue $K_{\ell}$.
+    \end{definition}
+    \hphantom{}
+
+    All Ramsey numbers are finite, which can be observed through strong induction. For $n \ge R(k, \ell-1) + R(k-1, \ell) + 1$, for any colouring of $K_n$, every vertex must be connected along $R(k, \ell-1)$ blue edges or $R(k-1, \ell)$ red edges. The corresponding subgraphs of these vertices must either have a red (respectively, blue) monochrome colouring isomorphic to $K_k$ (respectively, $K_{k-1}$) or a blue (resp. red) monochrome colouring isomorphic to $K_{\ell -1}$ (respectively, $K_{\ell}$). Assume that neither of our preferred cases ($K_k$ red monochrome or $K_{\ell}$ blue monochrome) occur, and we find immediately that adding our vertex gives a $K_k$ red monochrome or $K_{\ell}$ blue monochrome graph. \\
+
+    Applying the first moment method, we can find a lower bound on the size of $R(k, k)$. Specifically, we're trying to show that for a particular $n$, there exists a colouring of $K_n$ such that no monochrome $K_k$ subgraph exists. This is straightforwardly done by choosing the uniform colouring on $K_n$, and noting that the probability of a particular $V \in [n]^{(k)}$ being monochrome is $2^{1-{k \choose 2}}$. Thus
+    \begin{align*}
+      \P{\bigcup_{V \in [n]^{(k)}} \{V \text{ is monochrome}\}} &\le \sum_{V \in [n]^{(k)}} \P{V \text{is monochrome}} \\
+      &= {n \choose k} 2^{1-{k \choose 2}}.
+    \end{align*}
+    Therefore, if this quantity is $< 1$, then certainly a colouring of $K_n$ exists for which no $k$-vertex complete subgraph is monochrome. Thus $R(k, k) > n$, and indeed taking the upper bound $2(en/2^{(k-1)/2}k)^k$ we see that $n < 2^{(k-1)/2} k/e$ gives the desired inequality. Thus $R(k, k) \ge 2^{(k-1)/2}k/e$. \\
+
+    \coloredbox{
+    The second moment method resolves the counterpart statement: instead of ``there exists an $\omega$ such that no $A_i$ is true'', we want a method to prove the statement ``there exists an $\omega$ such that some $A_i$ is true''. To do so, we leverage the Chebyshev inequality for a countering variable $X = \sum_{i} \chi_{A_i}$, for $\alpha \in (0, 1)$:
+    \begin{align*}
+      \P{X = 0} &\le \P{|X - \E{X}| \ge \alpha \E{X}} \\
+      &\le \frac{\Var(X)}{\alpha^2 \E{X}^2}.
+    \end{align*}
+    Thus $\P{X > 0} > 0$ if $\Var(X) < \E{X}^2$, by selecting $\alpha$ appropriately. 
+    }
+    \hphantom{}
+
+    \begin{definition}[Erd\"os-R\'enyi]
+    \ The Erd\"os-R\'enyi graph $G(n, p)$ is the distribution on graphs with $V = [n]$, where each edge in $[n]^{(2)}$ is included in the graph independently with probability $p$. We will occasionally denote the measure on this graph by $\Pj_{n, p} : \mc{P}([n]^{(2)}) \to [0,1]$.
+    \end{definition}
+    \hphantom{}
+
+    We often will talk about events happening ``with high probability'' (whp) in the context of Erd\"os-R\'enyi or other sequences of probability measures. This is to say that as $n \to \infty$, with $p = p(n)$ in some way, $\Pj_{n, p(n)}(A) \to 1$. The goal here is mostly to show that for large enough $n$ we can get arbitrarily high probability of the event, but this can also be likened to understanding the behaviour of the graph defined by the pseudo-measure $\lim_{n \to \infty} \Pj_{n, p(n)}$ on $\mc{P}\left(\mathbb{N}^{(2)}\right)$ (this is purely for intuition however, do not use this as a rigorous claim). \\
+
+    \begin{definition}[Threshold function]
+    \ With $P$ a measurable event in the Erd\"os-R\'enyi graph distribution, a function $p^*(n)$ is said to be a threshold function for $P$ if $p(n) = o(p^*(n))$ implies that $\Pj_{n, p(n)}\left(P\right) \to 0$, and $p(n) = \omega(p^*(n))$ implies that $\Pj_{n, p(n)}\left(P\right) \to 1$.
+    \end{definition}
+    \hphantom{}
+
+    For the sake of algebra we can often write $p(n) = f(n) p^*(n)$ with $f(n) \to 0$ and $f(n) \to \infty$ to view each of the claims. \\
+
+    If $P$ takes the form $\bigcup_i A_i$, then we usually prove low probability using the first moment method, and then prove high probability using the second moment method. In this case we have a sequence of counting variables $(X_n)$, and specifically want to show that $\Var(X_n) = o(\E{X_n}^2)$ (equivalently, $\E{X_n^2} \sim \E{X_n}^2$). If $P$ is the opposite we take complements. \\
+
+    A very general result in Erd\"os-R\'enyi graphs is the threshold function for $G(n, p)$ containing a copy of a fixed graph $H$, where $H$ is balanced (when for each subgraph $H' \subseteq H$, $|E(H')|/|V(H')| \le |E(H)|/|V(H)|$). \\
+
+    Proceeding according to the above definition, we see that if $v = |V(H)|$, $e = |E(H)|$, then there are ${n \choose v}$ candidate subgraphs to be a copy, each doing so with probability $p^e$. Thus $\mu_n = \Theta(n^v p^e)$, suggesting $p^*(n) = n^{-v/e}$. Clearly $p(n) = o(p^*(n))$ gives $\mu_n \to 0$ resolving the low probability case. \\
+
+    We then apply the second moment method to $p(n) = f(n) n^{-v/e}$ for $f(n) \to \infty$, noting $S \sim T$ iff $|S \cap T| \ge 2$. Looking at each intersection case characterised by $|S \cap T|$, we note that there are ${n \choose 2v-|S \cap T|} = \Theta(n^{2v-|S \cap T|})$ possible cases. By the balance of $H$, $(S \cap T)^{(2)} \cap E(H) \le |S \cap T| e/v$, so the probability of the particular intersection is $\le p^{2e - |S \cap T| e/v} = f(n)^{2e - |S \cap T| e/v}n^{-2v + |S \cap T|}$. Therefore noting that $\mu_n = f(n)^e$,
+    \begin{align*}
+      \Delta &\le \mu_n^2\sum_{i = 2}^{n-1} f(n)^{-ie/v} \\
+      &= \Theta(\mu^2_n f(n)^{-2e/v})
+    \end{align*}
+    as $n \to \infty$, and $\mu_n \to \infty$ so we get that $\P{X_n > 0} \to 1$ as $n \to \infty$. \\
+
+  }
+  \column{0.25}
+  \block{Improvements to the moment methods}{
+    \innerblock{When there's too much disjointness for the first moment method}{
+      The first moment method works wonderfully when our events are mostly disjoint. It starts to fail when many of our events may occur simultaneously however, as then it may not be $\P{X = 0}$ being small that causes $\E{X} \ge 1$, but rather $\P{X \ge N}$ being non-negligible for some sufficiently large $N$. \\
+
+      In absence of event disjointness, we can instead appeal to their independence to prove the same ``there exists an $\omega$ such that no $A_i$ is true'' statement as before. To do so, we construct a \emph{dependency digraph} on vertex set $\{A_i : i \in I\}$, with $E$ chosen such that $A_i$ is independent of the family of events which are not $1$-step accessible from it. \\
+
+      The point of defining a digraph rather than just an undirected graph (as surely independence is a symmetric relationship?) is to account for dependency as a relationship between families. For a particular vertex $i$, the edges exiting it point to exactly the \emph{set} of events which we may need to condition on to get the probability of $A_i$. Importantly, the edge $i \to j$ may be necessary to produce a dependency digraph (i.e. removing it voids the dependency digraph property), even if $A_i$ and $A_j$ are independent -- specifically because $A_j$ in combination with other events is not independent of $A_i$. \\
+
+      For an example, taking two coinflips, $A_1 = \{HH \text{ or } HT\}$, $A_2 = \{HH \text{ or } TH\}$, $A_3 = \{HH \text{ or } TT\}$, the digraph $\{1 \to 2, 2 \to 3, 3 \to 1\}$ is a valid (and minimal) dependency digraph despite all three being pairwise independent. \\
+
+      With that being said, we'd usually like to keep things simple (while being mindful of the above-described sticky aspects of independence). If each event $A_i$ is determined by the random variables $\{X_{k} : k \in F_i\}$, then we can immediately construct the deterministic (un)digraph by letting $i \to j$ iff $F_i \cap F_j \neq \varnothing$. \\
+
+      With this in place, we get a lower bound on $\P{X = 0}$ subject to the appropriate conditions. \\
+
+      \begin{lemma}[Local lemma, general form]
+    \ Let $D$ be a dependency digraph for $\{A_i : i \in I\}$, $I$ finite. If there are $x_i \in \rightopen{0}{1}$ such that for $i \in I$,
+    \begin{align*}
+      \P{A_i} \le x_i \prod_{j : i \to j} (1-x_j),
+    \end{align*}
+    then 
+    \begin{align*}
+      \P{\bigcap_{i \in I} A^c_i} \ge \prod_{i = 1}^n (1-x_i) > 0.
+    \end{align*}
+      \end{lemma}
+      \hphantom{}
+
+      The proof is by showing that for any $S \subseteq I$, $\P{A_i | \bigcap_{j \in S} A_j^c } \le x_i$. For any $k \in S$ such that $i \to k$,
+      \begin{align*}
+        \P{A_i \,\middle|\, \bigcap_{j \in S} A_j^c} &= \frac{\P{A_i \cap \bigcap_{j \in S} A_j^c}}{(1 - \P{A_k \,\middle|\, \bigcap_{j \in S \setminus \{k\}} A^c_j}) \P{\bigcap_{j \in S \setminus \{k\}} A^c_j}} \\
+                                                     &= \frac{\P{A_i \,\middle|\, \bigcap_{j \in S \setminus \{k\}} A^c_j}}{1 - x_k}.
+      \end{align*}
+      Thus we can do the same with all such $k$ to get $S'$ with which $A_i$ is independent, which achieves the $x_i$ bound using the condition. With this in place, it should be clear to get the final bound by induction. \\
+
+      If applying the above version of the local lemma, the most straightforward approach is to bound the maximum degree of the digraph, which gives us a more specific condition.
+      \begin{lemma}[Local lemma, user-friendly (symmetric) version]
+      \ For $A_i, \dots, A_n$ events with a dependency digraph of maximum degree $\le d$, if $\P{A_i} \le (e(d+1))^{-1}$, then $\P{\bigcap_i A_i^c} > 0$.
+      \end{lemma}
+      \hphantom{}
+
+      Taking $x_i$ constant in $i$, under these conditions we know that the general lemma's conditions may be satisfied if $\P{A_i} \le x(1-x)^d$ for all $i$, so maximising in $x$ gives the bound $\frac{1}{d+1} (1 + 1/d)^{-d} \ge \frac{1}{e(d+1)}$.
+    }
+    \hphantom{}
+
+    \innerblock{When there's too much dependence for the second moment method}{
+      Consider $S$ a finite set, and $S_p$ the random set formed by including each element with probability $p$. With $E_1, \dots, E_k \subseteq S$, $A_i = \{S_p \supseteq E_i\}$. These are called \emph{principal up-sets}. \\
+
+      \begin{theorem}[First Janson inequality]
+    \ With $X$ the number of $E_i$ contained in $S_p$, $\mu := \E{X}$, $\Delta := \sum_i \sum_{j \sim i} \P{A_i \cap A_j}$,
+    \begin{align*}
+      \P{X = 0} \le \exp\left(-\E{X} + \Delta/2\right).
+    \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      Note that using Harris's lemma it is reasonably immediate to get $\P{X = 0} \ge e^{-\mu}$, so this statement indicates that the bound is modulated entirely by $\Delta$. \\
+
+      In particular, the proof focuses on showing that $\P{A_i \,|\, \bigcap_{j = 1}^{i -1} A_j^c}$ is not much smaller than $\P{A_i}$. Splitting $\bigcap_{j = 1}^{i - 1} A_j^c$ into $D := \bigcap_{j \sim i} A_j^c$ and $I := \bigcap_{j \not\sim i} A_j^c$ then allows us to proceed by standard methods to obtain the result. \\
+
+      \begin{theorem}[Second Janson inequality]
+    \ With $X$ the number of $E_i$ contained in $S_p$, $\Delta \ge \mu$ implies that
+    \begin{align*}
+      \P{X = 0} \le \exp\left(-\frac{\mu^2}{2\Delta}\right).
+    \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      To do this, we apply the First Janson inequality to a random $q$-thinning of the events $A_1, \dots, A_k$, and then optimise over $q$. \\
+
+      \begin{theorem}[Third Janson inequality]
+    \ With $X$ the number of $E_i$ contained in $S_p$,
+    \begin{align*}
+      \P{X \le \mu - t} \le \exp\left(-\frac{t^2}{2(\mu + \Delta)}\right).
+    \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      This then gives the corresponding generalisation outside of the $\Delta \ge \mu$ domain:
+      \begin{align*}
+        \P{X = 0} \le \exp\left(-\frac{\mu^2}{2(\mu + \Delta)}\right)
+      \end{align*}
+      by setting $t = \mu$ in the third inequality.
+
+    }
+  }
+  \column{0.25}
+  \block{Erd\"os-Renyi}{
+    We consider a branching process in analogy to component exploration in Erd\"os-Renyi. Starting with one individual, at each step a live individual is selected to have $Z_t \sim \Po(c)$ children and then to die. The number of live individuals at time $t$ is denoted $Y_t$. \\
+
+    Correspondingly, let us explore components in $G(n, p)$ by starting at a vertex $v$ (set to be `live'), and at each step selecting a live vertex, setting all of the yet-unreached vertices to which it is connected to be live, and then marking the origin vertex as `processed'. In particular, with $Z_t$ the number of `children' of the selected vertex, $Y^{(G)}_t$ the number of live vertices at time $t$, $Z_t \sim \Bin(n - (t - 1) - Y^{(G)}_{t-1}, p)$. \\
+
+    We want to argue that if $np \to c$, then $p$ is small so component sizes will be small and thus the distribution $Z_t$ should not be too dissimilar to $\Po(c)$. To do so, with $\mc{S}_k \subseteq \mathbb{N}^{k}$ the set of positive probability sequences which first hit zero at $t = k$, $\mc{C}_v$ the component in $G(n, p)$ containing $v$, note
+    \begin{align*}
+      \P{|\mc{C}_v| = k} &= \sum_{\bm{y} \in \mc{S}_k} \P{Y^{(G)}_1 = y_1, \dots, Y^{(G)}_k = y_k} \\
+                         &= \sum_{\bm{y} \in \mc{S}_k} \prod_{t = 1}^k \P{\Bin(n - (t - 1) - y_{t - 1}, p) = y_t} \\
+                         &\to \sum_{\bm{y} \in \mc{S}_k} \prod_{t = 1}^k \P{\Po(c) = y_t} \\
+      &= \P{\sum_{t = 0}^{\infty} Y_t = k} =: \rho_k(c),
+    \end{align*}
+    where one can convince themselves of the limit by evaluation of the relevant terms and application of $\Bin(n, c/n) \to \Po(c)$. \\
+
+    Writing $N_k(n, p)$ for the number of vertices in  size-$k$ components of $G(n, p)$, this gives immediately that $\E{N_k} \sim n \rho_k(c)$ as $n \to \infty$ (still with $np \to c$). Furthermore, $N_k / n \to \rho_k(c)$ in probability, as $\E{N_k^2} \sim n^2 \rho_k(c)$ (which can be obtained by splitting the variance sum into a $\mc{C}_v = \mc{C}_w$ component, and a $\mc{C}_v \neq \mc{C}_w$ component). \\
+
+    For more general statements about the average size of the cluster each vertex is contained in (note: a slightly different thing from the average cluster size), taken in the limit, we need to be slightly careful for $c > 1$ (when there is positive probability of an infinite cluster existing in the limit). We can't quite expect $\sum_{k = 1}^{K(n)} N_k(G(n, p(n)))/n \to \rho_{< \infty}(c)$ to hold (take $K(n) = n$ and we get the LHS $=1$, the RHS $<1$), but can (via a non-examinable proof) do so for $K(n) \le n^{1/4}$. \\
+
+    \begin{theorem}
+    \ For $c \in (0, 1)$, there is a constant $A(c) > 0$ such that whp every component of $G(n, c/n)$ has size $\le A \log n$.
+    \end{theorem}
+    \hphantom{}
+
+    To see this, note that the distribution of $Z_t$ is (with the appropriate coupling) dominated by $\Bin(n - (t - 1), p)$, so using that $c < 1$ we get
+    \begin{align*}
+      \P{|\mc{C}_v| > k} &\le \P{Y_k > 0} \\
+                         &= \P{\sum_{t = 1}^k (\Bin(n - (t - 1), p) - 1) \ge 0} \\
+                         &\le \P{\Bin(nk, p) \ge k} \\
+                         &\le \exp\left(- \frac{3(1-c)^2}{2(2c + 1)}k \right) \\
+      &\le \exp\left(-\frac{(1-c)^2}{2} k\right)
+    \end{align*}
+    and so for $k(n) = \frac{4}{(1-c)^2} \log n$ we get $\P{|\mc{C}_v| > k} \le n^{-2}$, and summing over all vertices gives us an upper bound on the event as a whole which is $\le n^{-1}$. \\
+
+    In supercriticality where $c > 1$, we claim that with $L_i(G)$ the number of vertices in the $i$th largest component, $L_1(G) / n \to 1 - \eta(c)$ in probability. Furthermore, $L_2(G) \le A \log n$ whp for some $A(c)$. \\
+
+    \begin{theorem}
+    \ For $c > 1$ (supercriticality), with $L_i(G)$ the number of vertices in the $i$th largest component of $G$, $\eta(c)$ the extinction probability of the $\Po(c)$ branching process,
+    \begin{align*}
+      L_1(G) \sim (1- \eta(c)) n
+    \end{align*}
+    as $n \to \infty$. Furthermore, there is a constant $A(c)$ such that whp as $n \to \infty$
+    \begin{align*}
+      L_2(G) \le A \log n.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    Thus we get only a slight step down from the bound of the subcritical case, in that taking out the largest component gives us something which behaves like the subcritical graph. \\
+
+    Again using the component exploration model, we note that $\Bin(n - (t - 1) - Y^{(G)}_{t-1}, c/n)$ is $> 1$ on average for $t - 1 + Y^{(G)}_{t-1}$ small enough, so we get a positive drift, and want to bound it below by $\Bin(n(1/c + \delta), c/n)$ for $t - 1 + Y^{(G)}_{t - 1} \le n\left(1 - 1/c - \delta\right)$. With this lower bound, denoted $Y^-_t$, in place,
+    \begin{align*}
+      \P{|\mc{C}_v| = k} &\le \P{Y^-_k \le 0} \\
+                         &= \P{\Bin(nk(1/c + \delta), c/n) \le k-1} \\
+                         &\le \exp\left(-\frac{(\delta c)^2}{2 (1 + \delta c)} k\right).
+    \end{align*}
+    We can then select an appropriate $A(c)$ to get this bound cubic in $n$ for $A \log n \le k \le (1 - 1/c - \delta)n$. The key step here is that keeping the processed and live vertices small means we can see a positive drift, eliminating `intermediate' component sizes. \\
+
+    Recall from above that whp exactly $\eta(c) n$ vertices are contained in small (size $\le n^{1/4}$) components, so thus $(1- \eta(c))n$ vertices are whp in large components. Noting that $\eta(c) = e^{-c(1-\eta(c))}$, we must show that $1 - 1/c - \delta > (1 - \eta) / 2$ for some $\delta > 0$ ($2/c - 1 < \eta$). This can be seen by drawing the graph, with a bit of algebra. Consequently, whp there is only one large component, as two would exceed the number of vertices known to be in large components. This concludes the proof. \\
+
+    \innerblock{Clique and chromatic number}{
+      \begin{definition}[Clique number]
+    \ The clique number $\omega(G)$ is the maximum $k$ such that $G$ contains a copy of $K_k$.
+      \end{definition}
+      \hphantom{}
+
+      \begin{definition}[Chromatic number]
+    \ The chromatic number $\chi(G)$ is the minimum $k$ such that there exists a proper $k$-colouring of the vertices of $G$ (one such that no adjacent vertices have the same colour).
+      \end{definition}
+      \hphantom{}
+
+      With $X_k$ the number of copies of $K_k$ in $G(n, p)$, we immediately get
+      \begin{align*}
+        \E{X_k} = {n \choose k} p^{{k \choose 2}}.
+      \end{align*}
+      Noting that $\E{X_{k+1}}/\E{X_k}$ is decreasing in $k$, we have that this quantity is unimodal in $k$. Thus we define $k_0$ as the first $k$ for which $\E{X_k} < 1$. Sandwiching, we get $k_0 \sim -2 \log n / \log p$. \\
+
+      \begin{lemma}
+    \ With $p \in (0, 1)$, $\omega(G(n, p)) \le k_0$ whp as $n \to \infty$.
+      \end{lemma}
+      \hphantom{}
+
+      Note that $\omega(G(n, p)) \le k_0$ iff $X_{k_0 + 1} = 0$, and
+      \begin{align*}
+        \E{X_{k_0 + 1}} &= \E{X_{k_0}} \frac{\E{X_{k_0 + 1}}}{\E{X_{k_0}}} \\
+                        &= \E{X_{k_0}} \frac{n - k_0}{k_0 + 1} p^{k_0} \\
+                        &= \E{X_{k_0}} \frac{n + O(\log n)}{\Theta (\log n)} n^{-2 + o(1)} \\
+                        &< n^{-1 + o(1)} \\
+        &\to 0.
+      \end{align*}
+
+      \begin{theorem}
+    \ With $p \in (0, 1)$, whp $k_0 - 2 \le \omega(G) \le k_0$ as $n \to \infty$.
+      \end{theorem}
+      \hphantom{}
+
+      This follows from the second moment method applied to $X_{k_0 - 2}$. We claim that $\Delta_{k_0 - 2} = o(\mu^2_{k_0 - 2})$, as
+      \begin{align*}
+        \Delta_{k}  &= {n \choose k} \sum_{i = 2}^{k-1} {k \choose i} {n - k \choose k-i} p^{2 {k \choose 2} - {i \choose 2}} \\
+                    &= \mu^2_k \sum_{i = 2}^{k-1} {n \choose k}^{-1} {k \choose i} {n -k \choose k - i} p^{- {i \choose 2}} \\
+        &\le \mu^2_k n^{-1} .
+      \end{align*}
+
+      In fact this limiting picture is exhibited incredibly quickly, as seen by this bound:
+      \begin{theorem}
+    \ With $p \in (0, 1)$, $\P{\omega(G) < k_0 - 3} \le \exp(-n^{2 - o(1)})$.
+      \end{theorem}
+      \hphantom{}
+
+      We obtain this via Janson's inequality. \\
+
+      \begin{theorem}[Bollob\'as]
+    \ With $p \in (0, 1)$, for $\varepsilon > 0$, whp
+    \begin{align*}
+      (1 - \varepsilon) \frac{n}{2 \log_b n} \le \chi(G(n, p)) \le (1 + \varepsilon) \frac{n}{2 \log_b n}
+    \end{align*}
+    where $b = 1/(1-p)$.
+      \end{theorem}
+      \hphantom{}
+
+      This follows from noticing that with $\alpha(G)$ the independence number of $G$ (the size of the maximal independent set of vertices), $\alpha(G) = \omega(G^c)$. Furthermore, $\alpha(G) \ge n/\chi(G)$, as if there is a $k$-colouring with $\mc{C}_1, \dots, \mc{C}_k$ the collections of vertices assigned each colour, each $\mc{C}_i$ is independent, so thus $k\alpha(G) \ge n$.
+    }
+  }
+
+  \column{0.25}
+  \block{Useful bounds}{
+    Using
+    \begin{align*}
+      e^n &= \sum_{r = 0}^{\infty} \frac{n^r}{r!} \\
+      &\ge \frac{n^n}{n!}
+    \end{align*}
+    we get that $n! \ge (n/e)^n$, which is often useful as the dual bound to $n! \le n^n$. In particular, we can get through this, and by analysing ${n \choose k} = \prod_{i = 0}^{k-1} \frac{n-i}{k-i}$,
+    \begin{align*}
+      \left(\frac{n}{k}\right)^k \le {n \choose k} \le \left(\frac{en}{k}\right)^k.
+    \end{align*}
+    If we want to do better than this for bounding factorials, we may use the integral comparison method for sums 
+    \begin{align*}
+      \int_1^n \log x \,\mathrm{d}x \le \sum_{k = 2}^n \log k \le \int_2^{n+1} \log x \,\mathrm{d}x
+    \end{align*}
+    with the former evaluating to $n \log n - n + 1$ and the latter to $(n+1) \log (n+1) - n + 1 - 2 \log 2$, so taking exponentials
+    \begin{align*}
+      e\left(\frac{n}{e}\right)^n \le n! \le \frac{e(n+1)}{4} \left(\frac{n+1}{e}\right)^n.
+    \end{align*}
+    Going further, we get the Stirling approximation
+    \begin{align*}
+      n! \sim \sqrt{2\pi n} \left(\frac{n}{e}\right)^n.
+    \end{align*}
+
+    \innerblock{Variance}{
+      Calculating (and specifically, bounding) the variance is particularly important for the second moment method, but can come up with issues. We focus on the case $X_n = \sum_{i = 1}^m \chi_{A_i^{(n)}}$, which gives us
+      \begin{align*}
+        \Var(X_n) &= \sum_{i = 1}^m \sum_{j = 1}^m \P{A^{(n)}_i \cap A^{(n)}_j} - \P{A^{(n)}_i}\P{A^{(n)}_j}.
+      \end{align*}
+      This gives us a good idea of the contribution of events to the variance: if any two events are independent (which we write as $i \not\sim j$), then their contribution is irrelevant. The contribution of an individual event is its own variance, which is easily calculated, and thus our difficulties lie in the dependencies between events. \\
+
+      If there is sufficient independence in the $(A^{(n)}_i)$ (specifically, that $\sum_i \sum_{j \not\sim i} \P{A^{(n)}_i} \P{A^{(n)}_j} \sim \E{X_n}^2$, which requires that the system of events is `macroscopically independent'), we can often happily throw away the rest of the terms of $\E{X_n}^2$ without a problem to achieve a good variance bound.
+
+      \begin{align*}
+        \Var(X_n) &= \sum_i \P{A^{(n)}_i}\left(1 - \P{A^{(n)}_i}\right) + \sum_i \sum_{j \sim i} \P{A_i^{(n)} \cap A_j^{(n)}} - \P{A_i^{(n)}} \P{A_j^{(n)}} \\
+        &\le \E{X_n} + \sum_i \sum_{j \sim i} \P{A^{(n)}_i \cap A^{(n)}_j}
+      \end{align*}
+      We use this bound often enough that we define $\Delta := \sum_i \sum_{j \sim i} \P{A^{(n)}_i \cap A^{(n)}_j}$. If $\Delta = o(\E{X_n}^2)$ and $\E{X_n} \to \infty$ as $n \to \infty$, the condition of the second moment method is satisfied such that $\P{X_n > 0} \to 1$ as $n \to \infty$.
+    }
+    \hphantom{}
+
+    \innerblock{Chernoff bounds}{
+      As seen in previous courses, we use Chernoff bounds to strengthen Markov's inequality:
+      \begin{align*}
+        \P{X \ge t} = \P{e^{\lambda X} \ge e^{\lambda t}} \le \E{e^{\lambda X}}e^{-\lambda t}.
+      \end{align*}
+      In particular, we want to choose $\lambda$ to minimise the bound. For the binomial distribution, we get
+      \begin{align*}
+        \E{e^{\lambda X}} &= (pe^{\lambda} + 1 - p)^n
+      \end{align*}
+      and so minimising $n \log (p e^{\lambda} + 1 - p) - \lambda t$ in $\lambda$ gives $\lambda = \log \frac{t(1-p)}{(n-t)p}$, and so provided $\lambda > 0$ which holds for $t < np$,
+      \begin{align*}
+        \P{X \ge t} &\le \left(\frac{n(1-p)}{n-t}\right)^n \left(\frac{(n-t)p}{t(1-p)}\right)^t \\
+        &= \left(\frac{p}{t/n}\right)^t \left(\frac{1-p}{1-t/n}\right)^{n-t}.
+      \end{align*}
+      Conversely, noting that $n - X \sim \Bin(n, 1-p)$, we see the exact same bound holds for $\P{X \le t}$ for $t < np$. \\
+
+      Analysing this a bit further allows us to get a less cumbersome exponential bound. Writing the bounds as $\P{X \ge t} \le e^{-nf(t/n)}$ for $f(x) = -x \log (p/x) - (1-x) \log ((1-p)/(1-x))$, we can use Taylor series to get a low-degree polynomial lower bound,
+      \begin{align*}
+        f(x) &= f(p) + (x-p) f'(p) + \frac{(x-p)^2}{2} f''(\xi) \\
+             &= \frac{(x-p)^2}{2\xi(1-\xi)}  \\
+        &\ge 2(x-p)^2
+      \end{align*}
+      and thus
+      \begin{align*}
+        \P{X \ge np + t}, \P{X \le np - t} &\le \exp\left(-nf(t/n + p)\right) \\
+        &\le \exp\left(-2t^2/n\right).
+      \end{align*}
+
+      If $p$ is very small, this inequality is a bit weaker, so we can strengthen either side. For $x < p$, $f''(x) > \frac{1}{p}$, so $f(x) \ge \frac{(x-p)^2}{2p}$ gives
+      \begin{align*}
+        \P{X \le np - t} &\le \exp\left(-\frac{t^2}{2np}\right),
+      \end{align*}
+      and as $(p + (x-p)/3)^3 > p^3 + (x-p)p^2$, $f''(x) \ge 1/x = \frac{p^2}{p^2 (p + x - p)} \ge \frac{p^2}{(p + (x-p)/3)^3}$. Observing that $g(x) = \frac{(x - p)^2}{2(p + (x-p)/3)}$ has $g(p) = g'(p) = 0$, and has this third derivative, thus by comparison we get $f(x) \ge g(x)$, and so
+      \begin{align*}
+        \P{X \ge np + t} &\le \exp\left(- \frac{t^2}{2(np + t/3)}\right).
+      \end{align*}
+
+      In general, outside of the binomial domain, we have the following related bounds:
+      \begin{theorem}[Hoeffding's inequality]
+    \ Suppose $X = \sum_{i = 1}^n X_i$ where $X_i$ are independent bounded random variables in $[a_i, b_i]$. Then for $t \ge 0$,
+    \begin{align*}
+      \P{X \ge \mu + t}, \P{X \le \mu - t} \le \exp\left(-\frac{2t^2}{\sum_{i = 1}^n (b_i - a_i)^2}\right).
+    \end{align*}
+      \end{theorem}
+      \hphantom{}
+
+      Furthermore,
+      \begin{theorem}
+    \ Suppose $X = \sum_{i = 1}^n X_i$ are independent and $X_i \le \E{X_i} + 1$. Then for $t \ge 0$,
+    \begin{align*}
+      \P{X \ge \E{X} + t} \le \exp\left(-\frac{t^2}{2(\Var(X) + t/3)}\right).
+    \end{align*}
+      \end{theorem}
+      \hphantom{}
+    }
+    \hphantom{}
+    \innerblock{Up-sets and down-sets}{
+      We say that $\mc{A} \subseteq \mc{P}(X)$ is an up-set if $A \in \mc{A}$ and $A \subseteq B \subseteq X$ implies that $B \in \mc{A}$. The reverse is a down-set.
+
+      \begin{lemma}[Harris's lemma]
+    \ If $\mc{A}, \mc{B} \subseteq \mc{P}(X)$ are up-sets, and $\Pj_{p}$ is the measure on $\mc{P}(X)$ which includes each element of $X$ with probability $p$, then
+    \begin{align*}
+      \Pj_p(\mc{A} \cap \mc{B}) \ge \Pj_p(\mc{A}) \Pj_p(\mc{B}).
+    \end{align*}
+      \end{lemma}
+      \hphantom{}
+
+      Otherwise put, increasing properties are made more likely by the occurrence of other increasing events. \\
+
+      This can be verified by induction on $|X|$, by standard methods. \\
+
+      We can also get immediate corollaries to do with down-sets:
+      \begin{align*}
+        \Pj_p(\mc{U} \cap \mc{D}) \le \Pj_p(\mc{U}) \Pj_p(\mc{D})
+      \end{align*}
+      and for $\mc{D}_1, \mc{D}_2$ both down-sets,
+      \begin{align*}
+        \Pj_p(\mc{D}_1 \cap \mc{D}_2) \ge \Pj_p(\mc{D}_1) \Pj_p(\mc{D}_2).
+      \end{align*}
+      That is, down-sets are also positively correlated. We can also see this by looking at the appropriate coupling with $\Pj_{1-p}$.
+    }
+
+
+
+
+
+    
+
+  }
+
+\end{columns}
+\end{document}

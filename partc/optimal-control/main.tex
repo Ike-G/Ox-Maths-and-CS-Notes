@@ -1,0 +1,170 @@
+\documentclass{tikzposter} %Options for format can be included here
+\geometry{paperwidth=850mm, paperheight=1600mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+\usepackage{amsmath}
+% \usepackage{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\mc}{\mathcal}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand\Eb[1]{\mathbb{E}\big[#1\big]}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\degree}{deg}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\newcommand\leftopen[2]{\ensuremath{(#1,#2]}}
+\newcommand\rightopen[2]{\ensuremath{[#1,#2)}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{definition}{Definition}
+
+\newtheorem{remark}{Remark}
+\newtheorem{claim}{Claim}
+\newtheorem{case}{Case}
+
+\definecolor{nbYellow}{HTML}{FCF434}
+\definecolor{nbPurple}{HTML}{9C59D1}
+\definecolor{nbBlack}{HTML}{2C2C2C}
+\definecolor{tBlue}{HTML}{5BCEFA}
+\definecolor{tPink}{HTML}{F5A9B8}
+\definecolor{bp1}{HTML}{D60270}
+\definecolor{bp2}{HTML}{9B4F96}
+\definecolor{bp3}{HTML}{0038A8}
+\definecolor{pcs1}{HTML}{B300B3}
+\definecolor{pcs2}{HTML}{54007D}
+\definecolor{pcs3}{HTML}{B30086}
+\definecolor{pcs4}{HTML}{3C00B3}
+\definecolor{pcs5}{HTML}{2A007D}
+
+\definecolorstyle{NewColour} {
+  \definecolor{c1}{named}{nbBlack}
+  \definecolor{c2}{named}{nbPurple}
+  \definecolor{c3}{named}{nbYellow}
+}{
+  % Background Colors
+  \colorlet{backgroundcolor}{black!10}
+  \colorlet{framecolor}{black}
+  % Title Colors
+  \colorlet{titlefgcolor}{black}
+  \colorlet{titlebgcolor}{black!10}
+  % Block Colors
+  \colorlet{blocktitlebgcolor}{c1}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  % Innerblock Colors
+  \colorlet{innerblocktitlebgcolor}{c2!80}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{c2!50}
+  \colorlet{innerblockbodyfgcolor}{black}
+  % Note colors
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{c3!50}
+  \colorlet{notefrcolor}{c3!70}
+}
+
+\defineblockstyle{NewBlock}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=0, linewidth=0pt, titleinnersep=1cm,
+  bodyinnersep=1cm
+}{
+  \ifBlockHasTitle%
+  \draw[draw=none, fill=blocktitlebgcolor]
+  (blocktitle.south west) rectangle (blocktitle.north east);
+  \fi%
+  \draw[draw=none, fill=blockbodybgcolor] %
+  (blockbody.north west) [rounded corners=30] -- (blockbody.south west) --
+  (blockbody.south east) [rounded corners=0]-- (blockbody.north east) -- cycle;
+}
+
+% Choose Layout
+\usecolorstyle{NewColour}
+\usebackgroundstyle{Default}
+\usetitlestyle{Filled}
+\useblockstyle{NewBlock}
+\useinnerblockstyle[roundedcorners=0.2]{Default}
+\usenotestyle[roundedcorners=0]{Default}
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+
+% Title, Author, Institute
+\title{Optimal Control}
+\author{Ike Glassbrook}
+\begin{document}
+\maketitle
+\begin{columns}
+  \column{0.5}
+  \block{Discrete-time control and MDPs}{
+    \begin{definition}
+    \ A discrete-time control problem is formed of the following:
+    \begin{itemize}[label=$\cdot$]
+            \item \ A control process $(U_t)_{t \in [T]}$ in some $\mc{U}$.
+            \item \ A state process $(X^U_t)_{t \in [T]}$ in $\mc{X} \subseteq \mathbb{R}^d$, a function of prior controls.
+            \item \ An instantaneous cost function $g : [T] \times \mc{X} \times \mc{U} \to \mathbb{R}$.
+    \end{itemize}
+    An \emph{optimal control} is a $U^{\ast} = (U_t^{\ast})$ which minimises
+    \begin{align*}
+      J(x, U) = \sum_{t \in [T]} g(t, X_t^U, U_t)
+    \end{align*}
+    where $X_0 = x$.
+    \end{definition}
+    \hphantom{}
+
+    To solve this, we decompose the problem into minimising each of the `remaining-cost' problems. With
+    \begin{align*}
+      J(t, x, U) = \sum_{s \ge t : s \in [T]} g(s, X_s^{t,x,U}, U_s)
+    \end{align*}
+    the remaining cost from time $t$ onwards given $X_t = x$, we note that
+    \begin{align*}
+      J(t, x, U) &= g(t, x, U_t) + J(t+1, X^{t, x, U}_{t+1}, U)
+    \end{align*}
+    and with $V(t, x) := \inf_U J(t, x, U)$, it is clear by the independence of $J$ from prior decisions and states, and the assumed Markov property of $(X_t)$, $X_{t+1} = f(t, X_t, U_t)$ that
+    \begin{align*}
+      V(t, x) = \inf_{U_t} \left\{g(t, x, U_t) + V\big(t+1, f(t, x, U_t)\big)\right\}
+    \end{align*}
+    which is the Bellman equation.
+
+
+
+
+
+
+  }
+  \block{Numerical methods and Reinforcement Learning}{
+
+  }
+  \block{Continuous Deterministic Control}{
+
+  }
+  \block{Continuous Stochastic Control}{
+
+  }
+
+\end{columns}
+\end{document}

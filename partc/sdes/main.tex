@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=1200mm, paperheight=2000mm}
+\geometry{paperwidth=1800mm, paperheight=2100mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -24,10 +24,10 @@
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\degree}{deg}
 \newcommand{\diff}{\mathrm{d}}
-\renewcommand{\P}{\mathbb{P}}
+\renewcommand\P[1]{\mathbb{P}\left(#1\right)}
 \newcommand\E[1]{\mathbb{E}\left[ #1 \right]}
 \newcommand{\mc}{\mathcal}
-\newcommand\qvar[1]{\langle #1 \rangle}
+\newcommand\qvar[1]{\left\langle #1 \right\rangle}
 \newcommand\Eb[1]{\mathbb{E}\big[ #1 \big]}
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
   \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
@@ -42,6 +42,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
 
 \newtheorem{definition}{Definition}
 
@@ -113,16 +114,26 @@
 \useinnerblockstyle[roundedcorners=0.2]{Default}
 \usenotestyle[roundedcorners=0]{Default}
 
-\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+\makeatletter
+\newcommand\@courseauthor{}
+\newcommand\courseauthor[1]{\def\@courseauthor{#1}}
+\newcommand\@lecturer{}
+\newcommand\lecturer[1]{\def\@lecturer{#1}}
+\makeatother
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, Notes written by \@author, based on the course lectured by \@lecturer, and the lecture notes of \@courseauthor}}
 
 % Title, Author, Institute
 \title{Stochastic Differential Equations}
 \author{Ike Glassbrook}
+\lecturer{Massimiliano Gubinelli in MT 2025}
+\courseauthor{Zhongmin Qian, 2021}
 \begin{document}
 \maketitle
 \begin{columns}
-  \column{0.5}
-  \block{It\^o calculus}{
+  \column{0.25}
+  \block{Stochastic calculus revision}{
+    We begin by recalling some of the key results which allow us to work well with semimartingales. \\
     \begin{theorem}
     \ Let $(X_t)$ be a super-martingale on $(\Omega, \mathcal{F}, (\mathcal{F}_t), \mathbb{P})$, $D \subseteq \rightopen{0}{\infty}$ countable:
     \begin{itemize}
@@ -141,65 +152,189 @@
     \hphantom{}
 
     \begin{definition}[Local martingales]
-    \ $(M_t)$ is a local martingale if it is right-continuous (to ensure we can talk about $M_T$ for $T$ a stopping time), and there is a sequence $(T_n)$ of stopping times such that $T_n \to \infty$ as $n \to \infty$ a.s., and $(M_t^{T_n})$ is a martingale for all $n \ge 1$.
+    \ $(M_t)$ is a local martingale if it is right-continuous, and there is a sequence $(T_n)$ of stopping times such that $T_n \to \infty$ as $n \to \infty$ a.s., and $(M_{t \land T_n})$ is a martingale for all $n \ge 1$ (with respect to a fixed filtration $(\mathcal{F}_t)$).
     \end{definition}
     \hphantom{}
 
-    Right-continuity is necessary here to ensure that $X_T \chi_{T < \infty}$ is $\mathcal{F}_T$-measurable, because otherwise we may have stopping times which provide information that is strictly known in the future, and consequently the value of the stopped random variable is conditional on the future. For an example, take $T = \inf \{t : X_t = 1\}$, and if $X_t$ \textbf{Finish}\\
+    Right-continuity makes our lives easier by ensuring that we can talk about hitting times. \\
 
-    A continuous local martingale stopped at hitting times is a martingale, since \textbf{fill}.  \\
+    Our intuition should be that a continuous martingale is just a continuous local martingale plus an integrability condition (does not blow up too quickly). A continuous local martingale localises in such a way as to `catch' each sample trajectory at a time when it is known to be of reasonable size, thus giving us a martingale by muting the blow-up of unfavourable trajectories. \\
 
-    A continuous local martingale stopped at deterministic times is a martingale, since \textbf{fill}. \\
+    To understand more, consider a non-negative random variable of infinite expectation, $\xi$. Defining $X_t := B_{\xi t}$, we have for each $\xi$ a process which looks locally like a martingale, but is not integrable due to large tails of $\xi$ giving rise to arbitrarily quick growth trajectories. In order to understand this process, we therefore want to catch each trajectory once it reaches a certain size, e.g. hits $\{\pm n\}$, and at this point we've muted the behaviour of high-$\xi$ trajectories while keeping the reasonable size ones, so as to preserve integrability while getting a slightly weaker martingale property. \\
 
-    \begin{theorem}[It\^o's formula]
-    \
+    We recall the following results
+    \begin{enumerate}
+            \item \ A non-negative continuous local martingale such that $M_0 \in L^1$ is a supermartingale.
+            \item \ A continuous local martingale dominated from above by an integrable random variable for $t \ge 0$ is a UI martingale.
+            \item \ For any continuous local martingale such that $M_0 \in L^1$, the hitting times of $\mathbb{R} \setminus (-n, n)$ are a reducing sequence.
+            \item \ For any continuous local martingale, stopping it at a stopping time gives us another continuous local martingale.
+    \end{enumerate}
+
+    Note that (3) gives us that bounded continuous local martingales are local martingales. \\
+
+     \begin{proposition}
+       \ For a martingale $(M_t)$, $s < t$,
+       \begin{align*}
+         \E{M_t^2 - M_s^2 \,\middle|\, \mathcal{F}_s} &= \E{(M_t - M_s)^2 \,\middle|\, \mathcal{F}_s}.
+       \end{align*}
+     \end{proposition}
+     \hphantom{}
+
+     This is a matter of algebra, just observing that $\E{M_t M_s - M_s^2 \,|\, \mathcal{F}_s} = 0$. With this, it follows that any continuous local martingale is of finite variation iff it is a.s. identically zero (for the square expectation, stopped at a hitting time of the finite variation, is the quadratic variation, which must be zero if the continuous local martingale is of finite variation). \\
+
+    \begin{definition}[Quadratic variation]
+    \ For $M \in \mathcal{H}^{2,c}$,
+    \begin{align*}
+      \qvar{M}_t := \lim_{\mathrm{mesh}{(t_i)} \to 0} \sum_{i = 1}^{|\pi|} |M_{t_i} - M_{t_{i - 1}}|^2,
+    \end{align*}
+    where the limit is taken in probability and $L^2$, is the quadratic variation of $M$.
+    \end{definition}
+    \hphantom{}
+
+    This definition may then be extended to continuous local martingales by a theorem of Le Gall:
+    \begin{theorem}
+    \ For $M$ a continuous local martingale. There exists a a.s. unique non-decreasing, continuous adapted finite variation process $(\qvar{M}_t)$ started at zero such that $(M^2_t - \qvar{M}_t)$ is a continuous local martingale. For any $t > 0$, and sequence of partitions $(t^{(n)}_i)$ with mesh tending to zero, in probability we have the limit
+    \begin{align*}
+      \qvar{M}_t = \lim_{n \to \infty} \sum_{i = 1}^{|(t^{(n)}_k)|} (M_{t^{(n)}_i} - M_{t^{(n)}_{i-1}})^2.
+    \end{align*}
     \end{theorem}
     \hphantom{}
 
-    The proof of this formula is derived almost entirely via the Stone-Weierstrass theorem stating that polynomials on compact sets $K \subseteq \mathbb{R}^n$ are dense in $C(K)$. Consequently, it should be emphasised that, contrary to how the proof is often stated, we do not require that $f \in C^2(\mathbb{R})$, but merely $C^2(K)$ where $K$ is of sufficient size to be well-defined in the context of the formula.
+    It may then be extended to semimartingales, noting that the quadratic variation of any finite variation process is identically zero. \\
 
     \begin{theorem}
+      Let $M$ be a continuous local martingale with $M_0 \in L^2$. \\
+
+      In the weak case, $M$ is a martingale which is square integrable for all $t \ge 0$ iff $\E{\qvar{M}_t} < \infty$ for all $t \ge 0$. Furthermore, in this case $M_t^2 - \qvar{M}_t$ is a martingale. \\
+
+      In the strong case, $M$ is a martingale such that $\sup \E{M_t^2} < \infty$ iff $\E{\qvar{M}_{\infty}} < \infty$, and in this case $M_t^2 - \qvar{M}_t$ is a UI martingale.
+    \end{theorem}
+    \hphantom{}
+
+    The definition and results concerning the covariation are then entirely analogous. Note in particular that we can achieve these results by polarisation, that
+    \begin{align*}
+      \qvar{M, N} &:= \frac{1}{2} \left(\qvar{M+N} - \qvar{M} - \qvar{N}\right).
+    \end{align*}
+    Furthermore, recall Kunita-Watanabe, that
+    \begin{align*}
+      \int_0^t |H_s| |K_s| |\diff \qvar{M,N}_s| \le \left(\int_0^t H^2_s \diff \qvar{M}_s\right)^{1/2} \left(\int_0^t K_s^2 \diff \qvar{N}_s\right)^{1/2}.
+    \end{align*}
+
+    From here, we now just recall that integration against continuous martingales $M$ is defined for those progressively measurable processes $K$ such that for $t \ge 0$,
+    \begin{align*}
+      \int_0^t K^2_s \diff \qvar{M}_s < \infty.
+    \end{align*}
+    While integrating against a $\mathcal{H}^{2,c}$ martingale gives a $\mathcal{H}^{2,c}$ martingale, this integration gives another continuous martingale. We then obtain the commutativity relation
+    \begin{align*}
+      \qvar{\int_0^{\cdot} K_s \diff M_s, N}_t = \int_0^t K_s \diff \qvar{M, N}_s
+    \end{align*}
+    and the associativity relation
+    \begin{align*}
+      \int_0^t K_sH_s \diff M_s &= \int_0^t K_s \diff \left(\int_0^s H_u \diff M_u\right).
+    \end{align*}
+
+    Finally, before our key result, we note an integration by parts formula, for continuous semimartingales:
+    \begin{align*}
+      X_tY_t - X_0 Y_0 = \int_0^t X_s \diff Y_s + \int_0^t Y_s \diff X_s + \qvar{X, Y}_t.
+    \end{align*}
+    This may be proved using the Riemann integral limit formulation of stochastic integration, taking a sum over a partition and then taking the mesh to zero. This limit is only in probability, but it is sufficient to note uniqueness in this case. \\
+
+    \begin{theorem}[It\^o's formula]
+      \ For $X = (X^{(i)}_t)_{i \in [d]}$ a continuous semimartingale in $\mathbb{R}^d$ with decomposition $X = M + A$ where $M^{(i)}$ are continuous local martingales, and $A^{(i)}$ are continuous locally integrable adapted processes with finite variations, let $f \in C^2(\mathbb{R}^d, \mathbb{R})$. Then
+      \begin{align*}
+        f(X_t) - f(X_0) = \sum_{i = 1}^d \int_0^t \frac{\partial f}{\partial x_i}(X_s) \, \diff X^{(i)}_s + \frac{1}{2}\sum_{i = 1}^d\sum_{j = 1}^d \int_0^t \frac{\partial^2 f}{\partial x_i \partial x_j}(X_s) \,\diff \qvar{M^{(i)}, M^{(j)}}_s.
+      \end{align*}
+      This is often written equivalently as 
+      \begin{align*}
+        \diff f(X_t)= \sum_{i = 1}^d \frac{\partial f}{\partial x_i}(X_s) \diff X^{(i)}_t + \frac{1}{2}\sum_{i = 1}^d\sum_{j = 1}^d \frac{\partial^2 f}{\partial x_i \partial x_j} \,\diff \qvar{M^{(i)}, M^{(j)}}_t.
+      \end{align*}
+
+    \end{theorem}
+    \hphantom{}
+
+    The proof of this formula is derived almost entirely via the Stone-Weierstrass theorem stating that polynomials on compact sets $K \subseteq \mathbb{R}^n$ are dense in $C(K)$. Consequently, it should be emphasised that, contrary to how the proof is often stated, we do not require that $f \in C^2(\mathbb{R})$, but merely $C^2(K)$ where $K$ is of sufficient size to be well-defined in the context of the formula. \\
+
+    \begin{theorem}[Levy's characterisation]
+    \ Let $M = (M^{(i)}_t)_{i \in [d]}$ be an adapted continuous stochastic process with initial value $0$. Then $M$ is a Brownian motion iff each coordinate is a square integrable martingale, and $\qvar{M^{(i)}, M^{(j)}}_t = \delta_{ij} t$ for each pair.
+    \end{theorem}
+    \hphantom{}
+
+    This is seen by a generating function argument using It\^o's formula on $x \mapsto e^x$ with the appropriate semimartingale. \\
+
+    \begin{theorem}[Dambis-Dubins-Schwarz]
+      \ Let $M$ be a continuous local martingale starting at $0$, where $\qvar{M}_{\infty} = \infty$. Then with $T_t$ the hitting time of $t$ by $\qvar{M}$, $M_{T_t}$ is a $\mathcal{F}_{T_t}$ Brownian motion, and $M_t = B_{\qvar{M}_t}$.
+    \end{theorem}
+    \hphantom{}
+
+    While the $\qvar{M}_{\infty} = \infty$ condition seems problematic for the application of this theorem, it turns out to be of no matter at all when working on a finite interval: we can just glue a Brownian motion to run starting at $M_T$ for $t > T$, and this gives us a time-changed Brownian motion for $[0,T]$ (so running on $[0, \qvar{M}_T]$ in the original BM).
+  }
+  \column{0.25}
+  \block{Further results in stochastic calculus}{
+    \begin{theorem}[BDG inequality]
       \ Let $X$ be a continuous local martingale starting at $0$, $T > 0$:
       \begin{itemize}
               \item for $p > 1$
               \begin{align*}
-                (4p)^{-p} \E \langle X \rangle^p_T \le \E |\sup_{t \le T} X_t |^{2p} \le (2ep^2)^p \E \langle X \rangle^p_T
+                (4p)^{-p} \E{\qvar{X}^p_T} \le \E{|\sup_{t \le T} X_t |^{2p}} \le (2ep^2)^p \E{\qvar{X}^p_T}
               \end{align*}
               \item for $p = 1$
               \begin{align*}
-                \E \langle X \rangle_T \le \E |\sup_{t \le T} X_t|^2 \le 4 \E \langle X \rangle_T
+                \E{\qvar{X}_T} \le \E{|\sup_{t \le T} X_t|^2} \le 4 \E{\qvar{X}_T}
               \end{align*}
               \item For $0 < p < 1$
               \begin{align*}
-                p^{2p}\E \langle X \rangle^p_T \le \E |\sup_{t \le T} X_t|^{2p} \le \left(\frac{16}{p}\right)^{p} \E \langle X \rangle^p_T
+                p^{2p}\E{\qvar{X}^p_T} \le \E{|\sup_{t \le T} X_t|^{2p}} \le \left(\frac{16}{p}\right)^{p} \E{\qvar{X}^p_T}
               \end{align*}
       \end{itemize}
     \end{theorem}
     \hphantom{}
+
+    Read these inequalities as encompassing that $(X^{\ast})^{2p}$ and $\qvar{X}^p$ are of the same mean asymptotic growth. Their proofs are a combination of Doob's maximal inequality for submartingales, It\^o's formula applied with appropriate functions, IBP, and H\"older's inequality. Note that these inequalities can all be attacked with MCT, as all of the random variables concerned are increasing in $T$, and this means we can straightforwardly localise back to the true martingale case. \\
+
+    \innerblock{Exponentials}{
+      Recall from CMSC that we may define for any continuous semimartingale,
+      \begin{align*}
+        \mathcal{E}(X)_t := \exp\left(X_t - \frac{1}{2} \qvar{X}_t\right)
+      \end{align*}
+      as the stochastic exponential of $X$, and the unique solution to
+      \begin{align*}
+        \diff Z_t = Z_t \diff X_t
+      \end{align*}
+      with $Z_0 = 1$. That this is a solution may be seen via It\^o's formula (and the derivation via an ansatz). Uniqueness is shown later \textbf{add uniqueness} \\
+
+      The special case of this is of course when $X_t = t$, and we recover $e^x$. \\
+
+      If $X$ is just a continuous local martingale, immediately $\mathcal{E}(X)$ is, as a non-negative continuous local martingale, a supermartingale. In fact we can go further, by arguing that under regularity conditions, $\mathcal{E}(\alpha M)$ is UI for $\alpha \in (0, 1)$, and thus taking $\alpha \to 1$ we see that $\E{\mathcal{E}(M)} = 1$ so it is a martingale. \\
+
+      \begin{theorem}[Novikov]
+      \ For $M$ a continuous local martingale started at $0$, if
+      \begin{align*}
+        \E{\exp\left(\frac{1}{2} \qvar{M}_T\right)} < \infty
+      \end{align*}
+      then $(\mathcal{E}(M)_{t \land T})$ is a martingale.
+      \end{theorem}
+      \hphantom{}
+
+      Unfortunately, this condition is often quite difficult to verify, and thus we more often will retreat to the supermartingale characterisation. Nonetheless, each of these results mean that it's a standard practise to attempt to write a stochastic process as an exponential process with respect to some continuous local martingale. \\
+
+      From prior courses, we've observed the lesser used maximal inequality for supermartingales that
+      \begin{align*}
+        \lambda\P{\sup_{s \le t} |X_s| \ge \lambda} \le \E{X_0} + 2\E{X^-_t}.
+      \end{align*}
+      Using the exponential process, we can improve this if $X \in \mathcal{H}^{2,c}$ and there exists a deterministic bound $\qvar{X}_s \le a(s)$ for $s \le t$, to
+      \begin{align*}
+        \P{\sup_{s \le t} X_s \ge \lambda a(t)} \le \exp\left(-\frac{1}{2} \lambda^2 a(t)\right).
+      \end{align*}.
+    }
   }
+
   \block{Stochastic Differential Equations}{
-    \begin{lemma}
-    \ Let $X_t = M_t + A_t$ with $M$ a continuous local martingale, $A$ an adapted continuous process with finite total variation, $X_0 = 0$. Then the equation
-    \begin{align*}
-      \diff Z_t = Z_t \diff X_t, \quad Z_0 = 1
-    \end{align*}
-    is solved by
-    \begin{align*}
-      \mathcal{E}(X)_t = \exp\left(X_t - \frac{1}{2} \langle M \rangle_t\right).
-    \end{align*}
-    \end{lemma}
-
-    \begin{theorem}[Novikov]
-    \ Let $(M_t)$ be a continuous local martingale with $M_0 = 0$. If
-    \begin{align*}
-      \E\left[\exp \left(\frac{1}{2} \langle M \rangle_T\right)\right]
-    \end{align*}
-    then $\mc{E}(M)$ is a martingale up to time $T$.
-    \end{theorem}
-    \hphantom{}
-
     \begin{theorem}[Girsanov's theorem]
-    \ Let $(M_t)$ be a continuous local martingale on $(\Omega, \mathcal{F}, \mc{F}_t, \P)$ up to time $T$. Then
+      \ Let $(M_t)$ be a continuous local martingale on $(\Omega, \mathcal{F}, \mc{F}_t, \mathbb{P})$ up to time $T$. Then with
+      \begin{align*}
+        Z_t := \frac{\diff \restr{\mathbb{Q}}{\mc{F}_t}}{\diff \restr{\mathbb{P}}{\mc{F}_t}},
+      \end{align*}
+      the Radon-Nikodym derivative of the measures at time $t$ (essentially, a random variable which returns how much more likely the sampled event is under $\mathbb{Q}$ than $\mathbb{P}$), we have that
     \begin{align*}
       X_t = M_t - \int_0^t \frac{\diff \langle M, Z \rangle_s}{Z_s}
     \end{align*}
@@ -207,29 +342,72 @@
     \end{theorem}
     \hphantom{}
 
-    Note we require that $\mathbb{Q} \ll \P$ in order for this quantity to be defined. \\
+    Note we require that $\mathbb{Q} \ll \mathbb{P}$ in order for this quantity to be defined, as otherwise $Z_t$ is ill-defined on $\mathbb{P}^{-1}(0) \setminus \mathbb{Q}^{-1}(0)$.  \\
 
-    Equivalently, $M_t - \langle M, L \rangle_t$ is a continuous local martingale with respect to $\mathbb{Q}$, where $(L_t)$ satisfies
+    This result may be seen readily via noting that
     \begin{align*}
-      \diff L_t = \frac{\diff Z_t}{Z_t}
+      \mathbb{E}^{\mathbb{Q}}\left[\chi_A (X_t - X_s)\right] &= \mathbb{E}^{\mathbb{P}}\left[\chi_A (Z_t X_t - Z_s X_s)\right]
     \end{align*}
-    where $Z_t = \restr{\frac{\diff \mathbb{Q}}{\diff \mathbb{P}}}{\mathcal{F}_t}$. \\
+    and thus we can use integration by parts to get our result. \\
 
-    In practise we get $Z_t$ a supermartingale, and so we need $Z_t$ to be positive to get equivalence. \\
+    Equivalently, $M_t - \langle M, L \rangle_t$ is a continuous local martingale with respect to $\mathbb{Q}$, where $(L_t)$ satisfies the exponential equation
+    \begin{align*}
+      \diff Z_t = Z_t \,\diff L_t
+    \end{align*}
+    A corollary of this is that with $L$ a continuous local martingale starting at $0$, such that $\mathcal{E}(L)$ is a continuous martingale up to $T$, then with $\mathbb{Q}$ defined by
+    \begin{align*}
+      \frac{\diff \restr{\mathbb{Q}}{\mc{F}_t}}{\diff \restr{\mathbb{P}}{\mc{F}_t}} = \mc{E}(L)_t,
+    \end{align*}
+    for any $M$ a continuous local martingale in $\mathbb{P}$, $M - \qvar{M, L}$ is a continuous local martingale in $\mathbb{Q}$. \\
 
-    The point of this theorem is to say that when we change our measure for one not so different (strictly absolutely continuous with respect to), we maintain the class of semimartingales. Every semimartingale with respect to $\mathbb{P}$ is also a semimartingale with respect to $\mathbb{Q}$, with an added drift. \\
+    The point of this theorem (\textbf{is this the point of this theorem?}) is to say that when we change our measure for one not so different (strictly absolutely continuous with respect to), we maintain the class of semimartingales. Every semimartingale with respect to $\mathbb{P}$ is also a semimartingale with respect to $\mathbb{Q}$, with an added drift. \\
 
     \begin{theorem}[Martingale representation theorem]
-    \ Let $(M_t)$ be a square-integrable martingale on $(\Omega, \mc{F}, (\mc{F}_t), \P)$. Then there is a square-integrable process $(F_t)$ such that
+    \ Let $(M_t)$ be a square-integrable martingale on $(\Omega, \mc{F}, (\mc{F}_t), \mathbb{P})$. Then there is a process $F = (F_t) \in \bigcap_{T \ge 0} L^2[0, T]$ such that
     \begin{align*}
-      M_t = \Eb{M_0} + \int_0^t F_s \, \diff B_s
+      M_t = \E{M_0} + \int_0^t F_s \, \diff B_s
     \end{align*}
     a.s. for any $t \ge 0$. In particular, any martingale with respect to the Brownian filtration $(\mc{F}_t)$ has a continuous version.
     \end{theorem}
     \hphantom{}
 
+    While this is a nice result (and presumably has implications on a wider level), for the purpose of this course it's got few applications, and mainly serves to demonstrate the generality of the exponential martingale process. As of writing (prior to the 2026 paper), no paper in the last 6 years has required it. \\
+
+    The proof idea is in a few steps. Firstly, note that we need only consider $M_T$ for some fixed $T > 0$, as then using the regularity of $F$,
+    \begin{align*}
+      M_t &= \E{M_T \,|\, \mc{F}_t} \\
+          &= \E{\E{M_T} + \int_0^T F_s \,\mathrm{d}B_s \,\middle|\, \mc{F}_t} \\
+      &= \E{M_0} + \int_0^t F_s \,\mathrm{d}B_s.
+    \end{align*}
+    We can then construct $F$ by taking $T$ arbitrarily large. \\
+
+    Now working with a square-integrable $\xi \in L^2(\Omega, \mc{F}_T, \mathbb{P})$ (noting that we're considering $L^2$ over two different domains in this proof -- one temporal, the other probabilistic), we want to show that
+    \begin{align*}
+      \xi = \E{\xi} + \int_0^T F_s \, \diff B_s.
+    \end{align*}
+    The idea here is to keep reducing the problem. It may be shown through functional analytic techniques that
+    \begin{align*}
+      \mathbb{L} = \mathrm{Span} \left\{\mc{E}\left(\int_0^{\cdot} h(s) \,\mathrm{d}B_s\right)_T : h \in L^2[0,T]\right\}
+    \end{align*}
+    is dense in $L^2(\Omega, \mc{F}_T, \mathbb{P})$, and under these conditions it's then sufficient to show that (via the exponential property)
+    \begin{align*}
+      \mc{E}\left(\int_0^{\cdot} h(s) \, \diff B_s\right)_T &= 1 + \int_0^T \mc{E}\left(\int_0^{\cdot} h(s) \, \diff B_s\right)_t h(t) \, \diff B_t,
+    \end{align*}
+    giving us our $F$. \\
+
+    Thus our proof rests on the above claim, that $\mathbb{L}$ is dense in $L^2(\Omega, \mc{F}_T, \mathbb{P})$. This takes a couple of steps: firstly, we show that
+    \begin{align*}
+      \{\varphi(B_{t_1}, \dots, B_{t_k}) : k \ge 1, (t_i) \in [0,T], \varphi \in C^{\infty}_0(\mathbb{R}^k)\}
+    \end{align*}
+    is dense in $L^2(\Omega, \mc{F}_T, \mathbb{P})$. This follows by constructing for an arbitrary $X \in L^2(\Omega, \mc{F}_T, \mathbb{P})$ a martingale sequence $\E{X \,|\, B_{t_1}, \dots, B_{t_n}}$ (by some enumeration of $\mathbb{Q} \cap [0, T]$), and then using the martingale convergence theorem to get convergence in $L^2$. Each of these approximating variables is then an $L^2$ function of $(B_{t_1}, \dots, B_{t_n})$, and so we can use the density of $C^{\infty}_0(\mathbb{R}^n)$ in $L^2(\mathbb{R}^n, \mu)$ (for $\mu$ the Gaussian density on the Brownian motions, using that this is absolutely continuous with respect to $\mathrm{leb}$). \\
+
+    We may then utilise this density to show the density of the exponentials, by using that for $h$ a step function, the stochastic part of $\mc{E}(h \cdot B)_T$ is then analytic in finitely many $B_{t_i}$. We show that $\E{H \mc{E}(h \cdot B)_T} = 0$ iff $H = 0$ by continuing along these lines, and crucially by using the Fourier representation of analytic functions. This shows the result, as for $U$ a Hilbert subspace, if the orthogonal component $U^{\top} = \{0\}$, then $\overline{U} = (U^{\top})^{\top} = \{0\}^{\top}$ which is the entire space, and thus $U$ is dense in the space.
+    }
+    \column{0.25}
+
+    \block{SDEs}{
     \begin{definition}
-    \ An adapted continuous $\mathbb{R}^N$-valued stochastic process $(X_t)$ on $(\Omega, \mc{F}, (\mc{F}_t), \P)$ is a weak solution of
+    \ An adapted continuous $\mathbb{R}^N$-valued stochastic process $(X_t)$ on $(\Omega, \mc{F}, (\mc{F}_t), \mathbb{P})$ is a weak solution of
     \begin{align*}
       \diff X_t^j = \sum_{i = 1}^n f^j_i(t, X_t) \, \diff B_t^i + f_0^j(t, X_t) \, \diff t \quad j \in \{1, \dots, N\}
     \end{align*}
@@ -242,6 +420,94 @@
     \end{definition}
     \hphantom{}
 
+    Intuitively, a strong solution requires no more randomness to be added, whereas a weak solution may involve writing $X_t = f(t, (B_s)_{s \le t}, \xi_t)$ for $\xi$ some `additional' randomness. \\
+
+    With this in place, we say that a solution is \emph{path-wise unique} if any two solutions on the same space with the same starting condition and Brownian motion must be equal, and it is \emph{unique in law} if two solutions (with possibly different Brownian motions) started with the same initialisation distribution must have the same distribution. It is an intuitive result that path-wise uniqueness implies uniqueness in law (although not trivial to prove). \\
+
+    As for PDEs, it is possible to solve linear SDEs explicitly. Take
+    \begin{align*}
+      \diff X^{(i)}_t &= \sum_{j = 1}^n \sigma_{ij} \diff B_t^{(j)} + \sum_{k = 1}^N \beta_{ik} X_t^{(k)} \diff t
+    \end{align*}
+    for $i \in [N]$. Writing this as $\diff X_t = \sigma \diff B_t + \beta X_t \diff t$, we can have the intuition that this should look like $e^{\beta t}$ (in the sense that works for a matrix). We thus apply It\^o's formula to $Y_t := e^{-\beta t} X_t$, and see that
+    \begin{align*}
+      X_t = e^{\beta t} X_0 + \int_0^t e^{\beta (t-s)} \sigma \diff B_s
+    \end{align*}
+    solves the SDE. As the integrand is deterministic, it is straightforward to see that $X_t$ has mean $e^{\beta t} \E{X_0}$, and variance via It\^o's isometry is $\int_0^t e^{2\beta(t-s)} \sigma^2 \diff s = \sigma^2 (e^{2\beta t - 1})/2\beta$. This forms the notion of a diffusion process. \\
+
+    \begin{definition}[Cameron-Martin's formula]
+    \ The Cameron-Martin's formula is
+    \begin{align*}
+      \diff X_t = \diff B_t + b(t, X_t) \diff t
+    \end{align*}
+    for $b(t, x)$ a bounded, Borel measurable function.
+    \end{definition}
+    \hphantom{}
+
+    This formula is important, as we are able to apply Girsanov's theorem to solve it. With $W$ a standard BM, and
+    \begin{align*}
+      \restr{\frac{\diff \mathbb{Q}}{\diff \mathbb{P}}}{\mc{F}_t} = \mc{E}\left(\int_0^{\cdot} b(s, W_s) \diff W_s\right)_t,
+    \end{align*}
+    as this is a martingale, thus $B_t := W_t - W_0 - \qvar{W, b(\cdot, W) \cdot W}_t$ is a continuous local martingale in $\mathbb{Q}$ by Girsanov's theorem. Furthermore, the quadratic variation of $B_t$ is $t$, and so by Levy's characterisation $B_t$ is a $\mathbb{Q}$-Brownian motion. Furthermore,
+    \begin{align*}
+      \diff B_t = \diff W_t - b(t, W_t) \diff t
+    \end{align*}
+    so $W_t$ solves our formula within $\mathbb{Q}$, providing a weak solution. This then leads to a straightforward (if slightly technical) generalisation to the multidimensional case. We may furthermore show uniqueness in law by arguing that for an arbitrary solution, we can perform a measure change to a Brownian motion, which will allow us to write the distribution of the solution in terms of the Wiener measure and $b$, ensuring that it is unique in law. \\
+
+    \innerblock{Existence and uniqueness}{
+      \begin{lemma}[Gronwall]
+    \ If we have $g, h : [0, T] \to \mathbb{R}$ with $h$ integrable, $\alpha \in \mathbb{R}$ such that for $t \in [0, T]$,
+    \begin{align*}
+      0 \le g(t) \le h(t) + \alpha \int_0^t g(s) \diff s,
+    \end{align*}
+    then
+    \begin{align*}
+      g(t) \le h(t) + \alpha \int_0^t e^{\alpha (t - s)}h(s) \diff s.
+    \end{align*}
+      \end{lemma}
+      \hphantom{}
+
+      This is an example of a bootstrapping lemma, as we're able to go from a quantity growing with respect to itself to argue that it therefore cannot blow up outside of the domain. Critically, we get a bound independent of $g$, and so we just want to find $h$ which is ideally polynomial to bound $g$ by exponential growth. \\
+
+      With this in place, we may then argue 
+      \begin{lemma}
+    \ Let $B$ be a standard BM in $\mathbb{R}$ on $(\Omega, \mc{F}_t, \mc{F}, \mathbb{P})$, $(Z_t)$, $(\widetilde{Z}_t)$ be two continuous adapted processes, $f(t, x)$ Lipschitz in the spatial argument, then with the continuous local martingale $M$ defined as
+    \begin{align*}
+      M_t = \int_0^t f(s, Z_s) - f(s, \widetilde{Z}_s) \diff B_s,
+    \end{align*}
+    we have
+    \begin{align*}
+      \E{\sup_{s \le t} |M_s|^2} \le 4C^2 \int_0^t \E{(Z_s - \widetilde{Z}_s)^2} \diff s
+    \end{align*}
+    for $t \ge 0$. \\
+
+    Furthermore, with $N$ a finite variation process defined as
+    \begin{align*}
+      N_t = \int_0^t f(s, Z_s) - f(s, \widetilde{Z}_s) \diff s,
+    \end{align*}
+    then
+    \begin{align*}
+      \E{\sup_{s \le t} |N_s|^2} \le C^2 t \int_0^t \E{(Z_s - \widetilde{Z}_s)^2} \diff s
+    \end{align*}
+      \end{lemma}
+      \hphantom{}
+
+      These inequalities are then critical for proving uniqueness. \\
+
+      \begin{theorem}
+    \ With $f : \rightopen{0}{\infty} \times \mathbb{R}^N \to \mathbb{R}^{N \times n}$, $g : \rightopen{0}{\infty} \times \mathbb{R}^N \to \mathbb{R}^N$ $B$ an $n$-BM, define the SDE:
+    \begin{align*}
+      \diff X_t = f(t, X_t) \diff B_t + g(t, X_t) \diff t.
+    \end{align*}
+    Then if each $f_{ij}$ and $g_i$ are Lipschitz in their spatial argument, and are also bounded by $C(1+|x|)$, then for any $L^2$ starting condition, there is a unique strong solution.
+      \end{theorem}
+      \hphantom{}
+
+      To argue this, we perform a Picard-like iteration to approximate the solution. \\
+
+      Moving slightly further, under the same conditions it can be shown that the solution is a.s. uniformly continuous in its (deterministic) starting position.
+    }
+    \hphantom{}
+
     \innerblock{Martingale problem}{
       In some cases, we want to convert the problem of finding a weak solution of an SDE where for $i \in [d]$,
       \begin{align*}
@@ -252,7 +518,8 @@
       To do this, note that for any $f \in C^2(\mathbb{R}^d)$,
       \begin{align*}
         \diff f(X_t) &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \diff X_t^i + \frac{1}{2}\sum_{i = 1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j} \diff \langle X^i, X^j \rangle_t \\
-                     &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \left(\sum_{k=1}^d \sigma^i_k(X_t) \diff B_t^k + b^i(X_t) \diff t\right) + \frac{1}{2}\sum_{i = 1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j}(X_t) \left(\sum_{k=1}^d \sigma_k^i(X_t) \sigma^j_k(X_t) \diff t\right) \\
+                     &= \sum_{i = 1}^d \frac{\partial f}{\partial x^i}(X_t) \left(\sum_{k=1}^d \sigma^i_k(X_t) \diff B_t^k + b^i(X_t) \diff t\right) \\
+        &\hphantom{=}+ \frac{1}{2}\sum_{i = 1}^d \sum_{j=1}^d \frac{\partial^2 f}{\partial x^i \partial x^j}(X_t) \left(\sum_{k=1}^d \sigma_k^i(X_t) \sigma^j_k(X_t) \diff t\right) \\
                      &= \sum_{i = 1}^d \sum_{k=1}^d \frac{\partial f}{\partial x^i}(X_t) \sigma^i_k(X_t) \diff B_t^k + Lf(X_t) \diff t
       \end{align*}
       where
@@ -273,29 +540,103 @@
       \begin{align*}
         M_t^{[f]} = f(X_t) - f(X_0) - \int_0^t Lf(X_s) \diff s
       \end{align*}
-      is a continuous local martingale. Indeed this occurs if and only if the same $(X_t)$ is a solution to the corresponding SDE. \\
+      is a continuous local martingale. Indeed this is basically accurate -- any weak solution to the SDE will solve the $L$-martingale problem provided $\sigma$ and $b$ are bounded and Borel measurable. The reverse direction is slightly more difficult, but essentially: if $\sigma$ is uniformly positive definite with eigenvalues bounded above and below, then any solution to the $L$-martingale problem is a solution to the SDE. \\
 
       An advantage of this formulation is that we don't require a definition of Brownian motion, and thus this approach can be generalised to manifolds.
-    }
+      }
   }
-  \column{0.5}
+
+  \column{0.25}
   \block{Local times}{
     We now seek to find cases where we can generalise the functions $f$ for which It\^o's formula applies. Indeed it is possible to show that if $f$ is convex and $X$ is a continuous semimartingale, then $f(X)$ is again a semimartingale with a similar formula, known as the generalised It\^o's formula. \\
 
-    To show this is essentially a task of prelims and part A analysis using a mollifier $\alpha \in C^\infty_0(\mathbb{R})$ with $\int_0^\infty \alpha(s) \, \mathrm{d}s = 1$. Writing $f_{\varepsilon} = f \ast \alpha_{\varepsilon}$ where $\alpha_{\varepsilon}(s) = \frac{1}{\varepsilon}\alpha(s/\varepsilon)$, one can then take limits in probability on It\^o's formula to get an adapted continuous process for any continuous semimartingale $X$,
+    To show this is essentially a task of prelims and part A analysis using a mollifier $\alpha \in C^\infty_0(\mathbb{R})$ with $\int_0^\infty \alpha(s) \, \mathrm{d}s = 1$. Writing $f_{\varepsilon} = (x \mapsto |x-a|) \ast \alpha_{\varepsilon}$ where $\alpha_{\varepsilon}(s) = \frac{1}{\varepsilon}\alpha(s/\varepsilon)$, $f_{\varepsilon} \overset{u}{\to} (x \mapsto |x-a|)$ as $\varepsilon \to 0$, so one can then take limits in probability on It\^o's formula to get an adapted continuous process for any continuous semimartingale $X$,
     \begin{align*}
       L_t^a = \frac{1}{2} \left(|X_t - a| - |X_0 - a| - \int_0^t \mathrm{sgn}(X_s - a) \, \diff X_s\right).
     \end{align*}
-    This is a definition of the local time of $X$ at $a$. \\
+    This is a definition of the local time of $X$ at $a$. The intuition here is that when $(X_t)$ is away from $a$, $|X_t - a|$ changes linearly in $X_t$, and so the continuous martingale process $\mathrm{sgn}(X_t - a) \diff X_t$ captures all of the change. $|X_t - a|$ is not quite a continuous local martingale however, due to its behaviour around $a$. \\
 
-    \textbf{Fill in - mainly need to figure out how we show that $f(X_t)$ is a semimartingale.} \\
+    To provide a heuristic: the discontinuity of the derivative of $x \mapsto |x-a|$ means that where $X_t + \diff X_t < a < X_t$ or $X_t \le a < X_t + \diff X_t$, in each case $|X_t - a| + \mathrm{sgn}(X_t - a) \diff X_t = -|X_t + \diff X_t - a|$ (put into words: around $a$, the weak derivative $\mathrm{sgn}(X_t - a)$ pushes the process too far over $a$, requiring a correction). Thus we see that, writing $|X_t + \diff X_t - a| = |X_t - a|$,
+    \begin{align*}
+      \diff |X_t - a| - \mathrm{sgn}(X_t - a) \diff X_t &= \begin{cases}
+        2|X_t - a| & \text{if } \mathrm{sgn}(X_t - a) \neq \mathrm{sgn}(X_t + \diff X_t - a) \\
+        0 & \text{otherwise.}
+        \end{cases}
+    \end{align*}
+    and indeed this defines $2\diff L^a_t$ almost exactly (and explains the constant $2$)! This gives us a stochastic process $L^a_t$ which accumulates by $\diff L^a_t = |X_t - a| \in [0, |\diff X_t|]$ when $X_t$ is close to $a$, and remains constant elsewhere. As we will see, there is a strong sense in which $L_t$ tracks the quadratic variation of $X_t$ around $a$ (or more roughly, the space covered by the `jitters' of the process over $a$).  \\
 
-    \begin{theorem}[Skorohod's equation]
+    In particular, $\int_0^t |X_s - a| \diff L_s^a = 0$, which may be seen through IBP. \\
+
+    We claim that if $X$ is a continuous semimartingale, then for \emph{any} convex function $f$, $f(X_t)$ is a continuous semimartingale. This argument involves writing
+    \begin{align*}
+      f(x) = \alpha_n + \beta_n x + \frac{1}{2}\int_{-n}^n |x - z| \diff f'_+(z)
+    \end{align*}
+    and then applying Tanaka's formula for $L_t^a$ localised by hitting times of $n$, then taking $n \to \infty$, we achieve
+    \begin{align*}
+      f(X_t) = f(X_0) + \int_0^t f'_-(X_s) \diff X_s + \int_{-\infty}^{\infty} L^{z}_t \diff f'_+(z).
+    \end{align*}
+    Indeed if no discontinuity exists and $f \in C^2$, we may apply It\^o's standard formula to observe that
+    \begin{align*}
+      \frac{1}{2}\int_0^t f''(X_s) \diff \qvar{X}_s = \int_{-\infty}^{\infty} L^z_t f''(z) \diff z.
+    \end{align*}
+    giving a strong sense in which $2L^z_T \diff z = \mathbf{1}_{t \le T}\diff\qvar{X}_t$ (for continuous non-negative, and thus also bounded measurable functions). We can then go further with the below result. \\
+
+    \begin{theorem}[Occupation time]
+    \ If $X$ is a continuous semimartingale, and $\int_0^t \mathbf{1}_{\{a\}}(X_s) \diff A_s \equiv 0$, then
+    \begin{align*}
+      \lim_{\varepsilon \to 0} \frac{1}{4\varepsilon} \int_0^t \mathbf{1}_{(a - \varepsilon, a + \varepsilon)}(X_s) \diff \qvar{X}_s = L_t^a.
+    \end{align*}
+    In particular, note that this applies for a standard BM.
+    \end{theorem}
+    \hphantom{}
+
+    This is immediate from the above. We may then apply this to prove a comparison theorem.\\
+
+    \begin{theorem}[Ordering of SDEs]
+    \ Let $\sigma$, $b^{(1)}$ and $b^{(2)}$ be real-valued Lipschitz continuous functions on $\mathbb{R}$, and let $X^{(1)}$ and $X^{(2)}$ be strong solutions to
+    \begin{align*}
+      \diff X^{(i)}_t = \sigma(X^{(i)}_t) \diff B_t + b^{(i)}(X^{(i)}_t) \diff t.
+    \end{align*}
+    Then if $X^{(1)}_0 \ge X^{(2)}_0$ almost surely, and $b^{(1)} \ge b^{(2)}$, then $X^{(1)}_t \ge X^{(2)}_t$ almost surely.
+    \end{theorem}
+    \hphantom{}
+
+    This result uses Tanaka's formula to evaluate the negative part of the difference between the two, and identify that it is identically zero almost surely. \\
+
+    \begin{theorem}[Regularity of local time]
+      \ Let $X = X_0 + M + A$ be a continuous semimartingale, $L_t^a$ be its local time at $a$. Then almost surely, $L_t^a$ is jointly continuous in $t \in (0, \infty)$ and right-continuous in $a \in \mathbb{R}$ (so any convergent sequence $(t_n, a_n)$ where $(a_n)$ is decreasing will have $L_{t_n}^{a_n}$ converge). Furthermore, $L_t^{a-}$ exists almost surely, and where it does
+      \begin{align*}
+        L_t^a - L_t^{a-} = \int_0^t \chi_{X_s = a} \diff A_s.
+      \end{align*}
+      Thus we get full joint continuity a.s. wherever this integral is zero.
+    \end{theorem}
+    \hphantom{}
+
+    Note firstly that, provided we localise to bound $M$, $A$, and $V(A)$, the only problematic (not trivially continuous) term in $L_t^a$ is the $\int_0^t \mathrm{sgn}(X_s - a) \diff M_s$ for $M$ the martingale part of $X$ (continuity and finite variation allow us to deal with the other side). For this term, we use the Kolmogorov-\v{C}entsov criterion, giving H\"older continuity of stochastic process sample paths when we have a stronger continuity of the moments of their differences:
+    \begin{align*}
+      \E{\left|N(a)_t - N(b)_s\right|^{2p}}&= \E{\left| \int_0^t \mathrm{sgn}(X_u - a) \diff M_u - \int_0^s \mathrm{sgn}(X_u - b) \diff M_u\right|^{2p}} \\
+      &= \E{\left|\int_s^t \mathrm{sgn}(X_u - a) \diff M_u + \int_0^s \chi_{\leftopen{b}{a}}(X_u) \diff M_u\right|^{2p}} \\
+                                           &\le 2^{2p-1} \left(\E{\left|\int_s^t \mathrm{sgn}(X_u - a) \diff M_u\right|^{2p}} + \E{\left|\int_0^s \chi_{\leftopen{b}{a}}(X_u) \diff M_u\right|^{2p}}\right)
+    \end{align*}
+    where we use $|(x + y)/2|^p \le (|x|^p + |y|^p)/2$, plus the fact that the two martingales inside this sum are orthogonal. From here we may progress using BDG, plus being able to bound the latter term by $|a-b|^p$ using a separate argument with the functions $x \mapsto \frac12 (x - a)^{2} \chi_{x \le a}$. Subject to localisation, these all allow us to get continuity. To extend this then to the general case is done using the time-change $\tau_t = \inf \{s : \qvar{M}_s + V(A)_s + s > t\}$. \\
+
+    \begin{theorem}[Regularity of Brownian motion local time]
+    \ With $L_t^a$ the local time of a one-dimensional standard Brownian motion $W$, for $L, T > 0$, $p > 1$ there is a constant $C$ such that for $t, s \in [0, T]$, $a, b \in [-L, L]$,
+    \begin{align*}
+      \E{|L^a_t - L^b_s|^{2p}} \le C(|b-a|^p + |t-s|^p).
+    \end{align*}
+    Furthermore, $L_t^a$ is jointly H\"older continuous for $\alpha < 1/2$.
+    \end{theorem}
+    \hphantom{}
+
+    This comes out as an improvement of the prior proof. \\
+
+    \begin{theorem}[Skorokhod's equation]
       \ If $y \in C\rightopen{0}{\infty}$ is a continuous path in $\mathbb{R}$ with $y(0) \ge 0$, $\displaystyle k(t) = \left(\inf_{0 \le s \le t} y(s)\right)^-$, then $k$ is the unique continuous non-decreasing function on $\rightopen{0}{\infty}$:
       \begin{itemize}
               \item \ beginning at $0$;
               \item \ such that $y + k \ge 0$;
-              \item \ and which increases only on $(y + k)^{-1}(\{0\})$, so $\displaystyle \int_0^\infty \chi_{(y+k)^{-1}(0, \infty)}(t) \, \diff k(t)$.
+              \item \ and which increases only on $(y + k)^{-1}(\{0\})$, so $\displaystyle \int_0^\infty (1 - \mathbf{1}_{\{0\}}(y(t) + k(t))) \, \diff k(t) = 0$.
       \end{itemize}
     \end{theorem}
     \hphantom{}
@@ -304,15 +645,13 @@
 
     The consequence for our purposes comes from noting the relation to Tanaka's formula. $2L_t^a$ in this case reflects exactly the definition of $k$ in relation to
     \begin{align*}
-    y(t) = \int_0^t \mathrm{sgn}(X_s - a) \ \diff X_s + |X_0 - a|
+    y(t) = \int_0^t \mathrm{sgn}(X_s - a) \ \diff X_s + |X_0 - a|.
     \end{align*}
-    Thus we get
+    This is because we can show that $\int_0^{t} |X_s - a| \diff L_s^a = 0$ using It\^o, Tanaka, and IBP, and consequently that $L_t^a$ increases only on $X_s = a$. This gives us that
 
     \begin{align*}
-      L_t^a = \frac{1}{2} \left(|X_0 - a| + \inf_{0 \le s \le t} \int_0^s \mathrm{sgn}(X_r - a) \ \diff X_r\right)^-
+      L_t^a = \frac{1}{2} \left(|X_0 - a| + \inf_{0 \le s \le t} \int_0^s \mathrm{sgn}(X_r - a) \ \diff X_r\right)^-.
     \end{align*}
-
-
   }
 \end{columns}
 \end{document}

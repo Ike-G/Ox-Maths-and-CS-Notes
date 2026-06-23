@@ -1,5 +1,5 @@
 \documentclass{tikzposter} %Options for format can be included here
-\geometry{paperwidth=1200mm, paperheight=3000mm}
+\geometry{paperwidth=1900mm, paperheight=2400mm}
 \makeatletter
 \setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
 \setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
@@ -18,7 +18,8 @@
 \usepackage{xcolor}
 \usepackage{mathtools}
 \newcommand{\mc}{\mathcal}
-\renewcommand{\P}{\mathbb{P}}
+\newcommand\Pj{\mathbb{P}}
+\renewcommand{\P}[1]{\mathbb{P}\left(#1\right)}
 \newcommand{\E}{\mathbb{E}}
 \newcommand\Eb[1]{\mathbb{E}\big[#1\big]}
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
@@ -111,15 +112,21 @@
 \useinnerblockstyle[roundedcorners=0.2]{Default}
 \usenotestyle[roundedcorners=0]{Default}
 
-\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, \@author}}
+\makeatletter
+\newcommand\@courseauthor{}
+\newcommand\courseauthor[1]{\def\@courseauthor{#1}}
+\makeatother
+
+\settitle{\centering \color{titlefgcolor} {\Large \@title \, -- \, Notes written by \@author, based on the course and lecture notes of \@courseauthor}}
 
 % Title, Author, Institute
 \title{Probability on Graphs and Lattices}
 \author{Ike Glassbrook}
+\courseauthor{Christina Goldschmidt and Joost Jorritsma, 2025}
 \begin{document}
 \maketitle
 \begin{columns}
-  \column{0.5}
+  \column{0.25}
   \block{Uniform spanning trees}{
     \begin{definition}
     \ Let $G = (V, E)$ be a finite connected graph, $\mathcal{T}$ be the set of spanning trees of $G$. A random tree $\mathcal{T}$ is a uniform spanning tree (UST) if it is uniform on $\mathcal{T}$:
@@ -132,7 +139,7 @@
     This provides us with a first distribution on a random tree, although at this point it's slightly abstract, as we have no real way of simulating a UST at the moment if $|\mathcal{T}|$ is very large (and indeed we expect it often to be incredibly large). \\
 
    \begin{definition}[SRWs]
-   \ A \emph{simple random walk} (SRW) $(X_n)$ on a locally finite (all degrees finite) connected graph $G = (V, E)$ is a Markov chain with state-space $V$ and transition probabilities
+   \ A simple random walk (SRW) $(X_n)$ on a locally finite (all degrees finite) connected graph $G = (V, E)$ is a Markov chain with state-space $V$ and transition probabilities
    \begin{align*}
    p_{v, w} = \begin{cases}
    1/\degree_G(v) & \text{if } \{v, w\} \in E \\
@@ -142,9 +149,9 @@
    \end{definition}
 \hphantom{}
 
-Motivated by this, we can define the hitting time of a particular vertex $\tau_v$, the return time of a vertex $\tau^+_v$, and (new!) the \emph{cover time} of $G$, $t_{\mathrm{cov}} = \sup_{v \in V} \tau_v$. As standard, just because the cover time is infinite does not mean that the graph is not recurrent.
+Motivated by this, we can define the hitting time of a particular vertex $\tau_v$, the return time of a vertex $\tau^+_v$, and (new!) the \emph{cover time} of $G$, $t_{\mathrm{cov}} = \sup_{v \in V} \tau_v$. As standard, just because the cover time is infinite does not mean that the graph is not recurrent (see).
 
-We have a very well-behaved SRW for finite connected graphs, as our DBEs are satisfied for $\pi_v \propto \degree_G(v)$ -- \textbf{consider the case where $E = \infty$, as even locally finite graphs seem to indicate difficulties}. \\
+We have a very well-behaved SRW for finite connected graphs, as our DBEs are satisfied for $\pi_v \propto \degree_G(v)$. We may observe in other cases either null-recurrence ($\mathbb{Z}^d$, $d \le 2$) or transience ($\mathbb{Z}^d$, $d > 2$). \\
 
   \begin{definition}[Aldous-Broder algorithm]
   \ For a connected recurrent graph $G$, an SRW $(X_n)$ ran from $X_0 \in V$, we define a random tree $T$ by
@@ -153,6 +160,8 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
   \end{align*}
   \end{definition}
   \hphantom{}
+
+  The intuition is that we have an ant which at each move charts the edge they've just crossed whenever it arrives into \emph{new territory} (note in particular $X_0$ is not new territory). As it continues walking, this territory built of edges will gradually expand as a tree. \\
 
   \begin{theorem}
   \ Aldous-Broder samples a UST.
@@ -173,6 +182,8 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
   \end{definition}
   \hphantom{}
 
+  The intuition here is that we start with an external vertex, take a walk until it hits the graph, then straighten out the walk and attach it to the tree. \\
+
   \begin{theorem}
   \ Wilson's algorithm samples a UST.
   \end{theorem}
@@ -184,17 +195,25 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
   \begin{align*}
     x_{k+1} = \begin{cases}
       v_0 & \text{if } i = 0 \\
-      w_i^{(\#\{j \le k \,:\, x_j = v_i\})} & \text{otherwise}.
+      w_i^{(1+\#\{j \le k \,:\, x_j = v_i\})} & \text{otherwise}.
       \end{cases}
   \end{align*}
   In other words, $w_i^{(l)}$ is where we go from vertex $v_i$ on having visited it on the $l$th occasion. We can conceive of the loop-erasure process as recovering the path $(x_n)$ subject to ``loop-popping'' by `popping' the first $w_i$ from the stack of instructions if $v_i$ is involved in a cycle in the process $(x_n)$. Thus we want to eventually pop enough instructions such that the edge set defined by $(w_i^{(1)})$ contains no cycles, and our concern is whether this rejection sampling allows us to maintain uniformity of the sample. \\
 
   \begin{lemma}[Cycle popping lemma]
-  \ For any choice of $(w^{(k)}_i)_{k \ge 1, i \in \{1, \dots, n-1\}}$, and any order of cycle-popping, the number of cycles popped $N$ is the same, and if $N < \infty$, the tree generated $t$ is the same.
+  \ For any choice of $(w^{(k)}_i)_{k \ge 1, i \in \{1, \dots, n-1\}}$, the number of cycles popped $N$ is the same irrespective of the ordering of cycle-popping, and if $N < \infty$, the tree generated $t$ is similarly independent of the ordering.
   \end{lemma}
   \hphantom{}
 
-  If we then say that each $w_i^{(l)}$ is an i.i.d. choice from the vertices adjacent to $v_i$, then the probability that we get a particular tree \textbf{finish this} \\
+  If we then say that each $w_i^{(l)}$ is an i.i.d. choice from the vertices adjacent to $v_i$, then for any $t$ a spanning tree, $C_1, \dots, C_m$ a poppable sequence of cycles, then with
+  \begin{align*}
+    A := \{t \text{ is formed by popping the cycles } C_1, \dots, C_m \text{ from the graph formed by } (w_i^{(\ell)})\},
+\end{align*}
+we get by the independence of all $(w^{(\ell)}_i)$ that
+\begin{align*}
+    \P{A} &= \prod_{k = 1}^m \prod_{v_i w^{(\ell)}_i \in C_k} \frac{1}{\mathrm{deg}_G(v_i)} \times \prod_{v_i \in V(G) \setminus \{v_0\}} \frac{1}{\mathrm{deg}_{G}(v_i)}.
+  \end{align*}
+  Crucially, $\P{C_1, \dots, C_m \text{ are the popping cycles}}$ has the exact same first term, allowing us to identify that $\P{T = t \,\middle|\, C_1, \dots, C_m \text{ are the popping cycles}}$ is constant in choices of $m, C_1, \dots, C_m$. Thus $T$ must be uniformly chosen from spanning trees. \\
 
   Any spanning tree must have $|V|-1$ edges, as any more and we would have a cycle, any less we would not be able to form distinct paths to each vertex in the graph. Consequently we would expect that one edge being in a graph makes it less likely for another vertex to be in the graph (negative association). We can make this precise:
   \hspace{1em}
@@ -206,11 +225,21 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
           and more generally with $A$, $B$ disjoint acyclic collections of edges, $\mathbb{P}(B \subseteq E(T) \,|\, A \subseteq E(T)) \le \mathbb{P}(B \subseteq E(T))$.
           \item Let $H$ be a connected subgraph of $G$, $T_H$ a UST on $H$. Then for $A \subseteq E(H)$,
           \begin{align*}
-            \mathbb{P}(A \subseteq E(T_H)) \ge \mathbb{P}(A \subseteq E(T))
+            \mathbb{P}(A \subseteq E(T_H)) \ge \mathbb{P}(A \subseteq E(T)).
           \end{align*}
   \end{enumerate}
+  The conditional distribution of $T$ on $e' \in E(T)$ is the UST distribution on $G'$ defined by merging the endpoints of $e'$ in $G$. This may be seen by noting a bijection between the two sets of USTs. \\
+
+  Starting Aldous-Broder at $u$, where $e = (u, v)$, we see that
+  \begin{align*}
+    \P{e \in E(T)} = \frac{1}{\mathrm{deg}(u)} + \P{\tau_u < \tau_v} \P{e \in E(T)}
+  \end{align*}
+  so $\P{e \in E(T)} = \frac{1}{\mathrm{deg}(u) \P{\tau_v < \tau_u}}$. As $e, e'$ have disjoint endpoints, the degree of $u$ doesn't change between $G$ and $G'$ , so it remains to argue that $\P{\tau_v < \tau_u}$ is increased by merging the endpoints of $e'$. \\
+
+  Proposition (b) is obvious by a coupling of Wilson's algorithm: adding more vertices to the $(w^{(\ell)}_i)$ parametrisation means that if there are cycles in $H$, there must be cycles in $G$, so thus if there are no cycles in $G$ and the spanning tree contains $A$, then the same must be the case for $H$. \\
+
   \innerblock{Infinite Graphs}{
-    We have no immediate conception from the work already done for what a uniform spanning tree might look like on an infinite graph, as once the set of spanning trees becomes infinite we have no means of picking one uniformly. Indeed for any infinite connected graph, if it has a cycle then the set of spanning trees is infinite (although if the graph is already a tree then there is only one such tree). \\
+    We have no immediate conception from the work already done for what a uniform spanning tree might look like on an infinite graph, as once the set of spanning trees becomes infinite we have no means of picking one uniformly. \\
 
     \begin{definition}
     \ Let $G$ be an infinite connected graph. An exhaustion $(G_n)$ of $G$ is a sequence of finite connected graphs induced by the increasing sequence $V_1 \subset V_2 \subset \cdots \subset \bigcup_{n \ge 1} V_n = V(G)$.
@@ -221,9 +250,11 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
 
     Our probability space on random trees can be constructed relatively easily with $\Omega(G) = \{0, 1\}^{E(G)}$, so each $\omega$ defines the edges included. We then say that $\mu_n$ a sequence of probability measures on $(\Omega(G), \mathcal{B}(\Omega(G)))$ if $\mu_n(\mathcal{C}) \to \mu(\mathcal{C})$ for all cylinder events $\mathcal{C}_{A, B} = \{\omega \in \Omega(G) : \omega^{-1}(\{0\}) \subseteq A, \omega^{-1}(\{1\}) \subseteq B\}$ for $A, B \subseteq E(G)$ finite. \\
 
-    Our goal now is to show that with measures $\mu_{T_n}$ on the sequence of USTs $(T_n)$ with respect to $(G_n)$, we get a measure $\mu^F$ as the weak limit, and indeed that this limit is independent of the choice of exhaustion. \textbf{Argue this}. \\
+    Our goal now is to show that with measures $\mu_{T_n}$ on the sequence of USTs $(T_n)$ with respect to $(G_n)$, we get a measure $\mu^F$ as the weak limit, and indeed that this limit is independent of the choice of exhaustion. \\
 
-    The graph with measure $\mu^F$ has no cycles, and has no finite components, with probability 1. It is also invariant under graph automorphisms, which follows from seeing that the limit is independent of the exhaustion choice. \\
+    This may be seen by taking $(V_n)$, $(V'_n)$, and finding a sub-exhaustion of both which bounds their limits below. To do this, take $k$ large enough to find a vertex $v_1 \in V_1 \land V'_k$, then define $(\overline{G}_n)$ as the connected component containing $v_1$ in $V_n \land V'_{n+k-1}$. This gives a common lower bound to both of the limits, and furthermore we can then take a subsequence of this exhaustion which contains $(V_n \cup V'_n)$ and thus sandwiches the limit. \\
+
+    The graph with measure $\mu^F$ has no cycles (as any cycle must be finite, so eventually excluded in the limit), and has no finite components (for the same reason), with probability 1. It is also invariant under graph automorphisms, which follows from seeing that the limit is independent of the exhaustion choice. \\
 
     \begin{definition}
       \ For $G$ an infinite graph, $(G_n)$ an exhaustion, let $\partial G_n \subseteq V_n$ be the set of boundary vertices (those connected to $V \setminus V_n$), and the wired subgraph (counting edge multiplicity)
@@ -241,16 +272,19 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
       \mu_{T_n}^W(\mathcal{C}_A) \le \mu_{T_{n+1}}^W(\mathcal{C}_A)
     \end{align*}
     \end{claim}
-    Proof found in Grimmett, Proability on Graphs, but non-examinable. \\
+    Proof found in Grimmett, Probability on Graphs, but non-examinable. \\
 
     An immediate result is that the limit exists, and that the measure is dominated by the measure on FUSF of the same graph. \\
 
-    Critically, our question as it relates to infinite graphs is whether we can extend Aldous-Broder and Wilson's algorithm to define a UST in their case. Immediately, given recurrence, both algorithms are well-defined. We then intend to use the wired subgraph in order to approximate Wilson's algorithm on the infinite graph.
+    Critically, our question as it relates to infinite graphs is whether we can extend Aldous-Broder and Wilson's algorithm to define a UST in their case. Immediately, given recurrence, both algorithms are well-defined. We then intend to use the wired subgraph in order to approximate Wilson's algorithm on the infinite graph. \\
+
+    It turns out that for connected infinite recurrent graphs $G$, the FUSF and WUSF have the same law, and each are a.s. connected. This may be seen by studying Wilson's algorithm extended to the infinite case. In the transient case there may be differences however -- the rooted infinite binary tree has FUSF itself, while its WUSF has infinitely many components. If we extend Wilson's algorithm by allowing paths to be infinite before they are loop-erased, this generates the WUSF. 
   }
   }
 
+  \column{0.25}
   \block{Percolation}{
-    We denote by $\P_p$ the product measure on $\Omega_G$ with probability $p$ that independency each edge is open. \\
+    We denote by $\Pj_p$ the product measure on $\Omega_G$ with probability $p$ that independency each edge is open. \\
 
     \begin{definition}
     \ For $\omega \in \Omega_G$, $x, y \in V(G)$, $x \leftrightarrow y$ if there is a path of open edges between $x$ and $y$, and we define the cluster of $x$ as $C(x) = \{y \in V(G) : x \leftrightarrow y\}$. When the cluster is infinite, we say that there is a percolation, or that $x$ percolates.
@@ -264,7 +298,7 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
 
     For vertex transitive $G$, the each cluster is identically distributed. Consequently, we generally just use $G = \mathbb{Z}^d$. \\
     \begin{definition}
-    \ The percolation probability is $\theta(p) := \P_p(0 \leftrightarrow \infty)$
+    \ The percolation probability is $\theta(p) := \Pj_p(0 \leftrightarrow \infty)$
     \end{definition}
     \hphantom{}
 
@@ -280,7 +314,7 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{definition}
     \hphantom{}
 
-    We wish to claim that for $d \ge 2$, there exist $0 < p < p' < 1$ such that $0 = \theta(p) < \theta(p')$. In order to claim this, we would like to compare the probability that the cluster around $0$ is finite with the probability that there exists an open cycle in the dual graph around $0$, and we do this through finding an upper bound on the number of cycles of length $n$ around $0$ in $\mathbb{Z}^2_{\mathrm{dual}}$, which allows us to see that $\P_p(|C(0)| < \infty) \to 0$ as $p \to 1$. \\
+    We wish to claim that for $d \ge 2$, there exist $0 < p < p' < 1$ such that $0 = \theta(p) < \theta(p')$. In order to claim this, we would like to compare the probability that the cluster around $0$ is finite with the probability that there exists an open cycle in the dual graph around $0$, and we do this through finding an upper bound on the number of cycles of length $n$ around $0$ in $\mathbb{Z}^2_{\mathrm{dual}}$, which allows us to see that $\Pj_p(|C(0)| < \infty) \to 0$ as $p \to 1$. \\
 
     Noting that the property of there existing an infinite cluster is a tail event in edges, by Kolmogorov's theorem we can see that if $\theta(p) > 0$, thus there exists an infinite cluster almost surely. \\
 
@@ -308,8 +342,6 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{definition}
     \hphantom{}
 
-    Intuition: a witness set on $A$ for $\omega$ is a set of edges such that $A$ contains all such samples which `witness' the particular state of those edges laid out by $\omega$. \\
-
     \begin{definition}
     \ Given $A, B \subseteq \Omega_G$, the disjoint occurrence of $A$ and $B$ is
     \begin{align*}
@@ -317,39 +349,54 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{align*}
     \end{definition}
 
-    Intuition: $A \circ B$ is the event in $A \cap B$
+    Intuition: $A \circ B$ is the event that $A$ and $B$ both occur, but strictly \emph{along different arms} in the percolation. For example, $\{u \leftrightarrow v\} \circ \{w \leftrightarrow x\}$ is the event that two disjoint paths exist: one from $u$ to $v$, and another from $w$ to $x$. \\
 
     \begin{lemma}[BK Inequality]
       With $A, B \subseteq \Omega_G$ increasing events, each depending on only finitely many edges,
       \begin{align*}
-        \P_p(A \circ B) \le \P_p(A) \P_p(B).
+        \Pj_p(A \circ B) \le \Pj_p(A) \Pj_p(B).
       \end{align*}
     \end{lemma}
 
+    Crucially, this reverses the Harris inequality, because no longer does edge presence for $A$ make $A \circ B$ any more likely -- rather, edge presence for $A$ means $B$ must be satisfied using a path away from $A$ in order for $A \circ B$ to hold. \\
+
+    \innerblock{Subcritical regime}{
     \begin{theorem}
-    \ With $\Lambda(n) = \overline{B}^{\infty}(n) \subseteq \mathbb{Z}^d$, $p \in (0, p_c)$, there is a constant $\gamma = \gamma(p) > 0$ such that
+      \label{thm:boundary-hitting-exp-tails}
+    \ With $\Lambda(n) = [-n,n]^d \cap \mathbb{Z}^d$, $p \in (0, p_c)$, there is a constant $\gamma = \gamma(p) > 0$ such that
     \begin{align*}
-      \P_p(0 \leftrightarrow \partial \Lambda(n)) \le e^{-\gamma n}.
+      \Pj_p(0 \leftrightarrow \partial \Lambda(n)) \le e^{-\gamma n}.
     \end{align*}
     \end{theorem}
 
-    Essentially, the probability that we hit $\partial \Lambda(n)$ decays exponentially when $p$ is subcritical (although clearly is $1$ for $p$ supercritical). Note however we also have a lower bound on this probability as $p^n$. \\
+    Essentially, the probability that we hit $\partial \Lambda(n)$ decays exponentially when $p$ is subcritical (although clearly is $1$ for $p$ supercritical). Note however we also have a lower bound on this probability in $p^n$, so the asymptotics are exactly exponential. \\
 
     Indeed, we see from this that the mean cluster size around $0$ is finite. \\
 
+    If it is already known that $\E{|\mc{C}(0)|} < \infty$ (or more specifically, that $\E{|\mc{C}(0) \cap \partial \Lambda(n)} < 1$ eventually), then we may use BK inequality to recover theorem~\ref{thm:boundary-hitting-exp-tails}.
+    }
+    \hphantom{}
+
+    \innerblock{Supercritical regime}{
     \begin{lemma}
-    \ Let $A \in \mc{B}_G$ be an event. For $\varepsilon > 0$, there is $B \in \mc{B}_G$ that depends on only finitely many edges and such that $\P_p(A \triangle B) < \varepsilon$.
+    \ Let $A \in \mc{B}_G$ be an event. For $\varepsilon > 0$, there is $B \in \mc{B}_G$ that depends on only finitely many edges and such that $\Pj_p(A \triangle B) < \varepsilon$.
     \end{lemma}
     \hphantom{}
 
-    Consequently, we can show that an event invariant under automorphisms of $\mathbb{Z}^d$ must have trivial probability. We claim then that there is $k : [0, 1] \to \mathbb{N} \cup \{\infty\}$ such that $\P_p(N_\infty = k(p)) = 1$, where $N_\infty$ is the number of infinite clusters.
+    This is immediate from $\mc{B}_G$ being generated by the finite cylinder sets. The use of this fact is in approximating infinite events by finite ones, and critically that any event which is automorphism invariant must have trivial probability. \\
+
+    To show this, we just take $B$ a finite edge-measurable approximating event of the automorphism-invariant event $A$, and take an automorphism $\varphi$ such that the edges $B$ and $\varphi(B)$ depend on are disjoint. We then use an independence / Kolmogorov 0-1 style argument to claim that $\Pj_p(A) \le \Pj_p(A)^2$, and thus $A$ has trivial probability. \\
+
+    We claim then that there is $k : [0, 1] \to \mathbb{N} \cup \{\infty\}$ such that $\Pj_p(N_\infty = k(p)) = 1$, where $N_\infty$ is the number of infinite clusters. Furthermore,
 
     \begin{theorem}
     \ $k[0, 1] \subseteq \{0, 1\}$.
     \end{theorem}
     \hphantom{}
 
-    This is an improvement of a proof stated in this course that $k[0, 1] \subseteq \{0, 1, \infty\}$. \\
+    This is an improvement of a proof stated in this course that $k[0, 1] \subseteq \{0, 1, \infty\}$. To show this result, take $p$ s.t. $\theta(p) > 0$, so there is at least one infinite cluster, and assume that $\Pj(N_{\infty} < \infty) = 1$. Then by continuity of measure the probability that all of these clusters hit $\Lambda(n)$ is positive for $n$ large enough. Furthermore, the probability that all edges in $\Lambda(n)$ are open is positive for this fixed $n$, which connects these clusters and thus gives positive probability that $N_{\infty} = 1$. Thus $\P{N_{\infty} \in \{0, 1, \infty\}} = 1$.
+    }
+    \hphantom{}
 
     \innerblock{Critical probability in $\mathbb{Z}^2$}{
       \begin{theorem}[Kesten (1980)]
@@ -359,29 +406,116 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
 
       In particular, we get a continuous phase transition. \\
 
-      We first argue that $p_c \le 1/2$, demonstrating that $\P_{1/2}(0 \leftrightarrow \partial \Lambda(n))$ does not decay exponentially. Write $J_n$ as a square grid of vertices side $n$, $J'_n$ the dual box which meshes with it, and $L_n$, $R_n$, $T_n$, $B_n$ as expected. We write $H_n = \{L_n \overset{J_n}{\leftrightarrow} R_n\}$, $V_n = \{T_n \overset{J'_n}{\leftrightarrow} B_n\}$, and since a dual edge is open iff the primal edge is closed, either one or the other must happen, but not both. \\
+      We first argue that $p_c \le 1/2$, demonstrating that $\Pj_{1/2}(0 \leftrightarrow \partial \Lambda(n))$ does not decay exponentially. Write $J_n$ as a square grid of vertices side $n$, $J'_n$ the dual box which meshes with it, and $L_n$, $R_n$, $T_n$, $B_n$ as expected. We write $H_n = \{L_n \overset{J_n}{\leftrightarrow} R_n\}$, $V_n = \{T_n \overset{J'_n}{\leftrightarrow} B_n\}$, and since a dual edge is open iff the primal edge is closed, either one or the other must happen, but not both. \\
 
-      Consequently, we can bound $\P_{1/2}(0 \leftrightarrow \partial \Lambda(n)) \ge 1/(2n)$, which does not decay exponentially and thus $1/2$ cannot lie in the subcritical region. \\
+      Consequently, we can bound $\Pj_{1/2}(0 \leftrightarrow \partial \Lambda(n)) \ge 1/(2n)$, which does not decay exponentially and thus $1/2$ cannot lie in the subcritical region. \\
 
       We now demonstrate that $\theta(1/2) = 0$, by showing that assuming otherwise, we get infinite paths on the right and left side of $\Lambda(n)$, and the top and bottom sides of $\Lambda'(n)$ (in the dual) for $n$ large enough, and this means we cannot have a single connected cluster, which is a contradiction. Critically, we're repeatedly using the planarity of $\mathbb{Z}^2$ in this proof.
     }
   }
-  \column{0.5}
+  \column{0.25}
   \block{Ising model}{
+    Consider, for a finite graph $G$, a model for magnetisation viewed as a collection of polarised sites. Sites may either have up spin or down spin, and their distribution is such that they are encouraged to align with one another (with strength inversely proportional to the temperature $1/\beta$), while also being influenced by a global magnetisation $h$. \\
+
     \begin{definition}[Gibb's measure]
       \ Where
       \begin{align*}
-        \mathcal{H}^{\omega}_{G, \beta, h}(\sigma) &= -\left(\beta\sum_{{i, j} \in E \cap G^{(2)}} \sigma_i \sigma_j + \beta\sum_{{i, j} \in G \times \mathbb{Z}^d} \sigma_i \omega_j + h\sum_{i \in G} \sigma_i\right) \\
-        Z^{\omega}_{G, \beta, h} &= \sum_{\sigma \in \Omega_G} e^{-\mathcal{H}_{G, \beta, h}^\omega(\sigma)}
+        \mathcal{H}_{G, \beta, h}(\sigma) &= -\left(\beta\sum_{\{i, j\} \in E} \sigma_i \sigma_j + h\sum_{i \in G} \sigma_i\right) \\
+        Z_{G, \beta, h} &= \sum_{\sigma \in \Omega_G} e^{-\mathcal{H}_{G, \beta, h}(\sigma)}
       \end{align*}
       we define the Gibb's measure as
       \begin{align*}
-      \mu^{\omega}_{G, \beta, h}(\sigma) = \frac{e^{-\mathcal{H}^\omega_{G, \beta, h}(\sigma)}}{\sum_{\sigma \in \Omega_G} Z^\omega_{G, \beta, h}}.
+      \mu_{G, \beta, h}(\sigma) = \frac{e^{-\mathcal{H}_{G, \beta, h}(\sigma)}}{\sum_{\sigma \in \Omega_G} Z_{G, \beta, h}}.
     \end{align*}
     \end{definition}
     \hphantom{}
 
-    \textbf{Fill in up to Pott's model} \\
+    With the physical intuition in mind, we let
+    \begin{align*}
+      m_G(\omega) = \frac{1}{|V|} \sum_{i \in V} \sigma_i
+    \end{align*}
+    denote the average magnetisation of the system. This is critical to understanding the behaviour of the system under change in $\beta, h$. In particular, we are concerned with the phenomenon of \emph{spontaneous magnetisation}, where $\langle m_G \rangle_{G; \beta, h}$ is discontinuous in $h$. \\
+
+    We define the (deterministic) pressure by
+    \begin{align*}
+      \Psi_{G; \beta, h} = \frac{1}{|V|} \log Z_{G; \beta, h}.
+    \end{align*}
+    In the sense of magnetisation, this is possibly more easily understood as the system's `free energy'. It is useful as a quantity for understanding the average magnetisation, as
+    \begin{align*}
+      \frac{\partial \Psi_{G; \beta, h}}{\partial h} = \langle m_G \rangle_{G; \beta, h}
+    \end{align*}
+    and in fact we can get each of its moments through differentiation. \\
+
+    In order to capture an actual discontinuity, we need to make sense of $G$ being an infinite graph (in particular, an infinite lattice). We proceed in a similar way as when defining USTs of infinite graphs, by adding boundary conditions and then taking limits. Considering the model specifically on $\mathbb{Z}^d$, for any finite $V \subseteq \mathbb{Z}^d$ we take $\eta \in \{\pm 1\}^{\mathbb{Z}^d \setminus V}$ to be boundary conditions, and then let
+    \begin{align*}
+      \mc{H}^{\eta}_{G; \beta, h}(\sigma) &= -\left(\beta \sum_{\substack{\{i, j\} \in E \\ i, j \in V}} \sigma_i \sigma_j + \beta \sum_{\substack{\{i, j\} \in E \\ i \in V \\ j \in \mathbb{Z}^d \setminus V}} \sigma_i \eta_j + h \sum_{i \in V} \sigma_i\right) 
+    \end{align*}
+    with $Z_{G; \beta, h}^{\eta}$ and $\mu_{G; \beta, h}^{\eta}$ then defined in the same way as before with this new Hamiltonian. \\
+
+    Of particular use are the trivial boundary conditions of `all up' ($\eta = +$) and `all down' ($\eta = -$), which serve as useful extreme cases. \\
+
+    With $(V_n)$ an exhaustion, $(\eta_n)$ some sequence of boundary conditions, this construction then allows us to, as before, take a weak limit of $\mu^{\eta_n}_{G_n; \beta, h}$ by operating on increasing cylinder events. \\
+
+    \begin{theorem}[FKG inequality]
+      For $G$ a finite subgraph of $\mathbb{Z}^d$, for increasing functions $f, g : \{\pm 1\}^{\mathbb{Z}^d} \to \mathbb{R}$,
+      \begin{align*}
+        \langle fg \rangle^{\eta}_{G; \beta, h} \ge \langle f \rangle_{G; \beta, h}^{\eta} \langle g \rangle_{G; \beta, h}^{\eta}.
+      \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    This is once again a positive association result, as seen for percolation. \\
+
+    \begin{theorem}[Spatial Markov]
+    \ For finite subgraphs $G' \subseteq G \subseteq \mathbb{Z}^d$, the measure $\mu^{\eta}_{G'; \beta, h}$ on $G'$ is precisely the measure $\mu^{\eta}_{G; \beta, h}$ conditioned on the boundary conditions $\eta$ applied to $V(G) \setminus V(G')$.
+    \end{theorem}
+    \hphantom{}
+
+    This may be shown through explicit calculation. \\
+
+    A common trick leveraging both of these results is to write 
+    \begin{align*}
+      \langle f \rangle^+_{G'} = \frac{\langle f \chi_{\sigma_{V(G) \setminus V(G')} = +1} \rangle^+_{G}}{\mu^+_{G}(\sigma_{V(G) \setminus V(G')} = +1)} \ge \langle f \rangle^+_G
+    \end{align*}
+    and more generally to utilise characteristic functions in the FKG inequality. \\
+
+    Applying this amongst other results, we can see that $\mu^+_{G_n}$ (resp. $\mu^-_{G_n}$) decreases (resp. increases) monotonically to $\mu^+$ (resp. $\mu^-$). Furthermore, these limiting measures are exhaustion invariant, and translation invariant. \\
+
+    With this setup, it may be seen that for locally increasing functions $f$ (dependent on finitely many sites), for any infinite-volume Gibbs measure $\mu$ on $\mathbb{Z}^d$ (a measure obtained as the limit for a particular exhaustion and boundary condition function),
+    \begin{align*}
+      \langle f \rangle^- \le \langle f \rangle_{\mu} \le \langle f \rangle^+.
+    \end{align*}
+    This leaves us with an interesting situation, as clearly the ideal result, giving us a unique Gibbs measure, would be that $\mu^-_{\beta, h} = \mu^+_{\beta, h}$ for all $\beta, h$. \\
+
+    In fact we have that this is equivalent to $\langle \sigma_0 \rangle^- = \langle \sigma_0 \rangle^+$ (and if $h = 0$, this in itself is equivalent to both being equal to $0$). \\
+
+    With this idea, it is often natural to understand the existence of a phase transition as being equivalent to the Gibbs measure being non-unique for the particular parametrisation. \\
+
+    \begin{theorem}
+    \ The expected spin at the origin under the $\pm$ measures are equal to the partial derivatives of $\Psi$ with respect to $h$ taken from the right and left respectively:
+    \begin{align*}
+      \langle \sigma_0 \rangle^{\pm} = \frac{\partial \Psi}{\partial h^{\pm}}.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
+    \innerblock{Phase transition}{
+      We consider $d = 2$ specifically, and demonstrate that there exists a critical inverse temperature $\beta_c$ such that there is a first-order phase transition at $(\beta, 0)$ for $\beta > \beta_c$, so $\langle \sigma_0 \rangle^+_{\beta} > \langle \sigma_0 \rangle^-_{\beta}$. \\
+
+      Specifically, it's sufficient to show that $\mu^+(\sigma_0 = -1) < 1/2$ for sufficiently large $\beta$. From here onwards, we assume $+$ve boundary conditions outside of $\Lambda(n)$. \\
+
+      We construct within $\Lambda(n)$ the random set $B \subseteq E'(\mathbb{Z}^d)$ which is the set of dual edges between oppositely polarised sites. As such, it may be seen that this set forms a collection of boundaries between $+$ve and $-$ve spins, and thus can be decomposed into cycles. \\
+
+      If $\sigma_0 = -1$, then by construction there must be a cycle in $B$ which contains $0$. We therefore want to show that the probability of any particular cycle around $0$ being in $B$ is low. To do this, we note that the Hamiltonian is specifically equal to $\beta\left(2\sum_{\gamma_i \subseteq \bigcup_{i} \gamma_i = B} |\gamma_i| - |E(\Lambda(n))|\right)$, and that therefore switching the values of sites contained in any particular cycle $\gamma$ will specifically remove $\gamma$ from $B$, and so if $\gamma \in B(\omega)$,
+      \begin{align*}
+        \mu^+_{\Lambda(n); \beta, 0}(\omega) = e^{-2\beta |\gamma|} \mu^+_{\Lambda(n); \beta, 0}(s_{\gamma}(\omega))
+      \end{align*}
+      thus giving an $e^{-2\beta|\gamma|}$ upper bound on the probability of $\gamma \subseteq B$. As any length $\ell$ cycle around $0$ must cross the positive $y$-axis no higher than $\ell/2$, there are $\le (\ell/2) 3^{\ell - 1}$ such cycles, and we're able to use both of these to get the desired bound.
+    }
+    \hphantom{}
+
+    \innerblock{Related models}{
+      We now consider two other models which relate: the Potts model, and the Random cluster model. The former generalises by introducing arbitrarily many spin states, which may now more easily be referred to as colourings. The notion of an external magnetic field no longer makes sense in this context, so it is taken to be zero. The latter is a generalisation of the \emph{tendency towards clusters} induced by the Ising model. \\
 
     \begin{definition}[Potts model]
       \ With $\omega \in [q]^V$:
@@ -390,6 +524,8 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
       \end{align*}
     \end{definition}
     \hphantom{}
+
+    For $q = 2$ this immediately reduces back to the Ising model, but otherwise this is a slightly more general object. \\
 
     \begin{definition}[Random cluster model]
     \ With $\omega \in \{0, 1\}^E$, $k(\omega)$ the number of connected components in the configuration $\omega$, $q \in (0, \infty)$, $p \in (0, 1)$:
@@ -400,7 +536,13 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{definition}
     \hphantom{}
 
-    We can then couple these models: generate $\omega \in \{0, 1\}^E$ according to $\phi_{p, q}$ with $p = 1 - e^{-\beta}$, and then assign a colour from $[q]$ to each component $C$ of $\omega$, thus inducing a configuration $\sigma \in [q]^V$. \\
+    For $q = 2$ there is a standard coupling which allows us to recover the Ising model from the random cluster model. Writing each configuration of the Ising model as $\sigma \in \{\pm 1\}^{V}$, take
+    \begin{align*}
+      \mu(\sigma, \omega) = \frac{1}{Z} \prod_{e \in \omega} p \chi_{\sigma_i = \sigma_j} \prod_{e \not \in \omega} (1-p).
+    \end{align*}
+    It may be shown that this is a coupling of the Ising model for $\beta = 1-e^{-2\beta}$, $h = 0$ with the RC model for $q = 2$. \\
+
+    A crucial property of the Potts and Random cluster models is found in a coupling: Generate $\omega \in \{0, 1\}^E$ according to $\phi_{p, q}$ with $p = 1 - e^{-\beta}$, and then assign a colour from $[q]$ to each component $C$ of $\omega$, thus inducing a configuration $\sigma \in [q]^V$. This will then be distributed according to the Potts measure. \\
 
     \begin{theorem}
     \ $\sigma$ is distributed according to $\pi_{G; q, \beta}$.
@@ -410,7 +552,9 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     Just by writing out the probability of generating $\sigma$ under $\phi_{p, q}$, the result follows from algebra. \\
 
     Consequently, we see that the random cluster model is a generalisation of the Potts model, itself a generalisation of the Ising model.
+    }
   }
+  \column{0.25}
   \block{Mixing times}{
     We consider now an irreducible and aperiodic discrete-time Markov chain $(X_n)$. \\
 
@@ -422,11 +566,11 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{definition}
     \hphantom{}
 
-    This is a metric, with which we can define the proximity of a markov chain to stationarity:
+    This is a metric, with which we can define the proximity of a Markov chain to stationarity:
     \begin{align*}
       d(n) = \max_{x \in S} |P^n_s - \pi |_{\mathrm{TV}}
     \end{align*}
-    where $\pi$ is the stationary distribution of $(X_n)$, $P^n_x(y) = \P(X_n = y \,|\, X_0 = x)$.
+    where $\pi$ is the stationary distribution of $(X_n)$, $P^n_x(y) = \Pj(X_n = y \,|\, X_0 = x)$. \\
 
     \begin{definition}
     \ The $\varepsilon$-mixing time for $\varepsilon > 0$ is
@@ -435,28 +579,82 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{align*}
     \end{definition}
 
-    Note $\varepsilon \ge 1$ gives trivial results, so we often put $\varepsilon = 1/4$ arbitrarily. \\
+    Note $\varepsilon \ge 1$ gives trivial results, and (as we shall see) gives monotonic behaviour, so we often put $\varepsilon = 1/4$ arbitrarily. \\
 
     \begin{lemma}
     \ Let $\mu, \nu$ be probability measures on $S$ finite. Then
     \begin{align*}
-      | \mu - \nu |_{\mathrm{TV}} = \inf \{\P(X \neq Y) \,|\, \P \circ X^{-1} \equiv \mu, \P \circ Y^{-1} \equiv \nu\}
+      | \mu - \nu |_{\mathrm{TV}} = \inf \{\Pj(X \neq Y) \,|\, \Pj \circ X^{-1} \equiv \mu, \Pj \circ Y^{-1} \equiv \nu\}
     \end{align*}
     \end{lemma}
     \hphantom{}
 
-    \begin{lemma}
+    This may be seen as
     \begin{align*}
-      d(n) \le \max_{x, y \in S} |P^n_x - P^n_y|_{\mathrm{TV}}
+      |\mu - \nu|_{\mathrm{TV}} &= \max_{A \subseteq S} |\P{X \in A} - \P{Y \in A}| \\
+                                &= \max_{A \subseteq S} |\P{X \in A, X \neq Y} - \P{Y \in A, X \neq Y}| \\
+      &\le \P{X \neq Y}.
     \end{align*}
-    \end{lemma}
+    and we can find the optimal coupling $\omega$ by letting $\omega(z, z) = \min \{\mu(z), \nu(z)\}$, and writing $\omega(x, y) = \omega_X(x) \omega_Y(y)$ otherwise, so
+    \begin{align*}
+      \mu(x) &= \sum_y \omega(x, y) \\
+      &= \omega(x, x) + \omega_X(x) \sum_{x \neq y} \omega_Y(y) \\
+      \nu(y) &= \sum_x \omega(x, y) \\
+             &= \omega(y, y) + \omega_Y(y) \sum_{x \neq y} \omega_X(x)
+    \end{align*}
+    and thus we set $\omega_X(x) = 0$ where $\mu(x) \le \nu(x)$, $\omega_Y(y) = 0$ where $\nu(x) \le \mu(x)$. This means we get $\mu(x) = \omega(x, x) + \omega_X(x) \omega_Y(S)$, $\nu(y) = \omega(y, y) + \omega_Y(y) \omega_X(S)$ and can thus infer the full coupling:
+    \begin{align*}
+      \omega_X(S)\omega_Y(S) &= \sum_x \omega_Y(S)\omega_X(x) \\
+                             &= \sum_x \mu(x) - \min\{\mu(x), \nu(x)\} \\
+      &= |\mu - \nu|_{\mathrm{TV}} \\
+      \omega(x, y) &= \begin{cases}
+        \min \{\mu(x), \nu(y)\} & \text{if } x = y \\[0.8em]
+        \displaystyle \frac{(\mu(x) - \min \{\mu(x), \nu(x)\})(\nu(y) - \min \{\mu(y), \nu(y)\})}{|\mu - \nu|_{\mathrm{TV}}} & \text{otherwise.}
+        \end{cases}
+    \end{align*}
+    This indeed gives
+    \begin{align*}
+      \sum_{x \neq y} \omega(x, y) &= \frac{1}{|\mu - \nu|}\sum_{x \neq y} (\mu(x) - \min \{\mu(x), \nu(x)\}) (\nu(y) - \min \{\mu(y), \nu(y)\}) \\
+                                   &= \frac{1}{|\mu - \nu|} \left(\sum_x \mu(x) - \min\{\mu(x), \nu(x)\}\right) \left(\sum_y \nu(y) - \min\{\mu(y), \nu(y)\}\right) \\
+      &= |\mu - \nu|_{\mathrm{TV}}.
+    \end{align*}
+    Note that while this is useful to have such an $\omega$ to know that it exists, in practise this is usually not a particularly useful quantity. Not least because if the distributions we're coupling are evolving in such a way that makes them Markovian, we would usually want to find a coupling which is also Markovian. There is no guarantee or reason to believe that there exists an optimal coupling which is also Markovian in this sense. \\
+
+    If we now write
+    \begin{align*}
+      \rho(n) = \max_{x, y \in S} |P_n(x, \cdot) - P_n(y, \cdot)|_{\mathrm{TV}}
+    \end{align*}
+    we see with some straightforward algebraic work this gives an equivalent sort of norm, with
+    \begin{align*}
+      d(n) \le \rho(n) \le 2d(n).
+    \end{align*}
+
+    Going back to our earlier remark surrounding the use of $\varepsilon$, note that with $\Pj_{x, y}$ defined such that the walks evolve independently and then remain together after they first coalesce, we can get the following:
+    \begin{align*}
+      \rho(n+m) &\le \max_{x, y} \sum_{x' \neq y'} \Pj_{x, y}\left(X_{n+m} = x', Y_{n+m} = y'\right) \\
+                &= \max_{x, y} \sum_{x' \neq y'} \sum_{x'' \neq y''} \Pj_{x, y}\left(X_{n} = x'', Y_{n} = y''\right) \Pj_{x'', y''}\left(X_m = x', Y_m = y'\right) \\
+      &\le \rho(n) \rho(m).
+    \end{align*}
+    Thus $d(ct_{\mathrm{mix}}(\varepsilon)) \le \rho(ct_{\mathrm{mix}}(\varepsilon)) \le \rho(t_{\mathrm{mix}}(\varepsilon))^c \le (2d(t_{\mathrm{mix}}(\varepsilon)))^c \le (2\varepsilon)^c$, so with $c = \log(\varepsilon')/\log(2\varepsilon)$,
+    \begin{align*}
+      \frac{\log \varepsilon'}{\log 2 \varepsilon} t_{\mathrm{mix}}(\varepsilon) \le t_{\mathrm{mix}}(\varepsilon').
+    \end{align*}
+    Hence the regularity of $t_{\mathrm{mix}}$ in $\varepsilon$ sufficiently small. \\
+
+    \innerblock{Lazy random walk on hypercube}{
+      Consider the process $X$ on $\{0,1\}^n$ which uniformly selects a coordinate to flip, then does so with probability $1/2$ (or does nothing otherwise). To get a bound on its mixing time, we define a coupling $(X, Y)$ such that both select the same coordinate at each step, and change it to the same value (which may end up being the `lazy' option for one, and the `non-lazy' option for another, but it doesn't matter either way). Immediately this ensures that the chains will have converged once all coordinates have been covered. \\
+
+      It is known that for $t$ sufficiently large, $\P{T > n \log n + cn} \le e^{-c}$, so thus $t_{\mathrm{mix}}(\varepsilon) \le n (\log 2n - \log \varepsilon)$. 
+
+    }
+
 
     \begin{theorem}
     \ The coupling lemma remains valid for any metric $\delta$ on $S$ satisfying
     \begin{align*}
     \delta(x, y) \ge \chi_{x \neq y}
     \end{align*}
-    Moreover, with $\delta_K(\mu, \nu) := \inf \{\Eb{\delta(X, Y)} \,|\, \P \circ X^{-1} \equiv \mu, \P \circ Y^{-1} \equiv \nu\}$, $\delta_K$ is a metric on the space of probability distributions on $S$.
+    Moreover, with $\delta_K(\mu, \nu) := \inf \{\Eb{\delta(X, Y)} \,|\, \Pj \circ X^{-1} \equiv \mu, \Pj \circ Y^{-1} \equiv \nu\}$, $\delta_K$ is a metric on the space of probability distributions on $S$.
     \end{theorem}
     \hphantom{}
 
@@ -470,7 +668,23 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
     \end{theorem}
     \hphantom{}
 
-    Thus $t_{\mathrm{mix}}(\varepsilon) \le \frac{\log (d_H(x, y)) - \log \varepsilon}{\alpha}$.
+    Thus
+    \begin{align*}
+    t_{\mathrm{mix}}(\varepsilon) \le \frac{1}{\alpha} \log \frac{d_H(x, y)}{\varepsilon}.
+    \end{align*}
+
+    \begin{theorem}[Path coupling theorem]
+    \ Take an irreducible and aperiodic Markov chain on a finite state space $S$. If we can construct a graph $(S, E)$ with graph distance $d_S$, such that for some $\alpha > 0$, $\{x, y\} \in E$,
+    \begin{align*}
+      \E\left[d_S(X, Y)\right] &\le e^{-\alpha},
+    \end{align*}
+    then 
+    \begin{align*}
+      t_{\mathrm{mix}}(\varepsilon) \le \left\lceil \frac{1}{\alpha} \log \frac{\mathrm{diam}(S)}{\varepsilon}\right\rceil.
+    \end{align*}
+    \end{theorem}
+    \hphantom{}
+
 
     \innerblock{Glauber dynamics}{
       Consider the finite-volume Gibbs measure $\mu$ for $h = 0$, $G$ a finite subgraph of $\mathbb{Z}^d$, where we identify $V = [n]$. We want to understand how to practically sample from this distribution. \\
@@ -489,15 +703,9 @@ We have a very well-behaved SRW for finite connected graphs, as our DBEs are sat
       \begin{theorem}
       \ There is a $\beta' > 0$ depending only on $d$ such that for $\beta \in \leftopen{0}{\beta'}$, the mixing time of Glauber dynamics satisfies $t_{\mathrm{mix}} = O(n \log n)$.
       \end{theorem}
+      \hphantom{}
 
       The proof of this relies on the path coupling theorem. That is, we must show that there is some $\alpha > 0$ such that for all edges $(x, y)$ in a graph on $[n]$ (which we'll take to be according to the Hamming distance, so $x \sim y$ if it differs at exactly one site), there is a coupling $(X, Y)$ with marginals $(P^1_x, P^1_y)$ such that $\Eb{d(X, Y)} \le e^{-\alpha} d(x, y)$.
-      \begin{align*}
-        \Eb{d(X, Y)}
-      \end{align*}
-
-
-
-
     }`
   }
 \end{columns}
